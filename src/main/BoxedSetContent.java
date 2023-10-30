@@ -1,3 +1,3 @@
-class public BoxedSetContent extends BoxedSet{
+public class BoxedSetContent extends BoxedSet{
     protected Component component[];
 }

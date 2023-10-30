@@ -1,6 +1,6 @@
 
-public Class Person {
-    private int PersonID
+public class Person {
+    private int PersonID;
     private String forename;
     private String surname;
     private String email;
@@ -11,5 +11,7 @@ public Class Person {
     private Address address;
 
 
-
+    public static void main(String[]args){
+        System.out.println("Hello World");
+    }
 }

@@ -1,2 +1,2 @@
-class public Manager extends Staff{
+public class Manager extends Staff{
 }

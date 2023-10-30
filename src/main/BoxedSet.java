@@ -1,3 +1,3 @@
-class public BoxedSet extends Product{
+public class BoxedSet extends Product{
 
 }

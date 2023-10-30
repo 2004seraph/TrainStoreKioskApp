@@ -5,18 +5,8 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="ef159446-9a5e-471a-a07d-3900da53c477" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/src/main/BankDetail.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/BoxedSet.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/BoxedSetContent.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/Component.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/Controller.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/Locomotive.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/Manager.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/Person.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/Product.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/Staff.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/main.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/Address.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/Person.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/Person.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -37,19 +27,18 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent">{
-  &quot;keyToString&quot;: {
-    &quot;ASKED_SHARE_PROJECT_CONFIGURATION_FILES&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.OpenProjectViewOnStart&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
-    &quot;SHARE_PROJECT_CONFIGURATION_FILES&quot;: &quot;true&quot;,
-    &quot;last_opened_file_path&quot;: &quot;C:/Vol E/UoS/MComp/COM2008 Systems Design and Security/Group Project/mysql-connector-j-8.2.0/mysql-connector-j-8.2.0.jar&quot;,
-    &quot;project.structure.last.edited&quot;: &quot;Libraries&quot;,
-    &quot;project.structure.proportion&quot;: &quot;0.0&quot;,
-    &quot;project.structure.side.proportion&quot;: &quot;0.0&quot;,
-    &quot;settings.editor.selected.configurable&quot;: &quot;preferences.pluginManager&quot;
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "ASKED_SHARE_PROJECT_CONFIGURATION_FILES": "true",
+    "RunOnceActivity.OpenProjectViewOnStart": "true",
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "last_opened_file_path": "C:/Vol E/UoS/MComp/COM2008 Systems Design and Security/Group Project/mysql-connector-j-8.2.0/mysql-connector-j-8.2.0.jar",
+    "project.structure.last.edited": "Project",
+    "project.structure.proportion": "0.15",
+    "project.structure.side.proportion": "0.2",
+    "settings.editor.selected.configurable": "preferences.pluginManager"
   }
-}</component>
+}]]></component>
   <component name="RecentsManager">
     <key name="MoveFile.RECENT_KEYS">
       <recent name="C:\Vol E\UoS\MComp\COM2008 Systems Design and Security\Group Project\com2008team5\src\main" />

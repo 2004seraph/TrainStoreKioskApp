@@ -1,3 +1,3 @@
-class public Staff extends Person{
+public class Staff extends Person{
 
 }

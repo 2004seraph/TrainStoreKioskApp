@@ -1,10 +1,10 @@
-class public Product {
+public class Product {
 
     private Integer productCode;
     private String name;
     protected Integer stockLevel;
     private Double price;
-    enum private category {
+    private enum category {
             LOCOMOTIVES,
             CARRAIGES,
             WAGONS,
