@@ -1,3 +1,5 @@
+import java.util.Locale.Category;
+
 public class Product {
 
     private Integer productCode;
@@ -14,4 +16,15 @@ public class Product {
             TRAIN_SETS
     }
 
+    public static boolean InsertNewComponent() {
+        // database insetrt
+        return true;
+    }
+    public static boolean InsertNewBoxedSet() {
+        // error checking 
+        return true;
+
+
+    }
 }
+
