@@ -100,6 +100,7 @@ public final class DatabaseBridge {
             connectionOpts.append(opt);
             connectionOpts.append("&");
         }
+
         try {
             connection = DriverManager.getConnection(
                     DB_URL + connectionOpts.toString(),
@@ -107,7 +108,8 @@ public final class DatabaseBridge {
                     DB_PASSWORD
             );
             databaseLog("Opened connection");
-        } catch (com.mysql.cj.jdbc.exceptions.CommunicationsException e) {
+
+        } catch (java.sql.SQLRecoverableException e) { // The superclass of the MySQL connector's communication exception
             databaseError("Failed to open connection, you may not be connected to the VPN", e);
         } catch (SQLException e) {
             databaseError("Failed to open connection", e);
