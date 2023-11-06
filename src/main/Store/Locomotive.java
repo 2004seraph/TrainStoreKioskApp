@@ -1,3 +1,5 @@
+package Store;
+
 public class Locomotive extends Component{
     private enum priceBracket {
         ANALOGUE,

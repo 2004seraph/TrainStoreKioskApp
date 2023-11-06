@@ -1,3 +1,4 @@
+package Store;
 
 public class Person {
     private int PersonID;
@@ -6,7 +7,7 @@ public class Person {
     private String email;
     private String password;
 
-//  Link to BankDetail and Address
+//  Link to Store.BankDetail and Store.Address
     private BankDetail bankDetail;
     private Address address;
 

@@ -1,3 +1,5 @@
+package Store;
+
 public class BankDetail {
     private int bankDetailID;
     private String cardName;

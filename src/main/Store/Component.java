@@ -1,3 +1,5 @@
+package Store;
+
 public class Component extends Product{
     private String brand;
     private Integer era;
