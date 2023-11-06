@@ -1,4 +1,4 @@
-package Store;
+package store;
 
 public class Component extends Product{
     private String brand;

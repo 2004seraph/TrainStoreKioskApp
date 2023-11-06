@@ -1,6 +1,4 @@
-package Store;
-
-import java.util.Locale.Category;
+package store;
 
 public class Product {
 
