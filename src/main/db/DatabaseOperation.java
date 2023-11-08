@@ -122,7 +122,7 @@ public final class DatabaseOperation {
             ResultSet roles = roleQuery.executeQuery();
 
             Role userRole = Role.USER;
-            // get the highest privildge role this user has and use that
+            // get the highest priviledge role this user has and use that
             while (roles.next()) {
                 Role roleValue = Role.valueOf(roles.getString(2));
                 if (roleValue.getLevel() > userRole.getLevel())
