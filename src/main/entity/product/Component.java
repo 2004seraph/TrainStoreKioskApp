@@ -1,4 +1,4 @@
-package store;
+package entity.product;
 
 public class Component extends Product{
     private String brand;

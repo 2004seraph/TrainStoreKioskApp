@@ -1,4 +1,4 @@
-package store;
+package entity;
 
 public class Address {
     private String houseNumber;

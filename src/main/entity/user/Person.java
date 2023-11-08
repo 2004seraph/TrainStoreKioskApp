@@ -1,4 +1,7 @@
-package store;
+package entity.user;
+
+import entity.Address;
+import entity.BankDetail;
 
 public class Person {
     private int PersonID;
