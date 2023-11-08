@@ -1,4 +1,4 @@
-package store;
+package entity.product;
 
 public class Track {
     private enum curvature {

@@ -1,4 +1,4 @@
-package store;
+package entity;
 
 public class BankDetail {
     private int bankDetailID;
