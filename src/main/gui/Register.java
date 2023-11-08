@@ -2,6 +2,8 @@ package gui;
 
 import java.awt.*;
 import javax.swing.*;
+import java.awt.event.*;
+import gui.*;
 
 public class Register extends JPanel{
     private JLabel registerLabel;
@@ -34,7 +36,7 @@ public class Register extends JPanel{
         forename = new JTextField (5);
         forenameLabel = new JLabel ("Forename:");
         surnameLabel = new JLabel ("Surname:");
-        surname = new JPasswordField (5);
+        surname = new JPasswordField(5);
         emailLabel = new JLabel ("Email:");
         email = new JTextField (5);
         passwordLabel = new JLabel ("Password:");
@@ -107,9 +109,97 @@ public class Register extends JPanel{
         registerButton.setBounds (260, 560, 100, 25);
         alreadyAUserLabel.setBounds (260, 590, 95, 25);
         loginLabel.setBounds (355, 590, 100, 25);
+
+
+        // When clicking loginLabel, close register window and open login window
+        loginLabel.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                Window w = SwingUtilities.getWindowAncestor(Register.this);
+                w.dispose();
+                Login.startLogin();
+            }
+        });
+
+        // When clicking registerButton validate the input, then close register window and open login window
+        registerButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                // Validate input
+                validateCompulsoryInput();
+                validateFormat();
+            }
+    
+        });
     }
 
-    public static void main (String[] args) {
+    private void validateCompulsoryInput() {
+        if (forename.getText().isEmpty()) {
+            JOptionPane.showMessageDialog(null, "Forename cannot be empty");
+            return;
+        }
+        if (surname.getText().isEmpty()) {
+            JOptionPane.showMessageDialog(null, "Surname cannot be empty");
+            return;
+        }
+        if (email.getText().isEmpty()) {
+            JOptionPane.showMessageDialog(null, "Email cannot be empty");
+            return;
+        }
+        if (password.getText().isEmpty()) {
+            JOptionPane.showMessageDialog(null, "Password cannot be empty");
+            return;
+        }
+        if (passwordConfirmation.getText().isEmpty()) {
+            JOptionPane.showMessageDialog(null, "Password confirmation cannot be empty");
+            return;
+        }
+        if (!password.getText().equals(passwordConfirmation.getText())) {
+            JOptionPane.showMessageDialog(null, "Passwords do not match");
+            return;
+        }
+        if (houseNumber.getText().isEmpty()) {
+            JOptionPane.showMessageDialog(null, "House number cannot be empty");
+            return;
+        }
+        if (streetName.getText().isEmpty()) {
+            JOptionPane.showMessageDialog(null, "Street name cannot be empty");
+            return;
+        }
+        if (cityName.getText().isEmpty()) {
+            JOptionPane.showMessageDialog(null, "City name cannot be empty");
+            return;
+        }
+        if (postCode.getText().isEmpty()) {
+            JOptionPane.showMessageDialog(null, "Postcode cannot be empty");
+            return;
+        }
+    }
+
+    private void validateFormat(){
+        // regular expressions for email, postcode and password
+        String emailRegex = "^[a-zA-Z0-9_+&*-]+(?:\\."+ "[a-zA-Z0-9_+&*-]+)*@" + "(?:[a-zA-Z0-9-]+\\.)+[a-z" + "A-Z]{2,7}$";
+        String postcodeRegex = "^[A-Z]{1,2}[0-9]{1,2}\s[A-Z]?[0-9][A-Z]{2}$";
+        String passwordRegex = "^(?=.*[0-9])" + "(?=.*[a-z])(?=.*[A-Z])" + "(?=.*[@#$%^&+=])" + "(?=\\S+$).{8,20}$";
+
+        // Validate the fields with the regular expressions
+        if (!email.getText().matches(emailRegex)) {
+            JOptionPane.showMessageDialog(null, "Invalid email");
+            return;
+        }
+        if (!postCode.getText().matches(postcodeRegex)) {
+            JOptionPane.showMessageDialog(null, "Invalid postcode");
+            return;
+        }
+        if (!password.getText().matches(passwordRegex)) {
+            JOptionPane.showMessageDialog(null, "Password must be 8-20 characters long, contain at least one digit, one upper case letter, one lower case letter and one special character");
+            return;
+        }
+
+    }
+
+
+    public static void startRegister() {
         JFrame frame = new JFrame ("Register");
         frame.setDefaultCloseOperation (JFrame.EXIT_ON_CLOSE);
         frame.getContentPane().add (new Register());

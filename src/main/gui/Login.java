@@ -48,10 +48,20 @@ public class Login extends JPanel {
         notAUserLabel.setBounds (140, 245, 70, 20);
         reigsterLabel.setBounds (210, 245, 100, 20);
         password.setBounds (140, 180, 200, 25);
+
+        // When clicking reigsterLabel, close this window and open Register window
+        reigsterLabel.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                Window w = SwingUtilities.getWindowAncestor(Login.this);
+                w.dispose();
+                Register.startRegister();
+            }
+        });
     }
 
 
-    public static void main (String[] args) {
+    public static void startLogin () {
         JFrame frame = new JFrame ("Login");
         frame.setDefaultCloseOperation (JFrame.EXIT_ON_CLOSE);
         frame.getContentPane().add (new Login());
