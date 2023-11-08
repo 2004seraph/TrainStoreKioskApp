@@ -7,7 +7,7 @@ import java.util.List;
 
 /**
  * Maintainers: Sam Taseff
- * <p>
+ * <br>
  * This is a singleton class (meaning you cannot instantiate it, you may only get a reference using the Instance() method)
  * that manages the single db connection and also dispatches prepared statements to operations
  */
@@ -56,12 +56,23 @@ public final class DatabaseBridge {
      */
     public static void databaseError(String extraContext, Throwable e) {
         databaseLog(
-                "ERROR:",
+                "ERROR ->",
                 extraContext + "\n\t",
                 e.getClass().getCanonicalName() + ":",
                 e.getLocalizedMessage()
         );
         e.printStackTrace();
+    }
+
+    /**
+     * If you don't want to print the exception twice
+     * @param message An error message giving specific localised context
+     */
+    public static void databaseError(String message) {
+        databaseLog(
+                "ERROR ->",
+                message
+        );
     }
 
     /**
@@ -81,10 +92,10 @@ public final class DatabaseBridge {
     }
 
     /**
-     * It is correct that this constructor is private, do not instantiate this class, use the Instance() method
-     * @return Not for you
+     * Gets a handle to the database connection
+     * @return A reference
      */
-    public static DatabaseBridge Instance() {
+    public static DatabaseBridge instance() {
         if (Instance == null) {
             Instance = new DatabaseBridge();
         }
@@ -93,6 +104,9 @@ public final class DatabaseBridge {
     }
 
     // Instance methods
+    /**
+     * It is correct that this constructor is private, do not instantiate this class, use the Instance() method
+     */
     private DatabaseBridge() {
         databaseLog("Initialized");
         if (isDriverLoaded()) {
@@ -148,18 +162,51 @@ public final class DatabaseBridge {
         }
     }
 
+    public void setAutoCommit(Boolean t) throws SQLException {
+        connection.setAutoCommit(t);
+        databaseLog("AutoCommit:", t.toString());
+    }
+    public void commit() throws SQLException {
+        connection.commit();
+    }
+    public void rollback() throws SQLException {
+        databaseLog("Transaction failure, rolling back...");
+        connection.rollback();
+    }
+
     /**
      * How you begin any query on this database, this returns a prepared statement with your SQL that you can then set the parameters and execute
      * @param sql The SQL you wish to execute on the database
      * @return Your statement ready for you to add the parameters and execute it
      * @throws SQLException Concerning something to do with your query or update
      */
-    public PreparedStatement BeginQuery(String sql) throws SQLException {
+    public PreparedStatement prepareStatement(String sql) throws SQLException {
+        return prepareStatement(sql, 0);
+    }
+
+    /**
+     *
+     * @param sql The SQL you wish to execute on the database
+     * @param opts Any modifications you wish to make to the output of executing the query
+     * @return Your statement ready for you to add the parameters and execute it
+     * @throws SQLException Concerning something to do with your query or update
+     */
+    public PreparedStatement prepareStatement(String sql, int opts) throws SQLException {
         try {
-            return connection.prepareStatement(sql);
+            return connection.prepareStatement(sql, opts);
         } catch (NullPointerException e) {
             databaseError("A connection has not been opened yet, please call `openConnection()` before this method", e);
             throw e;
         }
     }
+
+    // I think it's better to use prepared statements everywhere
+//    /**
+//     * Creates a Statement object
+//     * @return
+//     * @throws SQLException
+//     */
+//    public Statement createStatement() throws SQLException {
+//        return connection.createStatement();
+//    }
 }
