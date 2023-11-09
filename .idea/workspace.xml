@@ -1,19 +1,32 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
+  <component name="AutoImportSettings">
+    <option name="autoReloadType" value="SELECTIVE" />
+  </component>
   <component name="ChangeListManager">
     <list default="true" id="2844179b-1312-47d2-ae71-32ea7b5a0776" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/.idea/libraries/com2008team5.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/.gitignore" beforeDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/libraries/bcrypt_0_10_2.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/uiDesigner.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/lib/bcrypt-0.10.2.jar" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/controllers/Login.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/utils/Hash.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/libraries/com2008team5.xml" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/runConfigurations/FullProgram.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/uiDesigner.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/com2008team5.iml" beforeDir="false" afterPath="$PROJECT_DIR$/com2008team5.iml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/db/DatabaseOperation.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/db/DatabaseOperation.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/entity/user/Person.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/entity/user/Person.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
     <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="FileTemplateManagerImpl">
+    <option name="RECENT_TEMPLATES">
+      <list>
+        <option value="Class" />
+      </list>
+    </option>
   </component>
   <component name="Git.Settings">
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
@@ -21,10 +34,10 @@
   <component name="MarkdownSettingsMigration">
     <option name="stateVersion" value="1" />
   </component>
-  <component name="ProjectColorInfo"><![CDATA[{
-  "customColor": "",
-  "associatedIndex": 5
-}]]></component>
+  <component name="ProjectColorInfo">{
+  &quot;customColor&quot;: &quot;&quot;,
+  &quot;associatedIndex&quot;: 5
+}</component>
   <component name="ProjectId" id="2XtuQ1e4JIvFlfmceLAoBjjnke3" />
   <component name="ProjectLevelVcsManager">
     <ConfirmationsSetting value="2" id="Add" />
@@ -38,10 +51,15 @@
     "ASKED_ADD_EXTERNAL_FILES": "true",
     "RunOnceActivity.OpenProjectViewOnStart": "true",
     "RunOnceActivity.ShowReadmeOnStart": "true",
+    "SHARE_PROJECT_CONFIGURATION_FILES": "true",
     "WebServerToolWindowFactoryState": "false",
     "git-widget-placeholder": "main",
-    "last_opened_file_path": "/home/seraph/Documents/University/com2008team5/lib/mysql-connector-j-8.2.0.jar",
-    "project.structure.last.edited": "Modules",
+    "last_opened_file_path": "C:/Users/Liam/Desktop/com2008team5/lib/bcrypt-0.10.2.jar",
+    "node.js.detected.package.eslint": "true",
+    "node.js.detected.package.tslint": "true",
+    "node.js.selected.package.eslint": "(autodetect)",
+    "node.js.selected.package.tslint": "(autodetect)",
+    "project.structure.last.edited": "Libraries",
     "project.structure.proportion": "0.15",
     "project.structure.side.proportion": "0.25747126",
     "vue.rearranger.settings.migration": "true"
@@ -56,6 +74,8 @@
       <option name="presentableId" value="Default" />
       <updated>1699460677768</updated>
       <workItem from="1699460680123" duration="118000" />
+      <workItem from="1699551619781" duration="269000" />
+      <workItem from="1699552718760" duration="2079000" />
     </task>
     <servers />
   </component>

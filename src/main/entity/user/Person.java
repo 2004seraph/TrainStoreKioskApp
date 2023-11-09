@@ -27,6 +27,7 @@ public class Person extends DatabaseOperation.Entity implements DatabaseRecord {
     public String getEmail() {
         return email;
     }
+    public String getPassword() { return password; }
 
     public static void main(String[] args){
         System.out.println("Hello World");
