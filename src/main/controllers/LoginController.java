@@ -1,5 +1,6 @@
 package controllers;
 
+import db.DatabaseBridge;
 import db.DatabaseOperation;
 import entity.user.Person;
 import utils.Hash;
@@ -9,12 +10,12 @@ import java.sql.SQLException;
 /**
  * Singleton class for handling logins
  */
-public final class Login {
-    private static Login Instance;
+public final class LoginController {
+    private static LoginController Instance;
 
-    public static Login getInstance() {
+    public static LoginController getInstance() {
         if (Instance == null) {
-            Instance = new Login();
+            Instance = new LoginController();
         }
 
         return Instance;
@@ -46,7 +47,9 @@ public final class Login {
      * @return Person instance of the user if password is correct, otherwise return null
      */
     public Person authenticateUser(String email, String password) {
+        DatabaseBridge db = DatabaseBridge.instance();
         try {
+            db.openConnection();
             Person user = DatabaseOperation.GetPersonByEmail(email);
             if (user == null) {
                 return null;
@@ -60,6 +63,8 @@ public final class Login {
         } catch (SQLException e) {
             logError("Failed to fetch user", e);
             return null;
+        } finally {
+            db.closeConnection();
         }
 
 

@@ -11,6 +11,7 @@ public class Hash {
     }
 
     public static boolean verifyString(String input, String hashString) {
-        return BCrypt.verifyer().verify(input.toCharArray(), hashString).verified;
+        char[] pwd = input.toCharArray();
+        return BCrypt.verifyer().verify(pwd, hashString).verified;
     }
 }
