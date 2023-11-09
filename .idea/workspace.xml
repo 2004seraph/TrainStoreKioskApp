@@ -1,14 +1,36 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
+  <component name="AutoImportSettings">
+    <option name="autoReloadType" value="SELECTIVE" />
+  </component>
   <component name="ChangeListManager">
-    <list default="true" id="2844179b-1312-47d2-ae71-32ea7b5a0776" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/.idea/libraries/com2008team5.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/.gitignore" beforeDir="false" />
+    <list default="true" id="0057afc0-b121-457b-9bab-c109c45bed9a" name="Changes" comment="">
+      <change afterPath="$PROJECT_DIR$/.idea/runConfigurations/RunAppMain.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/.gitignore" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/libraries/com2008team5.xml" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/runConfigurations/FullProgram.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/uiDesigner.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/com2008team5.iml" beforeDir="false" afterPath="$PROJECT_DIR$/com2008team5.iml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/db/DatabaseOperation.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/db/DatabaseOperation.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/modules.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/runConfigurations/FullProgramMain.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/com2008team5.iml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/Main.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/db/DatabaseBridge.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/db/DatabaseOperation.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/db/DatabaseRecord.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/entity/Address.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/entity/BankDetail.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/entity/StoreAttributes.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/entity/product/BoxedSet.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/entity/product/Component.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/entity/product/Controller.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/entity/product/Locomotive.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/entity/product/Product.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/entity/product/Track.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/entity/user/Manager.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/entity/user/Person.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/entity/user/Staff.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/gui/Login.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/gui/Register.java" beforeDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -23,9 +45,9 @@
   </component>
   <component name="ProjectColorInfo"><![CDATA[{
   "customColor": "",
-  "associatedIndex": 5
+  "associatedIndex": 6
 }]]></component>
-  <component name="ProjectId" id="2XtuQ1e4JIvFlfmceLAoBjjnke3" />
+  <component name="ProjectId" id="2XxJIzmgZKPFEc4hPvX9wG4wfrL" />
   <component name="ProjectLevelVcsManager">
     <ConfirmationsSetting value="2" id="Add" />
   </component>
@@ -38,10 +60,14 @@
     "ASKED_ADD_EXTERNAL_FILES": "true",
     "RunOnceActivity.OpenProjectViewOnStart": "true",
     "RunOnceActivity.ShowReadmeOnStart": "true",
+    "SHARE_PROJECT_CONFIGURATION_FILES": "true",
     "WebServerToolWindowFactoryState": "false",
-    "git-widget-placeholder": "main",
-    "last_opened_file_path": "/home/seraph/Documents/University/com2008team5/lib/mysql-connector-j-8.2.0.jar",
-    "project.structure.last.edited": "Modules",
+    "git-widget-placeholder": "mavenbuild",
+    "node.js.detected.package.eslint": "true",
+    "node.js.detected.package.tslint": "true",
+    "node.js.selected.package.eslint": "(autodetect)",
+    "node.js.selected.package.tslint": "(autodetect)",
+    "project.structure.last.edited": "Libraries",
     "project.structure.proportion": "0.15",
     "project.structure.side.proportion": "0.25747126",
     "vue.rearranger.settings.migration": "true"
@@ -50,12 +76,12 @@
   <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
   <component name="TaskManager">
     <task active="true" id="Default" summary="Default task">
-      <changelist id="2844179b-1312-47d2-ae71-32ea7b5a0776" name="Changes" comment="" />
-      <created>1699460677768</created>
+      <changelist id="0057afc0-b121-457b-9bab-c109c45bed9a" name="Changes" comment="" />
+      <created>1699564723129</created>
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
-      <updated>1699460677768</updated>
-      <workItem from="1699460680123" duration="118000" />
+      <updated>1699564723129</updated>
+      <workItem from="1699564725529" duration="692000" />
     </task>
     <servers />
   </component>

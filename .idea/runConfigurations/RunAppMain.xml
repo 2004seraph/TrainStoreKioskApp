@@ -1,5 +1,5 @@
 <component name="ProjectRunConfigurationManager">
-  <configuration default="false" name="FullProgramMain" type="Application" factoryName="Application">
+  <configuration default="false" name="RunAppMain" type="Application" factoryName="Application">
     <option name="MAIN_CLASS_NAME" value="Main" />
     <module name="com2008team5" />
     <method v="2">
