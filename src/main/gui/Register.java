@@ -10,7 +10,7 @@ public class Register extends JPanel{
     private JTextField forename;
     private JLabel forenameLabel;
     private JLabel surnameLabel;
-    private JPasswordField surname;
+    private JTextField surname;
     private JLabel emailLabel;
     private JTextField email;
     private JLabel passwordLabel;
@@ -36,7 +36,7 @@ public class Register extends JPanel{
         forename = new JTextField (5);
         forenameLabel = new JLabel ("Forename:");
         surnameLabel = new JLabel ("Surname:");
-        surname = new JPasswordField(5);
+        surname = new JTextField(5);
         emailLabel = new JLabel ("Email:");
         email = new JTextField (5);
         passwordLabel = new JLabel ("Password:");
