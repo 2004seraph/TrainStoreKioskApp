@@ -4,6 +4,7 @@ import db.DatabaseOperation;
 import db.DatabaseRecord;
 import entity.StoreAttributes;
 
+import java.io.Serializable;
 import java.util.Arrays;
 import java.util.List;
 
@@ -107,7 +108,7 @@ public class Person extends DatabaseOperation.Entity implements DatabaseRecord {
     public List<Object> GetFields() {
         // note that the AUTO_INCREMENT primary key is not included, this method is used for inserting
         // these also appear in the same order as the table fields (important)
-        return Arrays.asList(
+        List<Object> list = Arrays.asList(
                 forename,
                 surname,
                 email,
@@ -116,6 +117,7 @@ public class Person extends DatabaseOperation.Entity implements DatabaseRecord {
                 postCode,
                 bankDetailsID
         );
+        return list;
     }
 }
 

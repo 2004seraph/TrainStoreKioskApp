@@ -89,6 +89,42 @@ public final class DatabaseOperation {
 
 
     /**
+     * Inserts a new address into the database
+     * @param address A non-null address that doesn't have any null fields either
+     * @return Whether the insertion was successful or failed due to someone already having that house address
+     * @throws SQLException
+     */
+    public static Boolean CreateAddress(Address address) throws SQLException {
+        // Check if this address already exists using the primary key houseNumber and postCode
+
+        try (PreparedStatement s = db.prepareStatement("SELECT * FROM Address WHERE houseNumber=? AND postCode=?")){
+            Object [] fields = address.GetFields().toArray();
+
+            s.setString(1, fields[0].toString());
+            s.setString(2, fields[3].toString());
+
+            ResultSet res = s.executeQuery();
+            if(!res.next()){
+                // Create a new address to the database
+                try (PreparedStatement r = db.prepareStatement("INSERT INTO Address VALUES (?,?,?,?)")){
+                    r.setString(1, fields[0].toString());
+                    r.setString(2, fields[1].toString());
+                    r.setString(3, fields[2].toString());
+                    r.setString(4, fields[3].toString());
+                    r.executeUpdate();
+                } catch (SQLException e) {
+                    DatabaseBridge.databaseError("Failed to insert new address");
+                    throw e;
+                }
+            }
+        } catch (SQLException e) {
+            DatabaseBridge.databaseError("Failed to insert new address");
+            throw e;
+        }
+        return true;
+    }
+
+    /**
      * Inserts a Person object into the database
      * @param person A non-null person that doesn't have any null fields either
      * @return Whether the insertion was successful or failed due to someone already having that email address
@@ -134,9 +170,9 @@ public final class DatabaseOperation {
             DatabaseBridge.databaseError("Failed to insert new user");
             db.rollback();
             throw e;
+        } finally {
+            db.setAutoCommit(true);
         }
-
-        db.setAutoCommit(true);
 
         return true;
     }
@@ -147,41 +183,49 @@ public final class DatabaseOperation {
      * @return A Person object with all of its fields set, or null if there was no one with that email
      * @throws SQLException
      */
-    public static Person GetPersonByEmail(String email) throws SQLException {
-        PreparedStatement personQuery = db.prepareStatement("SELECT * FROM Person WHERE email=?");
-        PreparedStatement roleQuery = db.prepareStatement("SELECT * FROM Role WHERE personId=?");
-        personQuery.setString(1, email);
-        ResultSet res = personQuery.executeQuery();
 
-        Person person;
-        if (res.next()) {
-            int id = res.getInt(1);
-            roleQuery.setInt(1, id);
-            ResultSet roles = roleQuery.executeQuery();
+    public static Person GetPersonByEmail(
+            String email
+    ) throws SQLException {
 
-            Role userRole = Role.USER;
-            // get the highest priviledge role this user has and use that
-            while (roles.next()) {
-                Role roleValue = Role.valueOf(roles.getString(2));
-                if (roleValue.getLevel() > userRole.getLevel())
-                    userRole = roleValue;
+        try (PreparedStatement personQuery = db.prepareStatement("SELECT * FROM Person WHERE email=?");
+             PreparedStatement roleQuery = db.prepareStatement("SELECT * FROM Role WHERE personId=?");
+        ) {
+            personQuery.setString(1, email);
+            ResultSet res = personQuery.executeQuery();
+
+            Person person;
+            if (res.next()) {
+                int id = res.getInt(1);
+                roleQuery.setInt(1, id);
+                ResultSet roles = roleQuery.executeQuery();
+
+                Role userRole = Role.USER;
+                // get the highest priviledge role this user has and use that
+                while (roles.next()) {
+                    Role roleValue = Role.valueOf(roles.getString(2));
+                    if (roleValue.getLevel() > userRole.getLevel())
+                        userRole = roleValue;
+                }
+
+                person = new Person(
+                        id,                            // id
+                        res.getString(2),   // forename
+                        res.getString(3),   // surname
+                        res.getString(4),   // email
+                        res.getString(5),   // password (this is horrible)
+                        res.getString(6),   // houseName
+                        res.getString(7),   // postcode
+                        res.getInt(8),      // bank details
+                        userRole
+                );
+
+                return person;
+            } else {
+                return null;
             }
-
-            person = new Person(
-                    id,                            // id
-                    res.getString(2),   // forename
-                    res.getString(3),   // surname
-                    res.getString(4),   // email
-                    res.getString(5),   // password (this is horrible)
-                    res.getString(6),   // houseName
-                    res.getString(7),   // postcode
-                    res.getInt(8),      // bank details
-                    userRole
-            );
-
-            return person;
-        } else {
-            return null;
+        } catch (SQLException e) {
+            throw e;
         }
     }
 }
