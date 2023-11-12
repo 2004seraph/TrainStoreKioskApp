@@ -17,18 +17,18 @@ public class Main {
             // Sam has already been created in the database (you can go see it in workbench).
             // I had to add an address and payment details record manually using the workbench.
             Person newPerson = new Person(
-                    "Sam",
+                    "SamNoPayment",
                     "Seraph",
-                    "sam@sheffield.ac.uk",
+                    "sam_no_paymentid@sheffield.ac.uk",
                     "password123",
                     
                     "21",         // THESE ARE REAL PRIMARY KEYS IN THE DB
                     "SHR982",      // THESE ARE REAL PRIMARY KEYS IN THE DB
-                    2         // THESE ARE REAL PRIMARY KEYS IN THE DB
+                    -1         // THESE ARE REAL PRIMARY KEYS IN THE DB
             );
             System.out.println("Successfully added new person (if false they may already be present in the db): " + DatabaseOperation.CreatePerson(newPerson));
 
-            Person sam = DatabaseOperation.GetPersonByEmail("sam@sheffield.ac.uk");
+            Person sam = DatabaseOperation.GetPersonByEmail("sam_no_paymentid@sheffield.ac.uk");
             System.out.println("Successfully retrieved that new person: " + (sam != null));
 
         } catch (Throwable e) {

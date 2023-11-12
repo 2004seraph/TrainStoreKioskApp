@@ -4,10 +4,7 @@ import entity.user.*;
 import entity.*;
 import entity.StoreAttributes.Role;
 
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
+import java.sql.*;
 
 import static entity.StoreAttributes.*;
 
@@ -29,7 +26,7 @@ public final class DatabaseOperation {
      * It isn't needed for anything currently, it's here purely in case we need it.
      */
     public static abstract class Entity {
-        public PreparedStatement BeginQuery(String sql) throws SQLException {
+        public PreparedStatement prepareStatement(String sql) throws SQLException {
             return db.prepareStatement(sql);
         }
     }
@@ -112,7 +109,11 @@ public final class DatabaseOperation {
             s.setString(4, (String) fields[3]); // password
             s.setString(5, (String) fields[4]); // housename
             s.setString(6, (String) fields[5]); // postcode
-            s.setInt(7, (Integer) fields[6]); // paymentid
+            if ((Integer)fields[6] != -1) {                  // paymentid
+                s.setInt(7, (Integer) fields[6]);
+            } else {
+                s.setNull(7, Types.INTEGER);
+            }
             s.executeUpdate();
 
             ResultSet rs = s.getGeneratedKeys();
@@ -128,7 +129,7 @@ public final class DatabaseOperation {
 
             db.commit();
         } catch (SQLException | InternalError e) {
-            DatabaseBridge.databaseError("Failed to insert new user");
+            DatabaseBridge.databaseError("Failed to insert new user", e);
             db.rollback();
             throw e;
         } finally {

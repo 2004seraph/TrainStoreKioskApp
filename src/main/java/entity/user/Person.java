@@ -5,6 +5,8 @@ import db.DatabaseRecord;
 import entity.StoreAttributes;
 
 import java.io.Serializable;
+import java.sql.PreparedStatement;
+import java.sql.SQLException;
 import java.util.Arrays;
 import java.util.List;
 
@@ -102,6 +104,16 @@ public class Person extends DatabaseOperation.Entity implements DatabaseRecord {
         this.postCode =      postCode;
         this.bankDetailsID = bankDetailsID;
         this.role = role;
+    }
+
+
+    public boolean setBankAccountID(int id) {
+        // I will do the bank update sql later
+        try (PreparedStatement update = prepareStatement("")) {
+            return true;
+        } catch (SQLException e) {
+            return false;
+        }
     }
 
     @Override
