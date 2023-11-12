@@ -1,5 +1,6 @@
 package entity.user;
 
+import db.DatabaseBridge;
 import db.DatabaseOperation;
 import db.DatabaseRecord;
 import entity.StoreAttributes;
@@ -112,6 +113,7 @@ public class Person extends DatabaseOperation.Entity implements DatabaseRecord {
         try (PreparedStatement update = prepareStatement("")) {
             return true;
         } catch (SQLException e) {
+            DatabaseBridge.databaseError("Could not update [" + this.email + "]'s payment information", e);
             return false;
         }
     }
