@@ -3,7 +3,13 @@ package gui;
 import java.awt.*;
 import javax.swing.*;
 import java.awt.event.*;
+import java.sql.SQLException;
+
 import gui.*;
+import db.*;
+import entity.user.*;
+import entity.*;
+import utils.*;
 
 public class Register extends JPanel{
     private JLabel registerLabel;
@@ -126,76 +132,116 @@ public class Register extends JPanel{
             @Override
             public void actionPerformed(ActionEvent e) {
                 // Validate input
-                validateCompulsoryInput();
-                validateFormat();
+                if (validateCompulsoryInput() && validateFormat()) {
+                    // Open connection with the database
+                    try{
+                        DatabaseBridge db = DatabaseBridge.instance();
+                        db.openConnection();
+                        // Create a new address
+                        Address newAddress = new Address(
+                            houseNumber.getText(),
+                            streetName.getText(),
+                            cityName.getText(),
+                            postCode.getText()
+                        );
+                        DatabaseOperation.CreateAddress(newAddress);
+
+                        // Create new person
+                        String passwordHash = Hash.hashString(password.getText());
+                        Person newPerson = new Person(
+                            forename.getText(),
+                            surname.getText(),
+                            email.getText(),
+                            passwordHash,
+                            houseNumber.getText(),
+                            postCode.getText(),
+                            1 // TODO: Change this to the correct bank details ID
+                        );
+
+                        DatabaseOperation.CreatePerson(newPerson);
+
+                        db.closeConnection();
+                        
+                        // Close register window and open login window
+                        Window w = SwingUtilities.getWindowAncestor(Register.this);
+                        w.dispose();
+                        Login.startLogin();
+                    } catch (SQLException throwables) {
+                        JOptionPane.showMessageDialog(null, throwables.getMessage());
+                    }
+                    
+
+                }
             }
     
         });
     }
 
-    private void validateCompulsoryInput() {
+    private boolean validateCompulsoryInput() {
         if (forename.getText().isEmpty()) {
             JOptionPane.showMessageDialog(null, "Forename cannot be empty");
-            return;
+            return false;
         }
         if (surname.getText().isEmpty()) {
             JOptionPane.showMessageDialog(null, "Surname cannot be empty");
-            return;
+            return false;
         }
         if (email.getText().isEmpty()) {
             JOptionPane.showMessageDialog(null, "Email cannot be empty");
-            return;
+            return false;
         }
         if (password.getText().isEmpty()) {
             JOptionPane.showMessageDialog(null, "Password cannot be empty");
-            return;
+            return false;
         }
         if (passwordConfirmation.getText().isEmpty()) {
             JOptionPane.showMessageDialog(null, "Password confirmation cannot be empty");
-            return;
+            return false;
         }
         if (!password.getText().equals(passwordConfirmation.getText())) {
             JOptionPane.showMessageDialog(null, "Passwords do not match");
-            return;
+            return false;
         }
         if (houseNumber.getText().isEmpty()) {
             JOptionPane.showMessageDialog(null, "House number cannot be empty");
-            return;
+            return false;
         }
         if (streetName.getText().isEmpty()) {
             JOptionPane.showMessageDialog(null, "Street name cannot be empty");
-            return;
+            return false;
         }
         if (cityName.getText().isEmpty()) {
             JOptionPane.showMessageDialog(null, "City name cannot be empty");
-            return;
+            return false;
         }
         if (postCode.getText().isEmpty()) {
             JOptionPane.showMessageDialog(null, "Postcode cannot be empty");
-            return;
+            return false;
         }
+        return true;
     }
 
-    private void validateFormat(){
+    private boolean validateFormat(){
         // regular expressions for email, postcode and password
         String emailRegex = "^[a-zA-Z0-9_+&*-]+(?:\\."+ "[a-zA-Z0-9_+&*-]+)*@" + "(?:[a-zA-Z0-9-]+\\.)+[a-z" + "A-Z]{2,7}$";
         String postcodeRegex = "^[A-Z]{1,2}[0-9]{1,2}\s[A-Z]?[0-9][A-Z]{2}$";
-        String passwordRegex = "^(?=.*[0-9])" + "(?=.*[a-z])(?=.*[A-Z])" + "(?=.*[@#$%^&+=])" + "(?=\\S+$).{8,20}$";
+        // 8-20 characters long, contain at least one digit, one upper case letter, one lower case letter and one special character
+        String passwordRegex = "^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=.*[@#$%^&+=!()]).{8,20}$";
 
         // Validate the fields with the regular expressions
         if (!email.getText().matches(emailRegex)) {
             JOptionPane.showMessageDialog(null, "Invalid email");
-            return;
+            return false;
         }
         if (!postCode.getText().matches(postcodeRegex)) {
             JOptionPane.showMessageDialog(null, "Invalid postcode");
-            return;
+            return false;
         }
         if (!password.getText().matches(passwordRegex)) {
             JOptionPane.showMessageDialog(null, "Password must be 8-20 characters long, contain at least one digit, one upper case letter, one lower case letter and one special character");
-            return;
+            return false;
         }
-
+        return true;
     }
 
 

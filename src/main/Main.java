@@ -21,10 +21,10 @@ public class Main {
                     "Seraph",
                     "sam@sheffield.ac.uk",
                     "password123",
-
-                    "21",                         // THESE ARE REAL PRIMARY KEYS IN THE DB
-                    "SHR982",                     // THESE ARE REAL PRIMARY KEYS IN THE DB
-                    1                             // THESE ARE REAL PRIMARY KEYS IN THE DB
+                    
+                    "21",         // THESE ARE REAL PRIMARY KEYS IN THE DB
+                    "SHR982",      // THESE ARE REAL PRIMARY KEYS IN THE DB
+                    2         // THESE ARE REAL PRIMARY KEYS IN THE DB
             );
             System.out.println("Successfully added new person (if false they may already be present in the db): " + DatabaseOperation.CreatePerson(newPerson));
 

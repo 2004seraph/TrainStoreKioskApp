@@ -1,6 +1,8 @@
 package db;
 
 import entity.user.*;
+import entity.*;
+import entity.StoreAttributes.Role;
 
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -46,6 +48,45 @@ public final class DatabaseOperation {
     public static void SetConnection(DatabaseBridge conn) {
         db = conn;
     }
+
+    
+    /**
+     * Inserts a new address into the database
+     * @param address A non-null address that doesn't have any null fields either
+     * @return Whether the insertion was successful or failed due to someone already having that house address
+     * @throws SQLException
+     */
+    public static Boolean CreateAddress(Address address) throws SQLException {
+        // Check if this address already exists using the primary key houseNumber and postCode
+        
+        try (PreparedStatement s = db.prepareStatement("SELECT * FROM Address WHERE houseNumber=? AND postCode=?")){
+            Object [] fields = address.GetFields().toArray();
+
+            s.setString(1, fields[0].toString());
+            s.setString(2, fields[3].toString());
+
+            ResultSet res = s.executeQuery();
+            if(!res.next()){
+                // Create a new address to the database
+                try (PreparedStatement r = db.prepareStatement("INSERT INTO Address VALUES (?,?,?,?)")){
+                    r.setString(1, fields[0].toString());
+                    r.setString(2, fields[1].toString());
+                    r.setString(3, fields[2].toString());
+                    r.setString(4, fields[3].toString());
+                    r.executeUpdate();
+                } catch (SQLException e) {
+                    DatabaseBridge.databaseError("Failed to insert new address");
+                    throw e;
+                }
+            }
+        } catch (SQLException e) {
+            DatabaseBridge.databaseError("Failed to insert new address");
+            throw e;
+        }
+        return true;
+    }
+
+
 
     /**
      * Inserts a Person object into the database
@@ -106,10 +147,7 @@ public final class DatabaseOperation {
      * @return A Person object with all of its fields set, or null if there was no one with that email
      * @throws SQLException
      */
-    public static Person GetPersonByEmail(
-            String email
-    ) throws SQLException {
-
+    public static Person GetPersonByEmail(String email) throws SQLException {
         PreparedStatement personQuery = db.prepareStatement("SELECT * FROM Person WHERE email=?");
         PreparedStatement roleQuery = db.prepareStatement("SELECT * FROM Role WHERE personId=?");
         personQuery.setString(1, email);

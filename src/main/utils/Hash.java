@@ -14,4 +14,5 @@ public class Hash {
         char[] pwd = input.toCharArray();
         return BCrypt.verifyer().verify(pwd, hashString).verified;
     }
+
 }
