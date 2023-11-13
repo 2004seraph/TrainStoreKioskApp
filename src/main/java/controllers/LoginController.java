@@ -7,21 +7,8 @@ import utils.Hash;
 
 import java.sql.SQLException;
 
-/**
- * Singleton class for handling logins
- */
 public final class LoginController {
-    private static LoginController Instance;
-
-    public static LoginController getInstance() {
-        if (Instance == null) {
-            Instance = new LoginController();
-        }
-
-        return Instance;
-    }
-
-    private void log(String... msg) {
+    private static void log(String... msg) {
         System.out.print("[LoginController] ");
         for (String i : msg) {
             System.out.print(i);
@@ -30,7 +17,7 @@ public final class LoginController {
         System.out.println();
     }
 
-    public void logError(String extraContext, Throwable e) {
+    public static void logError(String extraContext, Throwable e) {
         log(
                 "ERROR ->",
                 extraContext + "\n\t",
@@ -46,7 +33,7 @@ public final class LoginController {
      * @param password password input
      * @return Person instance of the user if password is correct, otherwise return null
      */
-    public Person authenticateUser(String email, String password) {
+    public static Person authenticateUser(String email, String password) {
         DatabaseBridge db = DatabaseBridge.instance();
         try {
             db.openConnection();

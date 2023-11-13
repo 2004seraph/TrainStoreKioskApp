@@ -66,7 +66,6 @@ public class Login extends JPanel {
         loginButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                LoginController login = LoginController.getInstance();
                 String emailInput = email.getText();
                 char[] passwordInput = password.getPassword();
 
@@ -82,7 +81,7 @@ public class Login extends JPanel {
 
                 String pwd = String.valueOf(passwordInput);
 
-                Person user = login.authenticateUser(emailInput, pwd);
+                Person user = LoginController.authenticateUser(emailInput, pwd);
                 if (user != null) {
                     System.out.println("Successfully authenticated user");
                 } else {
