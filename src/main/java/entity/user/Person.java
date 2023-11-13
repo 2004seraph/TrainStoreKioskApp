@@ -3,10 +3,12 @@ package entity.user;
 import db.DatabaseBridge;
 import db.DatabaseOperation;
 import db.DatabaseRecord;
+import entity.BankDetail;
 import entity.StoreAttributes;
 
 import java.io.Serializable;
 import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Arrays;
 import java.util.List;
@@ -109,9 +111,26 @@ public class Person extends DatabaseOperation.Entity implements DatabaseRecord {
 
 
     public boolean setBankAccountID(int id) {
-        // I will do the bank update sql later
-        try (PreparedStatement update = prepareStatement("")) {
-            return true;
+        try (PreparedStatement query = prepareStatement("SELECT cardName FROM BankDetails WHERE paymentId = ?")){
+            query.setInt(1, id);
+            boolean found = query.execute();
+            if (!found) {
+                throw new BankDetail.BankAccountNotFoundException("Could not find bank details with ID ["+id+"]");
+            }
+
+        } catch (SQLException e) {
+            DatabaseBridge.databaseError("Could not fetch card details for card ID [" + id + "]", e );
+            return false;
+        } catch (BankDetail.BankAccountNotFoundException e) {
+            throw new BankDetail.BankAccountNotFoundException(e.getMessage());
+        }
+
+
+        try (PreparedStatement update = prepareStatement("UPDATE Person UPDATE paymentId = ? WHERE PersonId = ?")) {
+            update.setInt(1, id);
+            update.setInt(2, personID);
+
+            return update.getUpdateCount() > 0;
         } catch (SQLException e) {
             DatabaseBridge.databaseError("Could not update [" + this.email + "]'s payment information", e);
             return false;
