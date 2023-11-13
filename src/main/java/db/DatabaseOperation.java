@@ -190,4 +190,16 @@ public final class DatabaseOperation {
             throw e;
         }
     }
+
+    // Resultset of products for store view
+
+    // update a single products stock level
+
+    // change an order status
+
+    // a person can update their personal info
+
+    // promoting/demoting/changing a user's role
+
+    // getting a list of orders with a certain status
 }
