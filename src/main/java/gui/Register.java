@@ -134,8 +134,8 @@ public class Register extends JPanel{
                 // Validate input
                 if (validateCompulsoryInput() && validateFormat()) {
                     // Open connection with the database
+                    DatabaseBridge db = DatabaseBridge.instance();
                     try{
-                        DatabaseBridge db = DatabaseBridge.instance();
                         db.openConnection();
                         // Create a new address
                         Address newAddress = new Address(
@@ -160,14 +160,15 @@ public class Register extends JPanel{
 
                         DatabaseOperation.CreatePerson(newPerson);
 
-                        db.closeConnection();
-                        
                         // Close register window and open login window
                         Window w = SwingUtilities.getWindowAncestor(Register.this);
                         w.dispose();
                         Login.startLogin();
+                        JOptionPane.showMessageDialog(null, "Registration successful");
                     } catch (SQLException throwables) {
                         JOptionPane.showMessageDialog(null, throwables.getMessage());
+                    } finally {
+                        db.closeConnection();
                     }
                     
 
@@ -217,6 +218,17 @@ public class Register extends JPanel{
         if (postCode.getText().isEmpty()) {
             JOptionPane.showMessageDialog(null, "Postcode cannot be empty");
             return false;
+        }
+        try {
+            DatabaseBridge db = DatabaseBridge.instance();
+            db.openConnection();
+            if (DatabaseOperation.GetPersonByEmail(email.getText()) != null) {
+                JOptionPane.showMessageDialog(null, "Email already exists");
+                return false;
+            }
+            db.closeConnection();
+        } catch (SQLException throwables) {
+            JOptionPane.showMessageDialog(null, throwables.getMessage());
         }
         return true;
     }

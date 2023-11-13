@@ -71,10 +71,12 @@ public class Login extends JPanel {
                 char[] passwordInput = password.getPassword();
 
                 if (emailInput == null || passwordInput == null) {
+                    JOptionPane.showMessageDialog(null, "Please enter a valid email and password");
                     return;
                 }
 
                 if (emailInput.equals("") || passwordInput.length == 0) {
+                    JOptionPane.showMessageDialog(null, "Please enter a valid email and password");
                     return;
                 }
 
@@ -84,6 +86,7 @@ public class Login extends JPanel {
                 if (user != null) {
                     System.out.println("Successfully authenticated user");
                 } else {
+                    JOptionPane.showMessageDialog(null, "Incorrect email or password");
                     System.out.println("Authentication was unsuccessful");
                 }
             }
