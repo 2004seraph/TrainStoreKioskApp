@@ -3,6 +3,7 @@ package db;
 import entity.user.*;
 import entity.*;
 import entity.StoreAttributes.Role;
+import entity.order.Order;
 
 import java.sql.*;
 
@@ -191,11 +192,76 @@ public final class DatabaseOperation {
         }
     }
 
-    // Resultset of products for store view
+    /**
+     * Gets all the products to display in a view
+     * @return ResultSet of all products or null if there are no products
+     * @throws SQLException
+     */
+    public static ResultSet GetProducts() throws SQLException {
+        try (PreparedStatement productsQuery = db.prepareStatement("SELECT * FROM Product")) {
+            ResultSet results = productsQuery.executeQuery();
+            if (!results.next()) {
+                return null;
+            }
 
-    // update a single products stock level
+            return results;
+        } catch (SQLException e) {
+            DatabaseBridge.databaseError("Failed to fetch products", e);
+            throw e;
+        }
+    }
 
-    // change an order status
+    /**
+     * Update the stock level of a product given its product code
+     * @param productCode product to update
+     * @param newStock new stock level
+     * @return whether operation was successful or not
+     * @throws SQLException
+     */
+    public static boolean UpdateStock(String productCode, int newStock) throws SQLException {
+        try (PreparedStatement query = db.prepareStatement("UPDATE Product SET stockLevel = ? WHERE productCode = ?")) {
+            query.setInt(1, newStock);
+            query.setString(2, productCode);
+
+            int updatedRows = query.executeUpdate();
+            return updatedRows > 0;
+        } catch (SQLException e) {
+            DatabaseBridge.databaseError("Failed to update stock with product code ["+productCode+"]", e);
+            throw e;
+        }
+    }
+
+    /**
+     * Update the status of an order
+     * @param orderId primary key of the order
+     * @param newStatus should be either CONFIRMED, PENDING or FULFILLED
+     * @return whether operation was successful
+     * @throws SQLException
+     */
+    public static boolean UpdateOrderStatus(int orderId, Order.OrderStatus newStatus) throws SQLException {
+        try (PreparedStatement findQuery = db.prepareStatement("SELECT * FROM Order WHERE orderId = ?")) {
+            findQuery.setInt(1, orderId);
+            ResultSet rs = findQuery.executeQuery();
+
+            if (!rs.next()) {
+                throw new Order.OrderNotFoundException("Failed to find order with orderId ["+orderId+"]");
+            }
+        } catch (SQLException e) {
+            DatabaseBridge.databaseError("Failed to find order with orderId ["+orderId+"]", e);
+            throw e;
+        }
+
+        try (PreparedStatement query = db.prepareStatement("UPDATE Order SET status = ? WHERE orderId = ?")) {
+            query.setString(1, newStatus.toString());
+            query.setInt(2, orderId);
+
+            int rows = query.executeUpdate();
+            return rows > 0;
+        } catch (SQLException e) {
+            DatabaseBridge.databaseError("Failed to update order with orderId ["+orderId+"] to status ["+newStatus+"]", e);
+            throw e;
+        }
+    }
 
     // a person can update their personal info
 
