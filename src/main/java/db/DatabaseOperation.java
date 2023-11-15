@@ -1,11 +1,14 @@
 package db;
 
+import entity.order.OrderLine;
 import entity.user.*;
 import entity.*;
 import entity.StoreAttributes.Role;
 import entity.order.Order;
 
 import java.sql.*;
+import java.util.ArrayList;
+import java.util.List;
 
 import static entity.StoreAttributes.*;
 
@@ -320,5 +323,87 @@ public final class DatabaseOperation {
         }
     }
 
-    // getting a list of orders with a certain status
+    /**
+     * Get the order with its items
+     * @param orderId Primary key
+     * @return Order entity with order lines
+     * @throws SQLException
+     */
+    public static Order GetOrderWithOrderLine(Integer orderId) throws SQLException {
+        try (PreparedStatement findQuery = db.prepareStatement("SELECT * FROM Order WHERE orderId = ?")) {
+            findQuery.setInt(1, orderId);
+            ResultSet rs = findQuery.executeQuery();
+
+            if (!rs.next()) {
+                throw new Order.OrderNotFoundException("Failed to find order with orderId ["+orderId+"]");
+            }
+        } catch (SQLException e) {
+            DatabaseBridge.databaseError("Failed to find order with orderId ["+orderId+"]", e);
+            throw e;
+        }
+
+        try (PreparedStatement orderQuery = db.prepareStatement("SELECT * FROM Order WHERE orderId = ?");
+             PreparedStatement orderLineQuery = db.prepareStatement("SELECT * FROM OrderLine WHERE orderId = ?")
+        ) {
+            orderQuery.setInt(1, orderId);
+            orderLineQuery.setInt(1, orderId);
+
+            ResultSet rsOrder = orderQuery.executeQuery();
+            ResultSet rsOrderLine = orderLineQuery.executeQuery();
+
+            List<OrderLine> items = new ArrayList<OrderLine>();
+            while (rsOrderLine.next()) {
+                items.add(new OrderLine(
+                        rsOrderLine.getInt("orderId"),
+                        rsOrderLine.getString("productCode"),
+                        rsOrderLine.getInt("quantity")
+                ));
+            }
+
+            Order order = new Order(
+                    rsOrder.getInt("orderId"),
+                    rsOrder.getInt("personId"),
+                    rsOrder.getDate("date"),
+                    Order.OrderStatus.valueOf(rsOrder.getString(4)),
+                    items
+            );
+
+            return order;
+        } catch (SQLException e) {
+            DatabaseBridge.databaseError("Failed to fetch orders with orderId ["+orderId+"]", e);
+            throw e;
+        }
+    }
+
+    /**
+     * Returns all orders with a given status
+     * @param status Either PENDING, CONFIRMED, FULFILLED
+     * @return List of orders
+     * @throws SQLException
+     */
+    public static List<Order> GetOrdersWithStatus(Order.OrderStatus status) throws SQLException {
+        try (PreparedStatement orderQuery = db.prepareStatement("SELECT * FROM Order WHERE status = ?")) {
+            orderQuery.setString(1, status.toString());
+
+            ResultSet rs = orderQuery.executeQuery();
+            if (!rs.next()) {
+                return null;
+            }
+
+            List<Order> orders = new ArrayList<Order>();
+            while (rs.next()) {
+                orders.add(new Order(
+                            rs.getInt("orderId"),
+                            rs.getInt("personId"),
+                            rs.getDate("date"),
+                            Order.OrderStatus.valueOf(rs.getString(4))
+                ));
+            }
+
+            return orders;
+        }catch (SQLException e) {
+            DatabaseBridge.databaseError("Failed to fetch orders with status ["+status+"]", e);
+            throw e;
+        }
+    }
 }
