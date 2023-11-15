@@ -265,7 +265,60 @@ public final class DatabaseOperation {
 
     // a person can update their personal info
 
-    // promoting/demoting/changing a user's role
+    /**
+     * Finds user by ID and updates their staff role
+     * @param userId primary key of the user
+     * @param newRole Either USER, STAFF or MANAGER
+     * @return whether operation was successful
+     * @throws SQLException
+     */
+    public static boolean UpdateUserRoleById(int userId, StoreAttributes.Role newRole) throws SQLException {
+        try (PreparedStatement findQuery = db.prepareStatement("SELECT * FROM Person WHERE PersonId = ?")) {
+            findQuery.setInt(1, userId);
+            ResultSet rs = findQuery.executeQuery();
+
+            if (!rs.next()) {
+                throw new Person.PersonNotFoundException("Failed to find person with id ["+userId+"]");
+            }
+        } catch (SQLException e) {
+            DatabaseBridge.databaseError("Failed to find person with id ["+userId+"]", e);
+            throw e;
+        }
+
+        try(PreparedStatement roleQuery = db.prepareStatement("UPDATE Role SET role = ? WHERE personId = ?")) {
+            roleQuery.setString(1, newRole.toString());
+            roleQuery.setInt(2, userId);
+
+            return roleQuery.executeUpdate() > 0;
+        } catch (SQLException e) {
+            DatabaseBridge.databaseError("Failed to update user with id ["+userId+"] to role ["+newRole.toString()+"]", e);
+            throw e;
+        }
+    }
+
+    /**
+     * Assuming you already have the person entity you can update their role
+     * @param person Person entity
+     * @param newRole Either USER, STAFF or MANAGER
+     * @return whether operation was successful
+     * @throws SQLException
+     */
+    public static boolean UpdateUserRole(Person person, StoreAttributes.Role newRole) throws SQLException {
+        try (PreparedStatement query = db.prepareStatement("""
+                UPDATE Role, Person
+                LEFT JOIN Role R ON Person.PersonId = R.personId
+                SET R.role = ?
+                WHERE email = ?
+                """)) {
+            query.setString(1, newRole.toString());
+            query.setString(2, person.getEmail());
+
+            return query.executeUpdate() > 0;
+        } catch (SQLException e) {
+            DatabaseBridge.databaseError("Failed to update user with email ["+person.getEmail()+"] to role ["+newRole.toString()+"]", e);
+            throw e;
+        }
+    }
 
     // getting a list of orders with a certain status
 }

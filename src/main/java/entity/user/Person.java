@@ -14,6 +14,11 @@ import java.util.Arrays;
 import java.util.List;
 
 public class Person extends DatabaseOperation.Entity implements DatabaseRecord {
+    public static class PersonNotFoundException extends RuntimeException {
+        public PersonNotFoundException(String msg) {
+            super(msg);
+        }
+    }
 
     // -1 means the Person exists only in Java and hasn't had an entry made in the db for it
     private int personID = -1;
