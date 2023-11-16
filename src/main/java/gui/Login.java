@@ -8,7 +8,7 @@ import java.awt.event.*;
 import java.util.Arrays;
 import javax.swing.*;
 
-public class Login extends JPanel {
+public class Login extends JPanel implements TabbedGUIContainer.TabPanel {
     private JButton loginButton;
     private JLabel passwordLabel;
     private JTextField email;
@@ -17,6 +17,8 @@ public class Login extends JPanel {
     private JLabel notAUserLabel;
     private JLabel reigsterLabel;
     private JPasswordField password;
+
+    private TabbedGUIContainer parent;
 
     public Login() {
         //construct components
@@ -30,7 +32,7 @@ public class Login extends JPanel {
         password = new JPasswordField (5);
 
         //adjust size and set layout
-        setPreferredSize (new Dimension (483, 425));
+//        setPreferredSize (new Dimension (483, 425));
         setLayout (null);
 
         //add components
@@ -54,14 +56,17 @@ public class Login extends JPanel {
         password.setBounds (140, 180, 200, 25);
 
         // When clicking reigsterLabel, close this window and open Register window
-        reigsterLabel.addMouseListener(new MouseAdapter() {
-            @Override
-            public void mouseClicked(MouseEvent e) {
-                Window w = SwingUtilities.getWindowAncestor(Login.this);
-                w.dispose();
-                Register.startRegister();
-            }
-        });
+
+        // this needs to be made to work with tab screen system
+
+//        reigsterLabel.addMouseListener(new MouseAdapter() {
+//            @Override
+//            public void mouseClicked(MouseEvent e) {
+//                Window w = SwingUtilities.getWindowAncestor(Login.this);
+//                w.dispose();
+//                Register.startRegister();
+//            }
+//        });
 
         loginButton.addActionListener(new ActionListener() {
             @Override
@@ -74,7 +79,7 @@ public class Login extends JPanel {
                     return;
                 }
 
-                if (emailInput.equals("") || passwordInput.length == 0) {
+                if (emailInput.isEmpty() || passwordInput.length == 0) {
                     JOptionPane.showMessageDialog(null, "Please enter a valid email and password");
                     return;
                 }
@@ -99,5 +104,10 @@ public class Login extends JPanel {
         frame.getContentPane().add (new Login());
         frame.pack();
         frame.setVisible (true);
+    }
+
+    @Override
+    public void setNotebookContainer(TabbedGUIContainer cont) {
+        parent = cont;
     }
 }

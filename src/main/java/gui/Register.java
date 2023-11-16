@@ -63,7 +63,7 @@ public class Register extends JPanel{
         loginLabel = new JLabel ("<html><u><font color='blue'>Login</font></u></html>");
 
         //adjust size and set layout
-        setPreferredSize (new Dimension (752, 649));
+//        setPreferredSize (new Dimension (752, 649));
         setLayout (null);
 
         //add components
@@ -118,14 +118,17 @@ public class Register extends JPanel{
 
 
         // When clicking loginLabel, close register window and open login window
-        loginLabel.addMouseListener(new MouseAdapter() {
-            @Override
-            public void mouseClicked(MouseEvent e) {
-                Window w = SwingUtilities.getWindowAncestor(Register.this);
-                w.dispose();
-                Login.startLogin();
-            }
-        });
+
+        // this needs to be made to work with tab screen system
+
+//        loginLabel.addMouseListener(new MouseAdapter() {
+//            @Override
+//            public void mouseClicked(MouseEvent e) {
+//                Window w = SwingUtilities.getWindowAncestor(Register.this);
+//                w.dispose();
+//                Login.startLogin();
+//            }
+//        });
 
         // When clicking registerButton validate the input, then close register window and open login window
         registerButton.addActionListener(new ActionListener() {
@@ -163,7 +166,7 @@ public class Register extends JPanel{
                         // Close register window and open login window
                         Window w = SwingUtilities.getWindowAncestor(Register.this);
                         w.dispose();
-                        Login.startLogin();
+//                        Login.startLogin();
                         JOptionPane.showMessageDialog(null, "Registration successful");
                     } catch (SQLException throwables) {
                         JOptionPane.showMessageDialog(null, throwables.getMessage());
