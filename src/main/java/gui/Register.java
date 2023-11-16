@@ -5,7 +5,6 @@ import javax.swing.*;
 import java.awt.event.*;
 import java.sql.SQLException;
 
-import gui.*;
 import db.*;
 import entity.user.*;
 import entity.*;
@@ -147,7 +146,7 @@ public class Register extends JPanel{
                         DatabaseOperation.CreateAddress(newAddress);
 
                         // Create new person
-                        String passwordHash = Hash.hashString(password.getText());
+                        String passwordHash = Crypto.hashString(password.getText());
                         Person newPerson = new Person(
                             forename.getText(),
                             surname.getText(),
