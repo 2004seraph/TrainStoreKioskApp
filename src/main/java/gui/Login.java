@@ -1,7 +1,9 @@
 package gui;
 
+import controllers.AppContext;
 import controllers.LoginController;
 import entity.user.Person;
+import utils.Crypto;
 
 import java.awt.*;
 import java.awt.event.*;
@@ -84,6 +86,7 @@ public class Login extends JPanel {
                 Person user = LoginController.authenticateUser(emailInput, pwd);
                 if (user != null) {
                     System.out.println("Successfully authenticated user");
+                    AppContext.setEncryptionKey(Crypto.deriveEncryptionKey(pwd));
                 } else {
                     JOptionPane.showMessageDialog(null, "Incorrect email or password");
                     System.out.println("Authentication was unsuccessful");

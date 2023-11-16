@@ -22,4 +22,13 @@ public class AppContext {
     }
 
 //    Person currentUser
+
+    private static byte[] encryptionKey;
+    public static byte[] getEncryptionKey() {
+        return encryptionKey;
+    }
+
+    public static void setEncryptionKey(byte[] key) {
+        encryptionKey = key;
+    }
 }
