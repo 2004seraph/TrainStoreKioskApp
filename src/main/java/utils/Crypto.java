@@ -19,6 +19,42 @@ import java.util.Base64;
  * Static utility class for abstracting hash algorithm implementation
  */
 public class Crypto {
+    public static void cryptoLog(String... msg) {
+        System.out.print("[Utils::Crypto] ");
+        for (String i : msg) {
+            System.out.print(i);
+            System.out.print(" ");
+        }
+        System.out.println();
+    }
+
+    /**
+     * Logs a nicely formatted error message concerning the db to the console
+     * @param extraContext This is information specific to the place the error happened, a description of what the error would mean
+     * @param e This is an exception, it can be one that was caught or one you quickly instantiate yourself
+     */
+    public static void cryptoError(String extraContext, Throwable e) {
+        cryptoLog(
+                "ERROR ->",
+                extraContext + "\n\t",
+                e.getClass().getCanonicalName() + ":",
+                e.getLocalizedMessage()
+        );
+        e.printStackTrace();
+    }
+
+    /**
+     * If you don't want to print the exception twice
+     * @param message An error message giving specific localised context
+     */
+    public static void cryptoError(String message) {
+        cryptoLog(
+                "ERROR ->",
+                message
+        );
+    }
+
+
     public static String hashString(String input) {
         return BCrypt.withDefaults().hashToString(12, input.toCharArray());
     }
@@ -40,54 +76,91 @@ public class Crypto {
 
             return key.getEncoded();
         } catch (NoSuchAlgorithmException e) {
-            System.out.println("No such algorithm");
+            cryptoError("Algorithm PBKDF2WithHmacSHA256 was not found", e);
+            throw new RuntimeException(e);
         } catch (InvalidKeySpecException e) {
+            // Should never be thrown since values are hardcoded
             throw new RuntimeException(e);
         }
-
-        return null;
     }
 
-    public static String encryptString(String input, byte[] key) throws
-            InvalidAlgorithmParameterException, InvalidKeyException,
-            UnsupportedEncodingException, NoSuchPaddingException,
-            NoSuchAlgorithmException, IllegalBlockSizeException, BadPaddingException {
-        SecureRandom secureRandom = new SecureRandom();
-        byte[] iv = new byte[16];
-        secureRandom.nextBytes(iv);
-        IvParameterSpec ivspec = new IvParameterSpec(iv);
+    public static String encryptString(String input, byte[] key) throws InvalidKeyException {
+        try {
+            SecureRandom secureRandom = new SecureRandom();
+            byte[] iv = new byte[16];
+            secureRandom.nextBytes(iv);
+            IvParameterSpec ivspec = new IvParameterSpec(iv);
 
-        SecretKeySpec secretKeySpec = new SecretKeySpec(key, "AES");
+            SecretKeySpec secretKeySpec = new SecretKeySpec(key, "AES");
 
-        Cipher cipher = Cipher.getInstance("AES/CBC/PKCS5Padding");
-        cipher.init(Cipher.ENCRYPT_MODE, secretKeySpec, ivspec);
+            Cipher cipher = Cipher.getInstance("AES/CBC/PKCS5Padding");
+            cipher.init(Cipher.ENCRYPT_MODE, secretKeySpec, ivspec);
 
-        byte[] cipherText = cipher.doFinal(input.getBytes("UTF-8"));
-        byte[] encryptedData = new byte[iv.length + cipherText.length];
-        System.arraycopy(iv, 0, encryptedData, 0, iv.length);
-        System.arraycopy(cipherText, 0, encryptedData, iv.length, cipherText.length);
+            byte[] cipherText = cipher.doFinal(input.getBytes("UTF-8"));
+            byte[] encryptedData = new byte[iv.length + cipherText.length];
+            System.arraycopy(iv, 0, encryptedData, 0, iv.length);
+            System.arraycopy(cipherText, 0, encryptedData, iv.length, cipherText.length);
 
-        return Base64.getEncoder().encodeToString(encryptedData);
+            return Base64.getEncoder().encodeToString(encryptedData);
+        } catch(InvalidAlgorithmParameterException e) {
+            // This should never be raised because AES is hardcoded
+            cryptoError("Algorithm parameter of SecretKeySpec was invalid", e);
+            throw new RuntimeException("Algorithm parameter of SecretKeySpec was invalid");
+        } catch(InvalidKeyException e) {
+            cryptoError("Encryption key was invalid", e);
+            throw e;
+        } catch (UnsupportedEncodingException e) {
+            // Should basically never be raised
+            cryptoError("UTF-8 Encoding is not supported on this system", e);
+            throw new RuntimeException("UTF-8 Encoding is not supported on this system");
+        } catch (NoSuchPaddingException | NoSuchAlgorithmException e) {
+            // Again, this one should rarely get raised
+            cryptoError("AES/CBC/PKCS5Padding is not available on this system", e);
+            throw new RuntimeException("AES/CBC/PKCS5Padding is not supported on this system");
+        } catch (IllegalBlockSizeException | BadPaddingException e) {
+            // Should never be raised
+            cryptoError("Encryption block size was not padded correctly", e);
+            throw new RuntimeException("Encryption block size was not padded correctly");
+        }
+
     }
 
-    public static String decryptString(String input, byte[] key) throws
-            InvalidAlgorithmParameterException, InvalidKeyException,
-            UnsupportedEncodingException, NoSuchPaddingException,
-            NoSuchAlgorithmException, IllegalBlockSizeException, BadPaddingException {
-        byte[] encryptedData = Base64.getDecoder().decode(input);
-        byte[] iv = new byte[16];
-        System.arraycopy(encryptedData, 0, iv, 0, iv.length);
-        IvParameterSpec ivspec = new IvParameterSpec(iv);
-        SecretKeySpec secretKeySpec = new SecretKeySpec(key, "AES");
+    public static String decryptString(String input, byte[] key) throws InvalidKeyException{
+        try {
+            byte[] encryptedData = Base64.getDecoder().decode(input);
+            byte[] iv = new byte[16];
+            System.arraycopy(encryptedData, 0, iv, 0, iv.length);
+            IvParameterSpec ivspec = new IvParameterSpec(iv);
+            SecretKeySpec secretKeySpec = new SecretKeySpec(key, "AES");
 
-        Cipher cipher = Cipher.getInstance("AES/CBC/PKCS5Padding");
-        cipher.init(Cipher.DECRYPT_MODE, secretKeySpec, ivspec);
+            Cipher cipher = Cipher.getInstance("AES/CBC/PKCS5Padding");
+            cipher.init(Cipher.DECRYPT_MODE, secretKeySpec, ivspec);
 
-        byte[] cipherText = new byte[encryptedData.length - 16];
-        System.arraycopy(encryptedData, 16, cipherText, 0, cipherText.length);
+            byte[] cipherText = new byte[encryptedData.length - 16];
+            System.arraycopy(encryptedData, 16, cipherText, 0, cipherText.length);
 
-        byte[] decryptedText = cipher.doFinal(cipherText);
-        return new String(decryptedText, "UTF-8");
+            byte[] decryptedText = cipher.doFinal(cipherText);
+            return new String(decryptedText, "UTF-8");
+        }catch(InvalidAlgorithmParameterException e) {
+            // This should never be raised because AES is hardcoded
+            cryptoError("Algorithm parameter of SecretKeySpec was invalid", e);
+            throw new RuntimeException("Algorithm parameter of SecretKeySpec was invalid");
+        } catch(InvalidKeyException e) {
+            cryptoError("Encryption key was invalid", e);
+            throw e;
+        } catch (UnsupportedEncodingException e) {
+            // Should basically never be raised
+            cryptoError("UTF-8 Encoding is not supported on this system", e);
+            throw new RuntimeException("UTF-8 Encoding is not supported on this system");
+        } catch (NoSuchPaddingException | NoSuchAlgorithmException e) {
+            // Again, this one should rarely get raised
+            cryptoError("AES/CBC/PKCS5Padding is not available on this system", e);
+            throw new RuntimeException("AES/CBC/PKCS5Padding is not supported on this system");
+        } catch (IllegalBlockSizeException | BadPaddingException e) {
+            // Should never be raised
+            cryptoError("Encryption block size was not padded correctly", e);
+            throw new RuntimeException("Encryption block size was not padded correctly");
+        }
     }
 
     public static void main(String[] args) {
