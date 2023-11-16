@@ -12,6 +12,7 @@ import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
 import java.security.spec.InvalidKeySpecException;
+import java.security.spec.KeySpec;
 import java.util.Base64;
 
 /**
@@ -28,16 +29,16 @@ public class Crypto {
     }
 
     public static byte[] deriveEncryptionKey(String password) {
-        final int iterations = 1000;
-        final int keyLength = 32;
-        byte[] derrivedKey;
+        final int ITERATIONS = 65536;
+        final int KEY_LENGTH = 256;
         byte[] salt = {0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08, 0x09, 0xA};
 
         try {
-            PBEKeySpec spec = new PBEKeySpec(password.toCharArray(), salt, iterations, keyLength * 8);
-            SecretKeyFactory skf = SecretKeyFactory.getInstance("PBKDF2WithHmacSHA1");
+            SecretKeyFactory factory = SecretKeyFactory.getInstance("PBKDF2WithHmacSHA256");
+            KeySpec spec = new PBEKeySpec(password.toCharArray(), salt, ITERATIONS, KEY_LENGTH);
+            SecretKey key = factory.generateSecret(spec);
 
-            return skf.generateSecret(spec).getEncoded();
+            return key.getEncoded();
         } catch (NoSuchAlgorithmException e) {
             System.out.println("No such algorithm");
         } catch (InvalidKeySpecException e) {
@@ -64,6 +65,7 @@ public class Crypto {
         byte[] cipherText = cipher.doFinal(input.getBytes("UTF-8"));
         byte[] encryptedData = new byte[iv.length + cipherText.length];
         System.arraycopy(iv, 0, encryptedData, 0, iv.length);
+        System.arraycopy(cipherText, 0, encryptedData, iv.length, cipherText.length);
 
         return Base64.getEncoder().encodeToString(encryptedData);
     }
