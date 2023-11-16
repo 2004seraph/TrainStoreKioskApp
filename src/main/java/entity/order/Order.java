@@ -27,6 +27,19 @@ public class Order extends DatabaseOperation.Entity implements DatabaseRecord {
 
     private List<OrderLine> items = new ArrayList<OrderLine>();
 
+    public Integer getOrderId() {
+        return orderId;
+    }
+
+    public Integer setOrderId(Integer orderId) {
+        return this.orderId = orderId;
+    }
+
+    public List<OrderLine> getItemsList() {
+        return items;
+    }
+
+
     public Order(Integer customerId) {
         this.customerId = customerId;
         this.date = new Date();

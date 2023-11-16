@@ -10,8 +10,6 @@ import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
-import static entity.StoreAttributes.*;
-
 /**
  * Maintainers: Sam Taseff
  * <br>
@@ -405,5 +403,54 @@ public final class DatabaseOperation {
             DatabaseBridge.databaseError("Failed to fetch orders with status ["+status+"]", e);
             throw e;
         }
+    }
+
+    public static boolean CreateOrder(Order order) throws SQLException {
+        db.setAutoCommit(false);
+        int id = -1;
+
+        try (PreparedStatement s = db.prepareStatement("INSERT INTO Order VALUES (default,?,?,?)", Statement.RETURN_GENERATED_KEYS);
+             PreparedStatement r = db.prepareStatement("INSERT INTO OrderLine VALUES (?,?,?)");
+        ) {
+
+            Object[] fields = order.GetFields().toArray();
+
+            s.setInt(1, (Integer) fields[0]); // personId
+            s.setString(2, (String) fields[1]); // date
+            s.setString(3, fields[2].toString()); // status
+            s.executeUpdate();
+
+            ResultSet rs = s.getGeneratedKeys();
+            if (rs.next()) {
+                id = rs.getInt(1);
+                order.setOrderId(id);
+            } else {
+                throw new InternalError("Failed to insert into Order table");
+            }
+
+            order.getItemsList().forEach((item) -> {
+                Object[] olFields = item.GetFields().toArray();
+
+                try {
+                    r.setInt(1, (Integer) olFields[0]);
+                    r.setString(2, olFields[1].toString());
+                    r.setInt(3, (Integer) olFields[2]);
+                    r.executeUpdate();
+                } catch (SQLException e) {
+                    DatabaseBridge.databaseError("Failed to insert new order line", e);
+                }
+
+            });
+
+            db.commit();
+        } catch (SQLException | InternalError e) {
+            DatabaseBridge.databaseError("Failed to insert new order", e);
+            db.rollback();
+            throw e;
+        } finally {
+            db.setAutoCommit(true);
+        }
+
+        return true;
     }
 }
