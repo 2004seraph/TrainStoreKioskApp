@@ -29,7 +29,7 @@ public class TabbedGUIContainer extends JPanel {
     private JPanel contentContainer = new JPanel();
     private GridBagConstraints contentConstraints;
 
-    private Map<String, Triplet<JPanel, ScreenRequirement, JButton>> panels = new HashMap<>();
+    private final Map<String, Triplet<JPanel, ScreenRequirement, JButton>> panels = new HashMap<>();
 
     private void initPanel(float splitRatio) {
         // ensures that each screen fills the space
@@ -47,12 +47,12 @@ public class TabbedGUIContainer extends JPanel {
         gbc.weighty = 1;
         gbc.gridy = 0;
 
-        gbc.weightx = splitRatio;
+        gbc.weightx = 0.01;
         gbc.gridx = 0;
         gbl.setConstraints(tabContainer, gbc);
         this.add(tabContainer, gbc);
 
-        gbc.weightx = 1;
+        gbc.weightx = splitRatio;
         gbc.gridx = 1;
         gbl.setConstraints(contentContainer, gbc);
         this.add(contentContainer, gbc);
@@ -68,6 +68,7 @@ public class TabbedGUIContainer extends JPanel {
     private void initTabButtonContainer() {
         // this function creates a simple listed view layout of the buttons to switch tabs
         this.tabContainer.setLayout(new BorderLayout());
+//        this.tabContainer.setMaximumSize(new Dimension(23, 23));
 
         this.tabButtonConstraints = new GridBagConstraints();
         this.tabButtonConstraints.insets = new Insets(TAB_BUTTON_MARGIN,TAB_BUTTON_MARGIN,TAB_BUTTON_MARGIN,TAB_BUTTON_MARGIN);
