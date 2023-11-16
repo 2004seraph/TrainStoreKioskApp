@@ -1,5 +1,7 @@
 package controllers;
 
+import entity.user.Person;
+
 import javax.swing.*;
 
 import javax.swing.plaf.metal.MetalLookAndFeel;
@@ -35,5 +37,30 @@ public class AppContext {
         return window;
     }
 
-//    Person currentUser
+    private static Person currentUser;
+
+    private static byte[] encryptionKey;
+    public static byte[] getEncryptionKey() {
+        return encryptionKey;
+    }
+
+    public static void setEncryptionKey(byte[] key) {
+        encryptionKey = key;
+    }
+
+    public static Person getCurrentUser() {
+        return currentUser;
+    }
+
+    public static void setCurrentUser(Person user) {
+        currentUser = user;
+    }
+
+    /**
+     * Clear all app state
+     */
+    public static void logOut() {
+        encryptionKey = null;
+        currentUser = null;
+    }
 }

@@ -3,7 +3,7 @@ package controllers;
 import db.DatabaseBridge;
 import db.DatabaseOperation;
 import entity.user.Person;
-import utils.Hash;
+import utils.Crypto;
 
 import java.sql.SQLException;
 
@@ -42,7 +42,7 @@ public final class LoginController {
                 return null;
             }
 
-            boolean pwdMatch = Hash.verifyString(password, user.getPassword());
+            boolean pwdMatch = Crypto.verifyString(password, user.getPassword());
 
             if (pwdMatch) {
                 return user;
