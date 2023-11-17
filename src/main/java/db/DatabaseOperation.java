@@ -489,4 +489,35 @@ public final class DatabaseOperation {
             throw new RuntimeException(e);
         }
     }
+
+    public static BankDetail GetBankDetailsById(int id) throws SQLException, InvalidKeyException {
+        try(PreparedStatement bankQuery = db.prepareStatement("SELECT * FROM BankDetails WHERE paymentId = ?")) {
+            bankQuery.setInt(1, id);
+            ResultSet rs = bankQuery.executeQuery();
+
+            if (!rs.next()) {
+                throw new BankDetail.BankAccountNotFoundException("Failed to find bank details with id ["+id+"]");
+            }
+
+            byte[] encryptionKey = AppContext.getEncryptionKey();
+            String decryptedCardNumber = Crypto.decryptString(rs.getString("cardNumber"), encryptionKey);
+            String decryptedSecurityCode = Crypto.decryptString(rs.getString("securityCode"), encryptionKey);
+
+            return new BankDetail(
+                    rs.getInt("paymentId"),
+                    rs.getString("cardName"),
+                    decryptedCardNumber,
+                    rs.getDate("expiryDate"),
+                    decryptedSecurityCode
+            );
+        } catch (SQLException e) {
+            DatabaseBridge.databaseError("Failed to fetch bank details with id ["+id+"]", e);
+            throw e;
+        } catch (InvalidKeyException e) {
+            // Thrown when the user tries to decrypt another user's card with an invalid encryption key
+            // I.e. they are trying to decrypt a card that isn't theirs
+            Crypto.cryptoError("User tried to decrypt card with id ["+id+"] but they used the wrong encryption key", e);
+            throw e;
+        }
+    }
 }
