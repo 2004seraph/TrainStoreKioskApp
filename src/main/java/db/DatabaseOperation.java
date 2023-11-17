@@ -1,11 +1,14 @@
 package db;
 
+import controllers.AppContext;
 import entity.order.OrderLine;
 import entity.user.*;
 import entity.*;
 import entity.StoreAttributes.Role;
 import entity.order.Order;
+import utils.Crypto;
 
+import java.security.InvalidKeyException;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
@@ -452,5 +455,38 @@ public final class DatabaseOperation {
         }
 
         return true;
+    }
+
+    public static BankDetail CreatePaymentInfo(String cardNumber, Date expiryDate, String securityCode) throws SQLException {
+        //TODO: Validate card number, expiry date and security code
+        int id = -1;
+        String cardName = "Card ending in " + cardNumber.substring(cardNumber.length() - 4);
+        try (PreparedStatement cardQuery = db.prepareStatement("INSERT INTO CardDetails VALUES (?, ?, ?, ?")) {
+            byte[] encryptionKey = AppContext.getEncryptionKey();
+            String encryptedCardNumber = Crypto.encryptString(cardNumber, encryptionKey);
+            String encryptedSecurityCode = Crypto.encryptString(securityCode, encryptionKey);
+
+            cardQuery.setString(1, cardName);
+            cardQuery.setString(2, encryptedCardNumber);
+            cardQuery.setDate(3, expiryDate);
+            cardQuery.setString(4, encryptedSecurityCode);
+
+            cardQuery.executeUpdate();
+            ResultSet rs = cardQuery.getGeneratedKeys();
+
+            if (rs.next()) {
+                id = rs.getInt(1);
+            } else {
+                throw new InternalError("Failed to insert into BankDetails table");
+            }
+
+            return new BankDetail(id, cardName, cardNumber, expiryDate, securityCode);
+        } catch (SQLException e) {
+            DatabaseBridge.databaseError("Failed to insert new payment info ["+cardName+"]", e);
+            throw e;
+        } catch (InvalidKeyException e) {
+            Crypto.cryptoError("Error whilst encrypting card number, encryption key was invalid", e);
+            throw new RuntimeException(e);
+        }
     }
 }
