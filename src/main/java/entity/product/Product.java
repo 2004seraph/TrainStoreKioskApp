@@ -8,7 +8,7 @@ public class Product {
     private Double price;
     private enum category {
             LOCOMOTIVES,
-            CARRAIGES,
+            CARRIAGES,
             WAGONS,
             TRACK,
             SCENERY,
@@ -17,7 +17,7 @@ public class Product {
     }
 
     public static boolean InsertNewComponent() {
-        // database insetrt
+        // database insert
         return true;
     }
     public static boolean InsertNewBoxedSet() {
