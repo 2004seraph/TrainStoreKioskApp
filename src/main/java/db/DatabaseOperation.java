@@ -154,7 +154,7 @@ public final class DatabaseOperation {
     public static Person GetPersonByEmail(
             String email
     ) throws SQLException {
-
+        db = DatabaseBridge.instance(); // TODO:Im sure this isn't supposed to be here, but this line solves the problem
         try (PreparedStatement personQuery = db.prepareStatement("SELECT * FROM Person WHERE email=?");
              PreparedStatement roleQuery = db.prepareStatement("SELECT * FROM Role WHERE personId=?");
         ) {

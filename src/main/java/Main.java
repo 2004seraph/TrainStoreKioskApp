@@ -12,7 +12,9 @@ public class Main {
         try {
             db.openConnection();
 
-            Login.startLogin();
+            TabbedGUIContainer.generateLoginRegister();
+//            TabbedGUIContainer.generateDashboard();
+
 
             // Sam has already been created in the database (you can go see it in workbench).
             // I had to add an address and payment details record manually using the workbench.

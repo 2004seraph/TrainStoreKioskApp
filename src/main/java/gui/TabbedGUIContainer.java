@@ -10,6 +10,7 @@ import java.util.*;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
+import gui.*;
 
 
 public class TabbedGUIContainer extends JPanel {
@@ -164,7 +165,7 @@ public class TabbedGUIContainer extends JPanel {
         return res;
     }
 
-    public static void main(String[] args) {
+    public static void generateLoginRegister() {
         JFrame frame = AppContext.getWindow();
 
         JPanel registertest = new Register();
@@ -186,10 +187,34 @@ public class TabbedGUIContainer extends JPanel {
                 return true;
             }
         });
-        dashboards.switchTab("Register");
+        dashboards.switchTab("Login");
 
         frame.getContentPane().add(dashboards);
-        frame.pack();
+        frame.setExtendedState(JFrame.MAXIMIZED_BOTH);
         frame.setVisible(true);
     }
+
+    public static void generateDashboard() {
+        JFrame frame = AppContext.getWindow();
+//        destory the current window
+        frame.getContentPane().removeAll();
+
+        JPanel profile = new Profile();
+
+        TabbedGUIContainer dashboards = new TabbedGUIContainer(0.2f);
+
+        dashboards.insertTab("Profile", profile, new ScreenRequirement() {
+            @Override
+            public boolean canOpen() {
+                return true;
+            }
+        });
+
+        dashboards.switchTab("Profile");
+
+//        frame.getContentPane().add(dashboards);
+        frame.setExtendedState(JFrame.MAXIMIZED_BOTH);
+        frame.setVisible(true);
+    }
+
 }

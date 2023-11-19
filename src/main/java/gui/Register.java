@@ -137,8 +137,10 @@ public class Register extends JPanel{
                 if (validateCompulsoryInput() && validateFormat()) {
                     // Open connection with the database
                     DatabaseBridge db = DatabaseBridge.instance();
+                    System.out.println("Attempting to connect to database...");
                     try{
                         db.openConnection();
+                        System.out.println("Successfully connected to database");
                         // Create a new address
                         Address newAddress = new Address(
                             houseNumber.getText(),
@@ -161,6 +163,7 @@ public class Register extends JPanel{
                         );
 
                         DatabaseOperation.CreatePerson(newPerson);
+                        System.out.println("Successfully created new person");
 
                         // Close register window and open login window
                         Window w = SwingUtilities.getWindowAncestor(Register.this);
