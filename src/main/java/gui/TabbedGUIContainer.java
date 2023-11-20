@@ -23,6 +23,7 @@ public class TabbedGUIContainer extends JPanel {
 
     private static final int TAB_BUTTON_MARGIN = 5;
 
+    private JFrame frame;
     private JPanel tabContainer = new JPanel();
     private JPanel tabButtonList;
     private GridBagConstraints tabButtonConstraints;
@@ -66,6 +67,15 @@ public class TabbedGUIContainer extends JPanel {
         initTabButtonContainer();
     }
 
+//    Method removes all tabs in the tabbedGUIContainer
+    public void removeAllTabs() {
+        this.tabButtonList.removeAll();
+        this.panels.clear();
+//        this.tabButtonList.add(new JPanel(), this.tabButtonConstraints);
+//        this.tabButtonList.revalidate();
+//        this.tabButtonList.repaint();
+    }
+
     private void initTabButtonContainer() {
         // this function creates a simple listed view layout of the buttons to switch tabs
         this.tabContainer.setLayout(new BorderLayout());
@@ -93,7 +103,7 @@ public class TabbedGUIContainer extends JPanel {
         }
     }
 
-    TabbedGUIContainer(float splitRatio) {
+    public TabbedGUIContainer(float splitRatio) {
         this.initPanel(splitRatio);
     }
 
@@ -165,56 +175,5 @@ public class TabbedGUIContainer extends JPanel {
         return res;
     }
 
-    public static void generateLoginRegister() {
-        JFrame frame = AppContext.getWindow();
-
-        JPanel registertest = new Register();
-//        registertest.setBackground(Color.BLACK);
-        JPanel logintest = new Login();
-//        logintest.setBackground(Color.GRAY);
-
-        TabbedGUIContainer dashboards = new TabbedGUIContainer(0.2f);
-        dashboards.insertTab("Register", registertest, new ScreenRequirement() {
-            @Override
-            public boolean canOpen() {
-                return true;
-            }
-        });
-        dashboards.insertDivider();
-        dashboards.insertTab("Login", logintest, new ScreenRequirement() {
-            @Override
-            public boolean canOpen() {
-                return true;
-            }
-        });
-        dashboards.switchTab("Login");
-
-        frame.getContentPane().add(dashboards);
-        frame.setExtendedState(JFrame.MAXIMIZED_BOTH);
-        frame.setVisible(true);
-    }
-
-    public static void generateDashboard() {
-        JFrame frame = AppContext.getWindow();
-//        destory the current window
-        frame.getContentPane().removeAll();
-
-        JPanel profile = new Profile();
-
-        TabbedGUIContainer dashboards = new TabbedGUIContainer(0.2f);
-
-        dashboards.insertTab("Profile", profile, new ScreenRequirement() {
-            @Override
-            public boolean canOpen() {
-                return true;
-            }
-        });
-
-        dashboards.switchTab("Profile");
-
-//        frame.getContentPane().add(dashboards);
-        frame.setExtendedState(JFrame.MAXIMIZED_BOTH);
-        frame.setVisible(true);
-    }
 
 }

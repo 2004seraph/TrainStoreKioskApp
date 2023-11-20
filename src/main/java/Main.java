@@ -3,8 +3,12 @@ import db.DatabaseOperation;
 import gui.*;
 
 import entity.user.*;
+import controllers.*;
+
+import javax.swing.*;
 
 public class Main {
+
     public static void main(String[] args) throws Exception {
 
         DatabaseBridge db = DatabaseBridge.instance(); //Can be called wherever you need a reference (it's a static method)
@@ -12,9 +16,7 @@ public class Main {
         try {
             db.openConnection();
 
-            TabbedGUIContainer.generateLoginRegister();
-//            TabbedGUIContainer.generateDashboard();
-
+            Dashboard.generateLoginRegister();
 
             // Sam has already been created in the database (you can go see it in workbench).
             // I had to add an address and payment details record manually using the workbench.
@@ -40,4 +42,5 @@ public class Main {
             db.closeConnection();
         }
     }
+
 }
