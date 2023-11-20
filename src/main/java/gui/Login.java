@@ -93,22 +93,13 @@ public class Login extends JPanel implements TabbedGUIContainer.TabPanel {
                     System.out.println("Successfully authenticated user");
                     AppContext.setEncryptionKey(Crypto.deriveEncryptionKey(pwd));
                     AppContext.setCurrentUser(user);
-                    TabbedGUIContainer.generateDashboard();
+                    Dashboard.generateDashboard();
                 } else {
                     JOptionPane.showMessageDialog(null, "Incorrect email or password");
                     System.out.println("Authentication was unsuccessful");
                 }
             }
         });
-    }
-
-
-    public static void startLogin () {
-        JFrame frame = new JFrame ("Login");
-        frame.setDefaultCloseOperation (JFrame.EXIT_ON_CLOSE);
-        frame.getContentPane().add (new Login());
-        frame.pack();
-        frame.setVisible (true);
     }
 
     @Override
