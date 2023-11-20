@@ -13,6 +13,12 @@ public class BankDetail extends DatabaseOperation.Entity implements DatabaseReco
             super(message);
         }
     }
+
+    public static class InvalidBankDetailsException extends Exception {
+        public InvalidBankDetailsException(String message) {
+            super(message);
+        }
+    }
     private int bankDetailID = -1;
     private String cardName;
     private String cardNumber;
