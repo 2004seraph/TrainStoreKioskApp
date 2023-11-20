@@ -1,0 +1,8 @@
+
+0
+java:S1220""Move this file to a named package.
+@
+java:S1181""%Catch Exception instead of Throwable.(‡˜ÚÚøÿÿÿÿ
+@	java:S106"+Replace this use of System.out by a logger.(Ã”Æ
+@	java:S106 "+Replace this use of System.out by a logger.(««ŠÉ
+E	java:S106#"+Replace this use of System.out by a logger.(¢æáÚúÿÿÿÿ
