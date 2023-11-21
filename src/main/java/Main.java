@@ -13,7 +13,7 @@ public class Main {
         try {
             db.openConnection();
 
-            App.generateLoginRegister();
+            App.loggedOutScreen();
 
             // Sam has already been created in the database (you can go see it in workbench).
             // I had to add an address and payment details record manually using the workbench.
