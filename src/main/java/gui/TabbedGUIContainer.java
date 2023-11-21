@@ -71,9 +71,6 @@ public class TabbedGUIContainer extends JPanel {
     public void removeAllTabs() {
         this.tabButtonList.removeAll();
         this.panels.clear();
-//        this.tabButtonList.add(new JPanel(), this.tabButtonConstraints);
-//        this.tabButtonList.revalidate();
-//        this.tabButtonList.repaint();
     }
 
     private void initTabButtonContainer() {
