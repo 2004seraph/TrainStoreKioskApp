@@ -162,20 +162,4 @@ public class Crypto {
             throw new RuntimeException("Encryption block size was not padded correctly");
         }
     }
-
-    public static void main(String[] args) {
-        byte[] key = deriveEncryptionKey("password123");
-        System.out.println("Key: " + Base64.getEncoder().encodeToString(key));
-
-        try {
-            String encrypted = encryptString("Hello World", key);
-            System.out.println("Encrypted: " + encrypted);
-
-            String decrypted = decryptString(encrypted, key);
-            System.out.println("Decrypted: " + decrypted);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
-
 }
