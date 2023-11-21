@@ -4,7 +4,7 @@ import controllers.AppContext;
 
 import javax.swing.*;
 
-public class Dashboard {
+public class App {
     private static JFrame frame;
     private static TabbedGUIContainer dashboard = new TabbedGUIContainer(0.2f);
 

@@ -3,9 +3,6 @@ import db.DatabaseOperation;
 import gui.*;
 
 import entity.user.*;
-import controllers.*;
-
-import javax.swing.*;
 
 public class Main {
 
@@ -16,7 +13,7 @@ public class Main {
         try {
             db.openConnection();
 
-            Dashboard.generateLoginRegister();
+            App.generateLoginRegister();
 
             // Sam has already been created in the database (you can go see it in workbench).
             // I had to add an address and payment details record manually using the workbench.

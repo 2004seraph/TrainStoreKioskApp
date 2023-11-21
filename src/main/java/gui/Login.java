@@ -5,9 +5,7 @@ import controllers.LoginController;
 import entity.user.Person;
 import utils.Crypto;
 
-import java.awt.*;
 import java.awt.event.*;
-import java.util.Arrays;
 import javax.swing.*;
 
 public class Login extends JPanel implements TabbedGUIContainer.TabPanel {
@@ -93,7 +91,7 @@ public class Login extends JPanel implements TabbedGUIContainer.TabPanel {
                     System.out.println("Successfully authenticated user");
                     AppContext.setEncryptionKey(Crypto.deriveEncryptionKey(pwd));
                     AppContext.setCurrentUser(user);
-                    Dashboard.generateDashboard();
+                    App.generateDashboard();
                 } else {
                     JOptionPane.showMessageDialog(null, "Incorrect email or password");
                     System.out.println("Authentication was unsuccessful");
