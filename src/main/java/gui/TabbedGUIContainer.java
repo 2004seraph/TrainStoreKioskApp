@@ -30,6 +30,8 @@ public class TabbedGUIContainer extends JPanel {
 
     private final Map<String, Triplet<JPanel, ScreenRequirement, JButton>> panels = new HashMap<>();
 
+    private String currentTab = null;
+
     private void initPanel(float splitRatio) {
         // ensures that each screen fills the space
 
@@ -79,6 +81,9 @@ public class TabbedGUIContainer extends JPanel {
 
     private void resetTabButtonDisplay() {
         // this function makes the buttons display in a nice list from the top within the sidebar
+        this.tabContainer.removeAll();
+        this.tabButtonList.removeAll();
+
         this.tabButtonConstraints.weightx = 1;
         this.tabButtonConstraints.weighty = 1;
         tabButtonList.add(new JPanel(), this.tabButtonConstraints);
@@ -89,17 +94,6 @@ public class TabbedGUIContainer extends JPanel {
         for (Triplet<JPanel, ScreenRequirement, JButton> panel : panels.values()) {
             panel.getValue2().setEnabled(true);
         }
-    }
-
-
-    public void removeAllTabs() {
-        this.tabButtonList.removeAll();
-        this.panels.clear();
-
-        resetTabButtonDisplay();
-
-        this.revalidate();
-        this.repaint();
     }
 
     public TabbedGUIContainer(float splitRatio) {
@@ -113,6 +107,10 @@ public class TabbedGUIContainer extends JPanel {
      * @param constraints A predicate function that runs a check if a user can open this screen (for controller logic)
      */
     public void insertTab(String name, JPanel root, ScreenRequirement constraints) {
+        // do not add a panel with the same name as another
+        if (!panels.containsKey(name)) {
+            throw new IllegalArgumentException("[GUITabs] You cannot have two screens with the same name.");
+        }
 
         JButton tb = new JButton(name);
         tb.addActionListener(new ActionListener() {
@@ -131,6 +129,11 @@ public class TabbedGUIContainer extends JPanel {
         if (Arrays.asList(root.getClass().getInterfaces()).contains(TabPanel.class)) {
             ((TabPanel)root).setNotebookContainer(this);
         }
+
+        if (!panels.containsKey(currentTab)) {
+            switchTab(name);
+        }
+
         revalidate();
         repaint();
     }
@@ -151,16 +154,36 @@ public class TabbedGUIContainer extends JPanel {
             JPanel ui = panels.get(name).getValue0();
             if (ui == null)
                 throw new NullPointerException();
-            this.contentContainer.removeAll();
-            this.contentContainer.add(ui, this.contentConstraints);
-            enableAllButtons();
-            panels.get(name).getValue2().setEnabled(false);
+
+            SwingUtilities.invokeLater(new Runnable() {
+                @Override
+                public void run() {
+                    contentContainer.removeAll();
+                    contentContainer.add(ui, contentConstraints);
+                    enableAllButtons();
+                    panels.get(name).getValue2().setEnabled(false);
+
+                    revalidate();
+                    repaint();
+                }
+            });
+
+            this.currentTab = name;
+
         } catch (NullPointerException e) {
             throw new NullPointerException("No panel with that name or type in this tabset!");
         }
+    }
 
-        this.contentContainer.revalidate();
-        this.contentContainer.repaint();
+    /**
+     * Resets the internal state of the tab manager
+     */
+    public void removeAllTabs() {
+        this.panels.clear();
+        resetTabButtonDisplay();
+
+        this.revalidate();
+        this.repaint();
     }
 
     /**
@@ -179,42 +202,74 @@ public class TabbedGUIContainer extends JPanel {
         JFrame window = AppContext.getWindow();
 
         TabbedGUIContainer screenManager = new TabbedGUIContainer(0.2f);
+        window.add(screenManager);
+
+        state1(screenManager);
+
+        window.setVisible(true);
+    }
+
+
+
+    private static void state1(TabbedGUIContainer sc) {
+        sc.removeAllTabs();
+
+        JPanel blackWindow = new JPanel();
+        blackWindow.setBackground(Color.MAGENTA);
+        JPanel blueWindow = new JPanel();
+        blueWindow.setBackground(Color.BLUE);
+        JButton loginButton = new JButton("Go to new area");
+        blueWindow.add(loginButton);
+
+        loginButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                SwingUtilities.invokeLater(new Runnable() {
+                    @Override
+                    public void run() {
+                        state2(sc);
+                    }
+                });
+            }
+        });
+
+        sc.insertTab("MAGENTA", blackWindow, new TabbedGUIContainer.ScreenRequirement() {
+            @Override
+            public boolean canOpen() {
+                return true;
+            }
+        });
+        sc.insertTab("BLUE", blueWindow, new TabbedGUIContainer.ScreenRequirement() {
+            @Override
+            public boolean canOpen() {
+                return true;
+            }
+        });
+
+        sc.switchTab("MAGENTA");
+    }
+
+    public static void state2(TabbedGUIContainer sc) {
+        sc.removeAllTabs();
+
         JPanel blackWindow = new JPanel();
         blackWindow.setBackground(Color.BLACK);
         JPanel blueWindow = new JPanel();
         blueWindow.setBackground(Color.CYAN);
 
-        screenManager.insertTab("black", blackWindow, new ScreenRequirement() {
+        sc.insertTab("blue", blackWindow, new TabbedGUIContainer.ScreenRequirement() {
             @Override
             public boolean canOpen() {
                 return true;
             }
         });
-        screenManager.insertTab("blue", blueWindow, new ScreenRequirement() {
-            @Override
-            public boolean canOpen() {
-                return true;
-            }
-        });
-
-        window.add(screenManager);
-
-        screenManager.removeAllTabs();
-        screenManager.insertTab("black", blackWindow, new ScreenRequirement() {
-            @Override
-            public boolean canOpen() {
-                return true;
-            }
-        });
-        screenManager.insertTab("blue", blueWindow, new ScreenRequirement() {
+        sc.insertTab("blue", blueWindow, new TabbedGUIContainer.ScreenRequirement() {
             @Override
             public boolean canOpen() {
                 return true;
             }
         });
 
-        screenManager.switchTab("blue");
-
-        window.setVisible(true);
+//        sc.switchTab("black");
     }
 }
