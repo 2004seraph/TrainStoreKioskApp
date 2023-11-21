@@ -8,9 +8,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.*;
 import java.util.List;
-import java.util.stream.Collectors;
 import java.util.stream.IntStream;
-import gui.*;
 
 
 public class TabbedGUIContainer extends JPanel {
@@ -23,39 +21,36 @@ public class TabbedGUIContainer extends JPanel {
 
     private static final int TAB_BUTTON_MARGIN = 5;
 
-    private JFrame frame;
-    private JPanel tabContainer = new JPanel();
-    private JPanel tabButtonList;
+    private final JPanel tabContainer = new JPanel();
+    private final JPanel tabButtonList = new JPanel(new GridBagLayout());
     private GridBagConstraints tabButtonConstraints;
 
-    private JPanel contentContainer = new JPanel();
+    private final JPanel contentContainer = new JPanel();
     private GridBagConstraints contentConstraints;
 
     private final Map<String, Triplet<JPanel, ScreenRequirement, JButton>> panels = new HashMap<>();
 
     private void initPanel(float splitRatio) {
         // ensures that each screen fills the space
-//        this.setBackground(Color.MAGENTA);
 
         GridBagLayout gbl = new GridBagLayout();
         GridBagConstraints gbc = new GridBagConstraints();
+
         this.setLayout(gbl);
         this.contentContainer.setLayout(gbl);
+
         gbc.fill = GridBagConstraints.BOTH;
-
-//        tabContainer.setBackground(Color.BLUE);
-//        contentContainer.setBackground(Color.CYAN);
-
+        gbc.weightx = 0.01;
         gbc.weighty = 1;
+        gbc.gridx = 0;
         gbc.gridy = 0;
 
-        gbc.weightx = 0.01;
-        gbc.gridx = 0;
         gbl.setConstraints(tabContainer, gbc);
         this.add(tabContainer, gbc);
 
         gbc.weightx = splitRatio;
         gbc.gridx = 1;
+
         gbl.setConstraints(contentContainer, gbc);
         this.add(contentContainer, gbc);
 
@@ -65,27 +60,29 @@ public class TabbedGUIContainer extends JPanel {
         this.contentConstraints.weightx = 1;
 
         initTabButtonContainer();
+        resetTabButtonDisplay();
     }
 
+    /**
+     * Sets up the layout settings for the tab sidebar and the child buttons
+     */
     private void initTabButtonContainer() {
-        // this function creates a simple listed view layout of the buttons to switch tabs
         this.tabContainer.setLayout(new BorderLayout());
-//        this.tabContainer.setMaximumSize(new Dimension(23, 23));
 
         this.tabButtonConstraints = new GridBagConstraints();
         this.tabButtonConstraints.insets = new Insets(TAB_BUTTON_MARGIN,TAB_BUTTON_MARGIN,TAB_BUTTON_MARGIN,TAB_BUTTON_MARGIN);
         this.tabButtonConstraints.gridwidth = GridBagConstraints.REMAINDER;
+        this.tabButtonConstraints.fill = GridBagConstraints.HORIZONTAL;
         this.tabButtonConstraints.weightx = 1;
         this.tabButtonConstraints.weighty = 1;
-        this.tabButtonConstraints.fill = GridBagConstraints.HORIZONTAL;
+    }
 
-        tabButtonList = new JPanel(new GridBagLayout());
+    private void resetTabButtonDisplay() {
+        // this function makes the buttons display in a nice list from the top within the sidebar
+        this.tabButtonConstraints.weightx = 1;
+        this.tabButtonConstraints.weighty = 1;
         tabButtonList.add(new JPanel(), this.tabButtonConstraints);
-
         this.tabContainer.add(new JScrollPane(tabButtonList));
-
-        // for the buttons
-        this.tabButtonConstraints.weighty = 0;
     }
 
     private void enableAllButtons() {
@@ -99,7 +96,7 @@ public class TabbedGUIContainer extends JPanel {
         this.tabButtonList.removeAll();
         this.panels.clear();
 
-        initTabButtonContainer();
+        resetTabButtonDisplay();
 
         this.revalidate();
         this.repaint();
@@ -126,6 +123,7 @@ public class TabbedGUIContainer extends JPanel {
                 tb.setEnabled(false);
             }
         });
+        this.tabButtonConstraints.weighty = 0;
         this.tabButtonList.add(tb, this.tabButtonConstraints, 0);
 
         panels.put(name, Triplet.with(root, constraints, tb));

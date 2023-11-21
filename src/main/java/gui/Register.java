@@ -35,7 +35,10 @@ public class Register extends JPanel{
     private JLabel alreadyAUserLabel;
     private JLabel loginLabel;
 
-    public Register() {
+    private App app;
+
+    public Register(App app) {
+        this.app = app;
         //construct components
         registerLabel = new JLabel ("<html><h1>REGISTER</h1></html>");
         forename = new JTextField (5);
@@ -263,9 +266,10 @@ public class Register extends JPanel{
 
 
     public static void startRegister() {
+        App app = new App();
         JFrame frame = new JFrame ("Register");
         frame.setDefaultCloseOperation (JFrame.EXIT_ON_CLOSE);
-        frame.getContentPane().add (new Register());
+        frame.getContentPane().add (new Register(app));
         frame.pack();
         frame.setVisible (true);
     }
