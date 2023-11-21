@@ -14,6 +14,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.validator.routines.checkdigit.LuhnCheckDigit;
+
 /**
  * Maintainers: Sam Taseff
  * <br>
@@ -459,9 +461,22 @@ public final class DatabaseOperation {
         return true;
     }
 
-    public static BankDetail CreatePaymentInfo(String cardNumber, Date expiryDate, String securityCode) throws SQLException {
-        //TODO: Validate card number, expiry date and security code
+    public static BankDetail CreatePaymentInfo(String cardNumber, Date expiryDate, String securityCode)
+            throws SQLException, BankDetail.InvalidBankDetailsException {
         int id = -1;
+        boolean isCardValid = LuhnCheckDigit.LUHN_CHECK_DIGIT.isValid(cardNumber);
+        if (!isCardValid) {
+            throw new BankDetail.InvalidBankDetailsException("Card number invalid, failed Luhn check ["+cardNumber+"]");
+        }
+        // Expiry date should be in the format MM/YY
+        if (expiryDate.before(new java.util.Date())) {
+            throw new BankDetail.InvalidBankDetailsException("Card is expired ["+expiryDate.toLocalDate()+"]");
+        }
+
+        if (securityCode.length() != 3) {
+            throw new BankDetail.InvalidBankDetailsException("Security code was an invalid length ["+securityCode+"]");
+        }
+
         String cardName = "Card ending in " + cardNumber.substring(cardNumber.length() - 4);
         try (PreparedStatement cardQuery = db.prepareStatement("INSERT INTO CardDetails VALUES (?, ?, ?, ?")) {
             byte[] encryptionKey = AppContext.getEncryptionKey();
