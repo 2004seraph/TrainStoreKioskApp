@@ -10,7 +10,8 @@ public class Main {
 
         DatabaseBridge db = DatabaseBridge.instance(); //Can be called wherever you need a reference (it's a static method)
         DatabaseOperation.SetConnection(db); //Only needs to be called once with a DatabaseBridge reference and never again
-        App.generateLoginRegister();
+
+        App.loggedOutScreen();
     }
 
 }
