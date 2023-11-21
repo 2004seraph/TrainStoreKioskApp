@@ -1,9 +1,6 @@
 package gui;
 
 import javax.swing.*;
-import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 
 
 public class Profile extends JPanel{
@@ -27,7 +24,7 @@ public class Profile extends JPanel{
     private JLabel email;
 
     public Profile() {
-        add(profilePanel);
+//        add(profilePanel);
 //        myProfileLabel = new JLabel("My Profile");
 //        button1 = new JButton("Button 1");
 //        button2 = new JButton("Logout");
@@ -46,19 +43,18 @@ public class Profile extends JPanel{
 
     private void createUIComponents() {
         // TODO: place custom component creation code here
-        Font currentFont = profileLabel.getFont();
-        Font newFont = currentFont.deriveFont(currentFont.getSize() + 5.0f).deriveFont(Font.BOLD); // Increase size by 5 points
-        profileLabel.setFont(newFont);
-        addressLabel.setFont(newFont);
+//        Font currentFont = profileLabel.getFont();
+//        Font newFont = currentFont.deriveFont(currentFont.getSize() + 5.0f).deriveFont(Font.BOLD); // Increase size by 5 points
+//        profileLabel.setFont(newFont);
+//        addressLabel.setFont(newFont);
     }
 
-//    public static void main(String[] args) {
-//        JFrame frame = new JFrame("Profile");
-//        frame.setContentPane(new Profile().profilePanel);
-//        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-////      Make it full screen
-//        frame.setExtendedState(JFrame.MAXIMIZED_BOTH);
-//        frame.pack();
-//        frame.setVisible(true);
-//    }
+    public static void main(String[] args) {
+        JFrame frame = new JFrame("Profile");
+        frame.setContentPane(new Profile().profilePanel);
+        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+//      Make it full screen
+        frame.setExtendedState(JFrame.MAXIMIZED_BOTH);
+        frame.setVisible(true);
+    }
 }
