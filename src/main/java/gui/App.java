@@ -13,9 +13,7 @@ public class App {
 
         JFrame frame = AppContext.getWindow();
         frame.getContentPane().add(screenController);
-//        frame.setExtendedState(JFrame.MAXIMIZED_BOTH);
 
-        loginState();
         loginState();
 
         frame.setVisible(true);

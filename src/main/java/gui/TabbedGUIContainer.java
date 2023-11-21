@@ -108,7 +108,7 @@ public class TabbedGUIContainer extends JPanel {
      */
     public void insertTab(String name, JPanel root, ScreenRequirement constraints) {
         // do not add a panel with the same name as another
-        if (!panels.containsKey(name)) {
+        if (panels.containsKey(name)) {
             throw new IllegalArgumentException("[GUITabs] You cannot have two screens with the same name.");
         }
 
