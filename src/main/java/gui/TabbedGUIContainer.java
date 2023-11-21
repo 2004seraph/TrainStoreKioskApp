@@ -67,15 +67,6 @@ public class TabbedGUIContainer extends JPanel {
         initTabButtonContainer();
     }
 
-//    Method removes all tabs in the tabbedGUIContainer
-    public void removeAllTabs() {
-        this.tabButtonList.removeAll();
-        this.panels.clear();
-//        this.tabButtonList.add(new JPanel(), this.tabButtonConstraints);
-//        this.tabButtonList.revalidate();
-//        this.tabButtonList.repaint();
-    }
-
     private void initTabButtonContainer() {
         // this function creates a simple listed view layout of the buttons to switch tabs
         this.tabContainer.setLayout(new BorderLayout());
@@ -101,6 +92,17 @@ public class TabbedGUIContainer extends JPanel {
         for (Triplet<JPanel, ScreenRequirement, JButton> panel : panels.values()) {
             panel.getValue2().setEnabled(true);
         }
+    }
+
+
+    public void removeAllTabs() {
+        this.tabButtonList.removeAll();
+        this.panels.clear();
+
+        initTabButtonContainer();
+
+        this.revalidate();
+        this.repaint();
     }
 
     public TabbedGUIContainer(float splitRatio) {
@@ -175,5 +177,46 @@ public class TabbedGUIContainer extends JPanel {
         return res;
     }
 
+    public static void main(String[] args) {
+        JFrame window = AppContext.getWindow();
 
+        TabbedGUIContainer screenManager = new TabbedGUIContainer(0.2f);
+        JPanel blackWindow = new JPanel();
+        blackWindow.setBackground(Color.BLACK);
+        JPanel blueWindow = new JPanel();
+        blueWindow.setBackground(Color.CYAN);
+
+        screenManager.insertTab("black", blackWindow, new ScreenRequirement() {
+            @Override
+            public boolean canOpen() {
+                return true;
+            }
+        });
+        screenManager.insertTab("blue", blueWindow, new ScreenRequirement() {
+            @Override
+            public boolean canOpen() {
+                return true;
+            }
+        });
+
+        window.add(screenManager);
+
+        screenManager.removeAllTabs();
+        screenManager.insertTab("black", blackWindow, new ScreenRequirement() {
+            @Override
+            public boolean canOpen() {
+                return true;
+            }
+        });
+        screenManager.insertTab("blue", blueWindow, new ScreenRequirement() {
+            @Override
+            public boolean canOpen() {
+                return true;
+            }
+        });
+
+        screenManager.switchTab("blue");
+
+        window.setVisible(true);
+    }
 }
