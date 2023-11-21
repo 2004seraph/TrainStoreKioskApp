@@ -171,7 +171,7 @@ public class TabbedGUIContainer extends JPanel {
             this.currentTab = name;
 
         } catch (NullPointerException e) {
-            throw new NullPointerException("No panel with that name or type in this tabset!");
+            throw new NullPointerException("[GUITabs] No panel with that name or type in this tabset!");
         }
     }
 
@@ -198,78 +198,80 @@ public class TabbedGUIContainer extends JPanel {
         return res;
     }
 
-    public static void main(String[] args) {
-        JFrame window = AppContext.getWindow();
+    // VVV DO NOT USE THIS CODE VVV
 
-        TabbedGUIContainer screenManager = new TabbedGUIContainer(0.2f);
-        window.add(screenManager);
-
-        state1(screenManager);
-
-        window.setVisible(true);
-    }
-
-
-
-    private static void state1(TabbedGUIContainer sc) {
-        sc.removeAllTabs();
-
-        JPanel blackWindow = new JPanel();
-        blackWindow.setBackground(Color.MAGENTA);
-        JPanel blueWindow = new JPanel();
-        blueWindow.setBackground(Color.BLUE);
-        JButton loginButton = new JButton("Go to new area");
-        blueWindow.add(loginButton);
-
-        loginButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                SwingUtilities.invokeLater(new Runnable() {
-                    @Override
-                    public void run() {
-                        state2(sc);
-                    }
-                });
-            }
-        });
-
-        sc.insertTab("MAGENTA", blackWindow, new TabbedGUIContainer.ScreenRequirement() {
-            @Override
-            public boolean canOpen() {
-                return true;
-            }
-        });
-        sc.insertTab("BLUE", blueWindow, new TabbedGUIContainer.ScreenRequirement() {
-            @Override
-            public boolean canOpen() {
-                return true;
-            }
-        });
-
-        sc.switchTab("MAGENTA");
-    }
-
-    public static void state2(TabbedGUIContainer sc) {
-        sc.removeAllTabs();
-
-        JPanel blackWindow = new JPanel();
-        blackWindow.setBackground(Color.BLACK);
-        JPanel blueWindow = new JPanel();
-        blueWindow.setBackground(Color.CYAN);
-
-        sc.insertTab("blue", blackWindow, new TabbedGUIContainer.ScreenRequirement() {
-            @Override
-            public boolean canOpen() {
-                return true;
-            }
-        });
-        sc.insertTab("blue", blueWindow, new TabbedGUIContainer.ScreenRequirement() {
-            @Override
-            public boolean canOpen() {
-                return true;
-            }
-        });
-
-//        sc.switchTab("black");
-    }
+//    public static void main(String[] args) {
+//        JFrame window = AppContext.getWindow();
+//      DO NOT USE THIS CODE
+//        TabbedGUIContainer screenManager = new TabbedGUIContainer(0.2f);
+//        window.add(screenManager);
+//
+//        state1(screenManager);
+//
+//        window.setVisible(true);
+//    }
+//
+//      DO NOT USE THIS CODE
+//
+//    private static void state1(TabbedGUIContainer sc) {
+//        sc.removeAllTabs();
+//
+//        JPanel blackWindow = new JPanel();
+//        blackWindow.setBackground(Color.MAGENTA);
+//        JPanel blueWindow = new JPanel();
+//        blueWindow.setBackground(Color.BLUE);
+//        JButton loginButton = new JButton("Go to new area");
+//        blueWindow.add(loginButton);
+//          DO NOT USE THIS CODE
+//        loginButton.addActionListener(new ActionListener() {
+//            @Override
+//            public void actionPerformed(ActionEvent e) {
+//                SwingUtilities.invokeLater(new Runnable() {
+//                    @Override
+//                    public void run() {
+//                        state2(sc);
+//                    }
+//                });
+//            }
+//        });
+//          DO NOT USE THIS CODE
+//        sc.insertTab("MAGENTA", blackWindow, new TabbedGUIContainer.ScreenRequirement() {
+//            @Override
+//            public boolean canOpen() {
+//                return true;
+//            }
+//        });
+//        sc.insertTab("BLUE", blueWindow, new TabbedGUIContainer.ScreenRequirement() {
+//            @Override
+//            public boolean canOpen() {
+//                return true;
+//            }
+//        });
+//
+//        sc.switchTab("MAGENTA");
+//    }
+//      DO NOT USE THIS CODE
+//    public static void state2(TabbedGUIContainer sc) {
+//        sc.removeAllTabs();
+//
+//        JPanel blackWindow = new JPanel();
+//        blackWindow.setBackground(Color.BLACK);
+//        JPanel blueWindow = new JPanel();
+//        blueWindow.setBackground(Color.CYAN);
+//
+//        sc.insertTab("blue", blackWindow, new TabbedGUIContainer.ScreenRequirement() {
+//            @Override
+//            public boolean canOpen() {
+//                return true;
+//            }
+//        });
+//        sc.insertTab("blue", blueWindow, new TabbedGUIContainer.ScreenRequirement() {
+//            @Override
+//            public boolean canOpen() {
+//                return true;
+//            }
+//        });
+//          DO NOT USE THIS CODE
+////        sc.switchTab("black");
+//    }
 }
