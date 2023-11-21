@@ -180,10 +180,21 @@ public class TabbedGUIContainer extends JPanel {
      */
     public void removeAllTabs() {
         this.panels.clear();
+        this.currentTab = null;
+
+        this.contentContainer.removeAll();
         resetTabButtonDisplay();
 
         this.revalidate();
         this.repaint();
+    }
+
+    /**
+     * Which tab is the user currently looking at
+     * @return The string name as used in insertTab()
+     */
+    public String getCurrentTab() {
+        return currentTab;
     }
 
     /**
