@@ -1,5 +1,7 @@
 package entity;
 
+import java.util.Arrays;
+
 /**
  * This is where we can store our "enum"-like values for certain columns in the database
  * <br>
@@ -17,6 +19,10 @@ public class StoreAttributes {
 
         public int getLevel() {
             return priviledgeLevel;
+        }
+
+        public static String[] getStringValues() {
+            return Arrays.stream(values()).map(Enum::toString).toArray(String[]::new);
         }
     }
 

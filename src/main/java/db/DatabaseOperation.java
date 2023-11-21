@@ -12,6 +12,7 @@ import java.security.InvalidKeyException;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.commons.validator.routines.checkdigit.LuhnCheckDigit;
 
@@ -197,6 +198,7 @@ public final class DatabaseOperation {
             throw e;
         }
     }
+
 
     /**
      * Gets all the products to display in a view
@@ -533,6 +535,22 @@ public final class DatabaseOperation {
             // I.e. they are trying to decrypt a card that isn't theirs
             Crypto.cryptoError("User tried to decrypt card with id ["+id+"] but they used the wrong encryption key", e);
             throw e;
+        }
+    }
+
+    public static void main(String[] args) {
+        DatabaseBridge db = DatabaseBridge.instance();
+        DatabaseOperation.SetConnection(db);
+        try{
+            db.openConnection();
+            CreatePaymentInfo("1234567890123456", Date.valueOf("2021-01-01"), "123");
+//            BankDetail bank = GetBankDetailsById(2);
+//            System.out.println(bank);
+        } catch (Exception e) {
+            System.out.println("Failed to open connection");
+            System.out.println(e.getMessage());
+        } finally {
+            db.closeConnection();
         }
     }
 }
