@@ -67,12 +67,6 @@ public class TabbedGUIContainer extends JPanel {
         initTabButtonContainer();
     }
 
-//    Method removes all tabs in the tabbedGUIContainer
-    public void removeAllTabs() {
-        this.tabButtonList.removeAll();
-        this.panels.clear();
-    }
-    
     private void initTabButtonContainer() {
         // this function creates a simple listed view layout of the buttons to switch tabs
         this.tabContainer.setLayout(new BorderLayout());
