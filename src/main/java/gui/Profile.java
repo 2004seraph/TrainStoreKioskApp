@@ -1,60 +1,73 @@
 package gui;
 
 import javax.swing.*;
-
+import java.awt.*;
+import controllers.AppContext;
 
 public class Profile extends JPanel{
-    private JPanel profilePanel;
-    private JLabel profileLabel;
-    private JLabel forenameLabel;
-    private JTextField forename;
-    private JTextField surname;
-    private JLabel surnameLabel;
-    private JLabel emailLabel;
-    private JLabel houseNumLabel;
-    private JTextField houseNum;
-    private JLabel streetNameLabel;
-    private JTextField streetName;
-    private JLabel cityNameLabel;
-    private JTextField cityName;
-    private JLabel postCodeLabel;
-    private JTextField postCode;
-    private JButton editDetailsButton;
-    private JLabel addressLabel;
-    private JLabel email;
+
+    private JLabel forenameLabel = new JLabel("Forename:");
+    private JTextField forename = new JTextField(30);
+    private JLabel surnameLabel = new JLabel("Surname:");
+    private JTextField surname = new JTextField(30);
+    private JLabel emailLabel = new JLabel("Email:");
+    private JLabel email = new JLabel();
+    private JLabel houseNumberLabel = new JLabel("House Number:");
+    private JTextField houseNumber = new JTextField(30);
+    private JLabel streetLabel = new JLabel("Street:");
+    private JTextField street = new JTextField(30);
+    private JLabel cityLabel = new JLabel("City:");
+    private JTextField city = new JTextField(30);
+    private JLabel postCodeLabel = new JLabel("PostCode:");
+    private JTextField postCode = new JTextField(30);
+    private JButton updateButton = new JButton("UPDATE");
+
 
     public Profile() {
-//        this.add(profilePanel);
-//        myProfileLabel = new JLabel("My Profile");
-//        button1 = new JButton("Button 1");
-//        button2 = new JButton("Logout");
-//
-//        this.add(myProfileLabel);
-//        this.add(button1);
-//        this.add(button2);
+        setLayout(new GridBagLayout());
+        GridBagConstraints gbc = new GridBagConstraints();
+        gbc.insets = new Insets(1, 10, 1, 1);
+//        gbc.fill = GridBagConstraints.HORIZONTAL;
+        gbc.anchor = GridBagConstraints.WEST;
 
-//        button2.addActionListener(new ActionListener() {
-//            @Override
-//            public void actionPerformed(ActionEvent e) {
-//                App.loggedOutScreen();
-//            }
-//        });
+        addField(gbc, forenameLabel, forename, 0);
+        addField(gbc, surnameLabel, surname, 1);
+
+        gbc.gridx = 0;
+        gbc.gridy = 2;
+        add(emailLabel, gbc);
+        gbc.gridx = 1;
+        gbc.gridy = 2;
+        add(email, gbc);
+
+        addField(gbc, houseNumberLabel, houseNumber, 3);
+        addField(gbc, streetLabel, street, 4);
+        addField(gbc, cityLabel, city, 5);
+        addField(gbc, postCodeLabel, postCode, 6);;
+
+        gbc.gridx = 0;
+        gbc.gridy = 7;
+        gbc.gridwidth = 2;
+        gbc.fill = GridBagConstraints.NONE;
+        gbc.anchor = GridBagConstraints.CENTER;
+        add(updateButton, gbc);
+
     }
 
-    private void createUIComponents() {
-        // TODO: place custom component creation code here
-//        Font currentFont = profileLabel.getFont();
-//        Font newFont = currentFont.deriveFont(currentFont.getSize() + 5.0f).deriveFont(Font.BOLD); // Increase size by 5 points
-//        profileLabel.setFont(newFont);
-//        addressLabel.setFont(newFont);
+    private void addField(GridBagConstraints gbc, JLabel label, JTextField textField, int row) {
+        gbc.gridx = 0;
+        gbc.gridy = row;
+        add(label, gbc);
+
+        gbc.gridx = 1;
+        gbc.gridy = row;
+        add(textField, gbc);
     }
 
-    public static void main(String[] args) {
-        JFrame frame = new JFrame("Profile");
-        frame.setContentPane(new Profile());
-        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-//      Make it full screen
-        frame.setExtendedState(JFrame.MAXIMIZED_BOTH);
-        frame.setVisible(true);
-    }
+//    public static void main(String[] args) {
+//        JFrame frame = AppContext.getWindow();
+//        frame.setExtendedState(JFrame.MAXIMIZED_BOTH);
+//        frame.setContentPane(new Profile());
+//        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+//    }
 }
