@@ -2,9 +2,7 @@ package gui;
 
 import controllers.AppContext;
 import entity.StoreAttributes;
-import gui.person.Login;
-import gui.person.Register;
-import gui.person.TabbedGUIContainer;
+import gui.person.*;
 
 import javax.swing.*;
 
@@ -67,36 +65,11 @@ public class App {
         JPanel cartPage = new Cart();
         JPanel logoutPage = new Logout();
 
-        screenController.insertTab("Logout", logoutPage, new TabbedGUIContainer.ScreenRequirement() {
-            @Override
-            public boolean canOpen() {
-                return true;
-            }
-        });
-        screenController.insertTab("Cart", cartPage, new TabbedGUIContainer.ScreenRequirement() {
-            @Override
-            public boolean canOpen() {
-                return true;
-            }
-        });
-        screenController.insertTab("Profile", profilePage, new TabbedGUIContainer.ScreenRequirement() {
-            @Override
-            public boolean canOpen() {
-                return true;
-            }
-        });
-        screenController.insertTab("My Orders", ordersPage, new TabbedGUIContainer.ScreenRequirement() {
-            @Override
-            public boolean canOpen() {
-                return true;
-            }
-        });
-        screenController.insertTab("Shop", shopPage, new TabbedGUIContainer.ScreenRequirement() {
-            @Override
-            public boolean canOpen() {
-                return true;
-            }
-        });
+        screenController.insertTab("Logout", logoutPage);
+        screenController.insertTab("Cart", cartPage);
+        screenController.insertTab("Profile", profilePage);
+        screenController.insertTab("My Orders", ordersPage);
+        screenController.insertTab("Shop", shopPage);
 
         screenController.switchTab("Profile");
     }
