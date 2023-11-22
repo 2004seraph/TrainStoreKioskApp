@@ -157,7 +157,6 @@ public final class DatabaseOperation {
     public static Person GetPersonByEmail(
             String email
     ) throws SQLException {
-        db = DatabaseBridge.instance(); // TODO:Im sure this isn't supposed to be here, but this line solves the problem
         try (PreparedStatement personQuery = db.prepareStatement("SELECT * FROM Person WHERE email=?");
              PreparedStatement roleQuery = db.prepareStatement("SELECT * FROM Role WHERE personId=?");
         ) {
@@ -535,6 +534,20 @@ public final class DatabaseOperation {
             // I.e. they are trying to decrypt a card that isn't theirs
             Crypto.cryptoError("User tried to decrypt card with id ["+id+"] but they used the wrong encryption key", e);
             throw e;
+        }
+    }
+
+    /**
+     * Returns a result set of every person in the database
+     * @return A resultSet
+     */
+    public static ResultSet GetAllPersons() {
+        try {
+            PreparedStatement query = db.prepareStatement("SELECT * FROM Person");
+            return query.executeQuery();
+        } catch (SQLException e) {
+            DatabaseBridge.databaseError("Failed to fetch all persons", e);
+            throw new RuntimeException();
         }
     }
 

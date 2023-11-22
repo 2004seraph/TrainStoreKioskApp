@@ -62,7 +62,6 @@ public class Cart extends JPanel {
         add(checkoutButton);
 
         // Set frame properties
-        setSize(500, 400);
         setVisible(true);
     }
 

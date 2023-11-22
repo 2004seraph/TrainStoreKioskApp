@@ -1,6 +1,7 @@
 package gui;
 
 import controllers.AppContext;
+import entity.StoreAttributes;
 
 import javax.swing.*;
 import java.awt.*;
@@ -43,8 +44,19 @@ public class App {
     /**
      * The logged-in screen with each dashboard this role has access too
      */
-    public void userState() {
+    public void userState(StoreAttributes.Role userRole) {
         screenController.removeAllTabs();
+        switch (userRole) {
+            case MANAGER:
+                ManagerScreen manScreen = new ManagerScreen();
+                screenController.insertDivider();
+                screenController.insertTab("Management", manScreen);
+                // deliberate fallthrough
+            case STAFF:
+                screenController.insertDivider();
+                break;
+        }
+
 
     }
 }
