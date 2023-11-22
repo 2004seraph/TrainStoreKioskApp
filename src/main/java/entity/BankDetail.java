@@ -58,7 +58,7 @@ public class BankDetail extends DatabaseOperation.Entity implements DatabaseReco
      * @throws SQLException
      * @throws InvalidBankDetailsException
      */
-    public static BankDetail CreatePaymentInfo(String cardNumber, java.sql.Date expiryDate, String securityCode)
+    public static BankDetail createPaymentInfo(String cardNumber, java.sql.Date expiryDate, String securityCode)
             throws SQLException, InvalidBankDetailsException {
         int id = -1;
         boolean isCardValid = LuhnCheckDigit.LUHN_CHECK_DIGIT.isValid(cardNumber);
@@ -104,7 +104,7 @@ public class BankDetail extends DatabaseOperation.Entity implements DatabaseReco
         }
     }
 
-    public static BankDetail GetBankDetailsById(int id) throws SQLException, InvalidKeyException {
+    public static BankDetail getBankDetailsById(int id) throws SQLException, InvalidKeyException {
         try(PreparedStatement bankQuery = prepareStatement("SELECT * FROM BankDetails WHERE paymentId = ?")) {
             bankQuery.setInt(1, id);
             ResultSet rs = bankQuery.executeQuery();
@@ -136,7 +136,7 @@ public class BankDetail extends DatabaseOperation.Entity implements DatabaseReco
     }
 
     @Override
-    public List<Object> GetFields() {
+    public List<Object> getFields() {
         return Arrays.asList(
                 cardName,
                 cardNumber,

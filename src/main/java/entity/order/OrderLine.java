@@ -17,7 +17,7 @@ public class OrderLine extends DatabaseOperation.Entity implements DatabaseRecor
         this.quantity = quantity;
     }
 
-    public List<Object> GetFields() {
+    public List<Object> getFields() {
         List<Object> list = Arrays.asList(
                 orderId,
                 productCode,

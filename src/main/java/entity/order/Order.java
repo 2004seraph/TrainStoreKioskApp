@@ -36,8 +36,8 @@ public class Order extends DatabaseOperation.Entity implements DatabaseRecord {
         return orderId;
     }
 
-    public Integer setOrderId(Integer orderId) {
-        return this.orderId = orderId;
+    public void setOrderId(Integer orderId) {
+        this.orderId = orderId;
     }
 
     public List<OrderLine> getItemsList() {
@@ -78,7 +78,7 @@ public class Order extends DatabaseOperation.Entity implements DatabaseRecord {
      * @return Order entity with order lines
      * @throws SQLException
      */
-    public static Order GetOrderWithOrderLine(Integer orderId) throws SQLException {
+    public static Order getOrderWithOrderLine(Integer orderId) throws SQLException {
         try (PreparedStatement findQuery = prepareStatement("SELECT * FROM Order WHERE orderId = ?")) {
             findQuery.setInt(1, orderId);
             ResultSet rs = findQuery.executeQuery();
@@ -130,7 +130,7 @@ public class Order extends DatabaseOperation.Entity implements DatabaseRecord {
      * @return List of orders
      * @throws SQLException
      */
-    public static List<Order> GetOrdersWithStatus(Order.OrderStatus status) throws SQLException {
+    public static List<Order> getOrdersWithStatus(Order.OrderStatus status) throws SQLException {
         try (PreparedStatement orderQuery = prepareStatement("SELECT * FROM Order WHERE status = ?")) {
             orderQuery.setString(1, status.toString());
 
@@ -156,7 +156,7 @@ public class Order extends DatabaseOperation.Entity implements DatabaseRecord {
         }
     }
 
-    public static boolean CreateOrder(Order order) throws SQLException {
+    public static boolean createOrder(Order order) throws SQLException {
         setAutoCommit(false);
         int id = -1;
 
@@ -164,7 +164,7 @@ public class Order extends DatabaseOperation.Entity implements DatabaseRecord {
              PreparedStatement r = prepareStatement("INSERT INTO OrderLine VALUES (?,?,?)");
         ) {
 
-            Object[] fields = order.GetFields().toArray();
+            Object[] fields = order.getFields().toArray();
 
             s.setInt(1, (Integer) fields[0]); // personId
             s.setString(2, (String) fields[1]); // date
@@ -180,7 +180,7 @@ public class Order extends DatabaseOperation.Entity implements DatabaseRecord {
             }
 
             order.getItemsList().forEach((item) -> {
-                Object[] olFields = item.GetFields().toArray();
+                Object[] olFields = item.getFields().toArray();
 
                 try {
                     r.setInt(1, (Integer) olFields[0]);
@@ -212,7 +212,7 @@ public class Order extends DatabaseOperation.Entity implements DatabaseRecord {
      * @return whether operation was successful
      * @throws SQLException
      */
-    public static boolean UpdateOrderStatus(int orderId, Order.OrderStatus newStatus) throws SQLException {
+    public static boolean updateOrderStatus(int orderId, Order.OrderStatus newStatus) throws SQLException {
         try (PreparedStatement findQuery = prepareStatement("SELECT * FROM Order WHERE orderId = ?")) {
             findQuery.setInt(1, orderId);
             ResultSet rs = findQuery.executeQuery();
@@ -238,7 +238,7 @@ public class Order extends DatabaseOperation.Entity implements DatabaseRecord {
     }
 
 
-    public List<Object> GetFields() {
+    public List<Object> getFields() {
         List<Object> list = Arrays.asList(
                 customerId,
                 date.toString(),

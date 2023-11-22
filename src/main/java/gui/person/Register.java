@@ -150,7 +150,7 @@ public class Register extends JPanel{
                             1 // TODO: Change this to the correct bank details ID
                         );
 
-                        Person.CreatePerson(newPerson);
+                        Person.createPerson(newPerson);
 
                         AppContext.setEncryptionKey(Crypto.deriveEncryptionKey(password.getText()));
                         AppContext.setCurrentUser(newPerson);
@@ -214,7 +214,7 @@ public class Register extends JPanel{
         try {
             DatabaseBridge db = DatabaseBridge.instance();
             db.openConnection();
-            if (Person.GetPersonByEmail(email.getText()) != null) {
+            if (Person.getPersonByEmail(email.getText()) != null) {
                 JOptionPane.showMessageDialog(null, "Email already exists");
                 return false;
             }

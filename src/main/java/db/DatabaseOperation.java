@@ -1,20 +1,9 @@
 package db;
 
-import controllers.AppContext;
-import entity.order.OrderLine;
 import entity.user.*;
 import entity.*;
-import entity.StoreAttributes.Role;
-import entity.order.Order;
-import utils.Crypto;
 
-import java.security.InvalidKeyException;
 import java.sql.*;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-
-import org.apache.commons.validator.routines.checkdigit.LuhnCheckDigit;
 
 /**
  * Maintainers: Sam Taseff
@@ -58,28 +47,8 @@ public final class DatabaseOperation {
      * Sets the database connection on which these actions affect
      * @param conn A database connection bridge
      */
-    public static void SetConnection(DatabaseBridge conn) {
+    public static void setConnection(DatabaseBridge conn) {
         db = conn;
-    }
-
-    /**
-     * Update the stock level of a product given its product code
-     * @param productCode product to update
-     * @param newStock new stock level
-     * @return whether operation was successful or not
-     * @throws SQLException
-     */
-    public static boolean UpdateStock(String productCode, int newStock) throws SQLException {
-        try (PreparedStatement query = db.prepareStatement("UPDATE Product SET stockLevel = ? WHERE productCode = ?")) {
-            query.setInt(1, newStock);
-            query.setString(2, productCode);
-
-            int updatedRows = query.executeUpdate();
-            return updatedRows > 0;
-        } catch (SQLException e) {
-            DatabaseBridge.databaseError("Failed to update stock with product code ["+productCode+"]", e);
-            throw e;
-        }
     }
 
     /**
@@ -89,7 +58,7 @@ public final class DatabaseOperation {
      * @return whether operation was successful
      * @throws SQLException
      */
-    public static boolean UpdateUserRoleById(int userId, StoreAttributes.Role newRole) throws SQLException {
+    public static boolean updateUserRoleById(int userId, StoreAttributes.Role newRole) throws SQLException {
         try (PreparedStatement findQuery = db.prepareStatement("SELECT * FROM Person WHERE PersonId = ?")) {
             findQuery.setInt(1, userId);
             ResultSet rs = findQuery.executeQuery();
@@ -115,10 +84,10 @@ public final class DatabaseOperation {
 
     public static void main(String[] args) {
         DatabaseBridge db = DatabaseBridge.instance();
-        DatabaseOperation.SetConnection(db);
+        DatabaseOperation.setConnection(db);
         try{
             db.openConnection();
-            BankDetail.CreatePaymentInfo("1234567890123456", Date.valueOf("2021-01-01"), "123");
+            BankDetail.createPaymentInfo("1234567890123456", Date.valueOf("2021-01-01"), "123");
 //            BankDetail bank = GetBankDetailsById(2);
 //            System.out.println(bank);
         } catch (Exception e) {

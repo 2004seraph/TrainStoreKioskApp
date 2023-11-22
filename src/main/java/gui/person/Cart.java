@@ -48,7 +48,7 @@ public class Cart extends JPanel {
 
         // Create labels for total price
         JLabel totalLabel = new JLabel("Total Price: " + formatCurrency(totalPrice));
-        totalLabel.setBorder(new EmptyBorder(5, 5, 5, 5));
+//        totalLabel.setBorder(new EmptyBorder(5, 5, 5, 5));
         add(totalLabel);
 
         // Create a Checkout button
@@ -68,7 +68,7 @@ public class Cart extends JPanel {
     // Helper method to format currency
     private String formatCurrency(double amount) {
         DecimalFormat decimalFormat = new DecimalFormat("#,##0.00");
-        return "$" + decimalFormat.format(amount);
+        return "£" + decimalFormat.format(amount);
     }
 
     public static void main(String[] args) {

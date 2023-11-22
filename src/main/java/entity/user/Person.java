@@ -6,7 +6,6 @@ import db.DatabaseRecord;
 import entity.BankDetail;
 import entity.StoreAttributes;
 
-import java.io.Serializable;
 import java.sql.*;
 import java.util.Arrays;
 import java.util.List;
@@ -141,7 +140,7 @@ public class Person extends DatabaseOperation.Entity implements DatabaseRecord {
      * Returns a result set of every person in the database
      * @return A resultSet
      */
-    public static ResultSet GetAllPersons() {
+    public static ResultSet getAllPersons() {
         try {
             openConnection();
             PreparedStatement query = prepareStatement("SELECT * FROM Person");
@@ -160,7 +159,7 @@ public class Person extends DatabaseOperation.Entity implements DatabaseRecord {
      * @return A Person object with all of its fields set, or null if there was no one with that email
      * @throws SQLException
      */
-    public static Person GetPersonByEmail(
+    public static Person getPersonByEmail(
             String email
     ) throws SQLException {
         try (PreparedStatement personQuery = prepareStatement("SELECT * FROM Person WHERE email=?");
@@ -210,9 +209,9 @@ public class Person extends DatabaseOperation.Entity implements DatabaseRecord {
      * @return Whether the insertion was successful or failed due to someone already having that email address
      * @throws SQLException
      */
-    public static Boolean CreatePerson(Person person) throws SQLException {
+    public static Boolean createPerson(Person person) throws SQLException {
         // do not insert this person if an account with their email already exists
-        if (GetPersonByEmail(person.getEmail()) != null) {
+        if (getPersonByEmail(person.getEmail()) != null) {
             return false;
         }
 
@@ -223,7 +222,7 @@ public class Person extends DatabaseOperation.Entity implements DatabaseRecord {
              PreparedStatement r = prepareStatement("INSERT INTO Role VALUES (?,?)");
         ) {
 
-            Object[] fields = person.GetFields().toArray();
+            Object[] fields = person.getFields().toArray();
 
             s.setString(1, (String) fields[0]); // forename
             s.setString(2, (String) fields[1]); // surname
@@ -268,7 +267,7 @@ public class Person extends DatabaseOperation.Entity implements DatabaseRecord {
      * @return whether operation was successful
      * @throws SQLException
      */
-    public static boolean UpdateUserRole(Person person, StoreAttributes.Role newRole) throws SQLException {
+    public static boolean updateUserRole(Person person, StoreAttributes.Role newRole) throws SQLException {
         try (PreparedStatement query = prepareStatement("""
                 UPDATE Role, Person
                 LEFT JOIN Role R ON Person.PersonId = R.personId
@@ -286,7 +285,7 @@ public class Person extends DatabaseOperation.Entity implements DatabaseRecord {
     }
 
     @Override
-    public List<Object> GetFields() {
+    public List<Object> getFields() {
         // note that the AUTO_INCREMENT primary key is not included, this method is used for inserting
         // these also appear in the same order as the table fields (important)
         List<Object> list = Arrays.asList(

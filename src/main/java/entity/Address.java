@@ -32,7 +32,7 @@ public class Address extends DatabaseOperation.Entity implements DatabaseRecord{
         // Check if this address already exists using the primary key houseNumber and postCode
 
         try (PreparedStatement s = prepareStatement("SELECT * FROM Address WHERE houseNumber=? AND postCode=?")){
-            Object [] fields = address.GetFields().toArray();
+            Object [] fields = address.getFields().toArray();
 
             s.setString(1, fields[0].toString());
             s.setString(2, fields[3].toString());
@@ -59,7 +59,7 @@ public class Address extends DatabaseOperation.Entity implements DatabaseRecord{
     }
 
     @Override
-    public List<Object> GetFields() {
+    public List<Object> getFields() {
         return Arrays.asList(
                 houseNumber,
                 streetName,

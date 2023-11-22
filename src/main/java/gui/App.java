@@ -3,6 +3,7 @@ package gui;
 import controllers.AppContext;
 import entity.StoreAttributes;
 import gui.person.*;
+import gui.staff.StockManagementScreen;
 
 import javax.swing.*;
 
@@ -26,18 +27,8 @@ public class App {
 
         JPanel registerPage = new Register(this);
         JPanel loginPage = new Login(this);
-        screenController.insertTab("Register", registerPage, new TabbedGUIContainer.ScreenRequirement() {
-            @Override
-            public boolean canOpen() {
-                return true;
-            }
-        });
-        screenController.insertTab("Login", loginPage, new TabbedGUIContainer.ScreenRequirement() {
-            @Override
-            public boolean canOpen() {
-                return true;
-            }
-        });
+        screenController.insertTab("Register", registerPage);
+        screenController.insertTab("Login", loginPage);
 
         screenController.switchTab("Login");
     }
@@ -51,9 +42,11 @@ public class App {
             case MANAGER:
                 ManagerScreen manScreen = new ManagerScreen();
                 screenController.insertDivider();
-                screenController.insertTab("Management", manScreen);
+                screenController.insertTab("User Management", manScreen);
                 // deliberate fallthrough
             case STAFF:
+                StockManagementScreen sms = new StockManagementScreen();
+                screenController.insertTab("Stock Management", sms);
                 screenController.insertDivider();
                 break;
         }

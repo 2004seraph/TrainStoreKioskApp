@@ -1,7 +1,6 @@
 package gui;
 
 import db.DatabaseBridge;
-import db.DatabaseOperation;
 import entity.StoreAttributes;
 import entity.user.Person;
 import gui.person.TabbedGUIContainer;
@@ -54,10 +53,10 @@ public class ManagerScreen extends JPanel implements TabbedGUIContainer.TabPanel
         DatabaseBridge db = DatabaseBridge.instance();
         try {
             db.openConnection();
-            ResultSet allPeople = Person.GetAllPersons();
+            ResultSet allPeople = Person.getAllPersons();
 
             while (allPeople.next()) {
-                Person them = Person.GetPersonByEmail(allPeople.getString("email"));
+                Person them = Person.getPersonByEmail(allPeople.getString("email"));
                 assert them != null;
                 this.addUser(them.getFullName(), them.getRole());
             }
