@@ -15,6 +15,19 @@ public class Address extends DatabaseOperation.Entity implements DatabaseRecord{
     private String cityName;
     private String postcode;
 
+    public String getHouseNumber() {
+        return houseNumber;
+    }
+    public String getStreetName() {
+        return streetName;
+    }
+    public String getCityName() {
+        return cityName;
+    }
+    public String getPostcode() {
+        return postcode;
+    }
+
     public Address(String houseNumber, String streetName, String cityName, String postcode) {
         this.houseNumber = houseNumber;
         this.streetName = streetName;

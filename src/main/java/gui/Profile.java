@@ -2,6 +2,10 @@ package gui;
 
 import javax.swing.*;
 import java.awt.*;
+
+import db.DatabaseBridge;
+import entity.user.Person;
+import entity.user.PersonCompressed;
 import controllers.AppContext;
 
 public class Profile extends JPanel{
@@ -52,7 +56,25 @@ public class Profile extends JPanel{
         gbc.anchor = GridBagConstraints.CENTER;
         add(updateButton, gbc);
 
-
+        Person person = AppContext.getCurrentUser();
+        DatabaseBridge db = DatabaseBridge.instance();
+        //            TODO: HANDLE BANK DETAILS IF NULL
+        try {
+            db.openConnection();
+            PersonCompressed personCompressed = PersonCompressed.getPersonalDetails(person.getEmail());
+            forename.setText(personCompressed.getPerson().getForename());
+            surname.setText(personCompressed.getPerson().getSurname());
+            email.setText(personCompressed.getPerson().getEmail());
+            houseNumber.setText(personCompressed.getAddress().getHouseNumber());
+            street.setText(personCompressed.getAddress().getStreetName());
+            city.setText(personCompressed.getAddress().getCityName());
+            postCode.setText(personCompressed.getAddress().getPostcode());
+        } catch (Exception e) {
+            System.out.println("Failed to get personal details");
+            System.out.println(e.getMessage());
+        } finally {
+            db.closeConnection();
+        }
     }
 
     private void addField(GridBagConstraints gbc, JLabel label, JTextField textField, int row) {

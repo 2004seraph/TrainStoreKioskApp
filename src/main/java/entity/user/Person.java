@@ -34,6 +34,8 @@ public class Person extends DatabaseOperation.Entity implements DatabaseRecord {
     public StoreAttributes.Role getRole() { return role; }
     public String getEmail() { return email; }
     public String getPassword() { return password; }
+    public String getForename() { return forename; }
+    public String getSurname() { return surname; }
     public String getFullName() { return forename + " " + surname; }
     public int getBankDetailsId() { return bankDetailsID; }
     public String getHouseNumber() { return houseNumber; }

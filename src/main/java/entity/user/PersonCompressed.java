@@ -11,6 +11,16 @@ public final class PersonCompressed {
     private Address address;
     private BankDetail bankDetail;
 
+    public Person getPerson() {
+        return person;
+    }
+    public Address getAddress() {
+        return address;
+    }
+    public BankDetail getBankDetail() {
+        return bankDetail;
+    }
+
     public PersonCompressed(Person person, Address address, BankDetail bankDetail) {
         this.person = person;
         this.address = address;
@@ -27,12 +37,13 @@ public final class PersonCompressed {
             if (address == null) {
                 throw new SQLException("No address found with that house number and postcode");
             }
-            BankDetail bankDetail = BankDetail.getBankDetailsById(person.getBankDetailsId());
+//            BankDetail bankDetail = BankDetail.getBankDetailsById(person.getBankDetailsId());
+            BankDetail bankDetail = null;
             return new PersonCompressed(person, address, bankDetail);
         } catch (SQLException e) {
             throw new SQLException("Error getting personal details");
-        } catch (InvalidKeyException e) {
-            throw new InvalidKeyException(e.getMessage());
+//        } catch (InvalidKeyException e) {
+//            throw new InvalidKeyException(e.getMessage());
         }
     }
 }
