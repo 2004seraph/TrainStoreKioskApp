@@ -2,17 +2,33 @@ package entity.product;
 
 import db.DatabaseBridge;
 import db.DatabaseOperation;
+import db.DatabaseRecord;
 
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.Arrays;
+import java.util.List;
 
-public class Product extends DatabaseOperation.Entity {
+public class Product extends DatabaseOperation.Entity implements DatabaseRecord {
 
-    private String productCode;
-    private String name;
+    protected String productCode;
+    protected String name;
     protected Integer stockLevel;
-    private Double price;
+    protected Double price;
+
+    public String getProductCode() {
+        return productCode;
+    }
+    public String getName() {
+        return name;
+    }
+    public Integer getStockLevel() {
+        return stockLevel;
+    }
+    public Double getPrice() {
+        return price;
+    }
 
     public Product(String name, int stock, Double price) {
         this.name = name;
@@ -112,6 +128,15 @@ public class Product extends DatabaseOperation.Entity {
 
         assert thing != null;
         System.out.println(thing);
+    }
+
+    @Override
+    public List<Object> getFields() {
+        return Arrays.asList(
+                name,
+                stockLevel,
+                price
+        );
     }
 }
 

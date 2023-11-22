@@ -12,7 +12,6 @@ import java.sql.*;
  * connection initialized before any other calls, this is done with SetConnection(DatabaseBridge conn)
  */
 public final class DatabaseOperation {
-
     /**
      * Maintainers: Sam Taseff
      * <br>
