@@ -8,6 +8,8 @@ import gui.person.TabbedGUIContainer;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -35,6 +37,20 @@ public class ManagerScreen extends JPanel implements TabbedGUIContainer.TabPanel
 
             content.add(new JSeparator(SwingConstants.HORIZONTAL));
             content.add(new JSeparator(SwingConstants.HORIZONTAL));
+
+            roleBox.addActionListener(e -> {
+                StoreAttributes.Role newRole = StoreAttributes.Role.valueOf((String) roleBox.getSelectedItem());
+
+                DatabaseBridge db = DatabaseBridge.instance();
+                try {
+                    db.openConnection();
+                    Person.updateUserRole(person, newRole);
+                } catch (SQLException ex) {
+                    throw new RuntimeException(ex);
+                } finally {
+                    db.closeConnection();
+                }
+            });
         }
     }
     private TabbedGUIContainer parent;

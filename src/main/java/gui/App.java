@@ -48,7 +48,6 @@ public class App {
             case STAFF:
                 StockManagementScreen sms = new StockManagementScreen();
                 screenController.insertTab("Stock Management", sms);
-                screenController.insertTab("User Management", new ManagerScreen());
                 screenController.insertDivider();
                 break;
         }
