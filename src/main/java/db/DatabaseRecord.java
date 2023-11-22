@@ -15,12 +15,12 @@ public interface DatabaseRecord {
      * Note that you SHOULD NOT include the primary key in this (that is made by MySQL)
      * @return A list of the correctly ordered (and correctly typed) table field values for this entity, excluding the primary key
      */
-    public List<Object> GetFields();
+    public List<Object> getFields();
 
     /**
      * This function allows the DatabaseOperations class to create an instance of this
      * class and fill the correct members with the field data from a row in the table
      * @param fields A list of the values of each column, including the primary key
      */
-    //public void SetFields(List<Object> fields);
+    //public void setFields(List<Object> fields);
 }

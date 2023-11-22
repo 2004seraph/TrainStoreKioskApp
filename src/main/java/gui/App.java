@@ -1,9 +1,11 @@
 package gui;
 
 import controllers.AppContext;
+import entity.StoreAttributes;
+import gui.person.*;
+import gui.staff.StockManagementScreen;
 
 import javax.swing.*;
-import java.awt.*;
 
 public class App {
     private final TabbedGUIContainer screenController;
@@ -16,6 +18,7 @@ public class App {
 
         loginState();
 
+        frame.setExtendedState(JFrame.MAXIMIZED_BOTH);
         frame.setVisible(true);
     }
 
@@ -24,18 +27,8 @@ public class App {
 
         JPanel registerPage = new Register(this);
         JPanel loginPage = new Login(this);
-        screenController.insertTab("Register", registerPage, new TabbedGUIContainer.ScreenRequirement() {
-            @Override
-            public boolean canOpen() {
-                return true;
-            }
-        });
-        screenController.insertTab("Login", loginPage, new TabbedGUIContainer.ScreenRequirement() {
-            @Override
-            public boolean canOpen() {
-                return true;
-            }
-        });
+        screenController.insertTab("Register", registerPage);
+        screenController.insertTab("Login", loginPage);
 
         screenController.switchTab("Login");
     }
@@ -43,8 +36,34 @@ public class App {
     /**
      * The logged-in screen with each dashboard this role has access too
      */
-    public void userState() {
+    public void userState(StoreAttributes.Role userRole) {
         screenController.removeAllTabs();
+        switch (userRole) {
+            case MANAGER:
+                ManagerScreen manScreen = new ManagerScreen();
+                screenController.insertDivider();
+                screenController.insertTab("User Management", manScreen);
+                // deliberate fallthrough
+            case STAFF:
+                StockManagementScreen sms = new StockManagementScreen();
+                screenController.insertTab("Stock Management", sms);
+                screenController.insertDivider();
+                break;
+        }
 
+
+        JPanel shopPage = new Shop();
+        JPanel ordersPage = new Orders();
+        JPanel profilePage = new Profile();
+        JPanel cartPage = new Cart();
+        JPanel logoutPage = new Logout();
+
+        screenController.insertTab("Logout", logoutPage);
+        screenController.insertTab("Cart", cartPage);
+        screenController.insertTab("Profile", profilePage);
+        screenController.insertTab("My Orders", ordersPage);
+        screenController.insertTab("Shop", shopPage);
+
+        screenController.switchTab("Profile");
     }
 }

@@ -1,18 +1,15 @@
 package gui;
 
+import db.DatabaseBridge;
 import entity.StoreAttributes;
-import entity.user.Manager;
+import entity.user.Person;
+import gui.person.TabbedGUIContainer;
 
 import javax.swing.*;
 import javax.swing.table.AbstractTableModel;
-import javax.swing.table.DefaultTableModel;
-import javax.swing.table.TableColumn;
 import javax.swing.table.TableModel;
-import javax.swing.text.TableView;
-import java.awt.*;
-import java.util.Arrays;
-import java.util.Objects;
-import java.util.stream.Stream;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 
 public class ManagerScreen extends JPanel implements TabbedGUIContainer.TabPanel {
     private TabbedGUIContainer parent;
@@ -52,9 +49,26 @@ public class ManagerScreen extends JPanel implements TabbedGUIContainer.TabPanel
 
         add(heading);
         add(scrollPane);
+
+        DatabaseBridge db = DatabaseBridge.instance();
+        try {
+            db.openConnection();
+            ResultSet allPeople = Person.getAllPersons();
+
+            while (allPeople.next()) {
+                Person them = Person.getPersonByEmail(allPeople.getString("email"));
+                assert them != null;
+                this.addUser(them.getFullName(), them.getRole());
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+            throw new RuntimeException("Could not load user list");
+        } finally {
+            db.closeConnection();
+        }
     }
 
-    public void addUser(String name, StoreAttributes.Role role) {
+    private void addUser(String name, StoreAttributes.Role role) {
         JComboBox<String> comboBox = new JComboBox<>(roleNames);
         comboBox.setSelectedItem(role.toString());
 

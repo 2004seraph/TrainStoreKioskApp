@@ -1,7 +1,6 @@
 package controllers;
 
 import db.DatabaseBridge;
-import db.DatabaseOperation;
 import entity.user.Person;
 import utils.Crypto;
 
@@ -37,7 +36,7 @@ public final class LoginController {
         DatabaseBridge db = DatabaseBridge.instance();
         try {
             db.openConnection();
-            Person user = DatabaseOperation.GetPersonByEmail(email);
+            Person user = Person.getPersonByEmail(email);
             if (user == null) {
                 return null;
             }

@@ -1,13 +1,14 @@
-package gui;
+package gui.person;
 
-import java.awt.*;
 import javax.swing.*;
 import java.awt.event.*;
 import java.sql.SQLException;
 
+import controllers.AppContext;
 import db.*;
 import entity.user.*;
 import entity.*;
+import gui.App;
 import utils.*;
 
 public class Register extends JPanel{
@@ -118,20 +119,6 @@ public class Register extends JPanel{
         alreadyAUserLabel.setBounds (260, 590, 95, 25);
         loginLabel.setBounds (355, 590, 100, 25);
 
-
-        // When clicking loginLabel, close register window and open login window
-
-        // this needs to be made to work with tab screen system
-
-//        loginLabel.addMouseListener(new MouseAdapter() {
-//            @Override
-//            public void mouseClicked(MouseEvent e) {
-//                Window w = SwingUtilities.getWindowAncestor(Register.this);
-//                w.dispose();
-//                Login.startLogin();
-//            }
-//        });
-
         // When clicking registerButton validate the input, then close register window and open login window
         registerButton.addActionListener(new ActionListener() {
             @Override
@@ -140,10 +127,8 @@ public class Register extends JPanel{
                 if (validateCompulsoryInput() && validateFormat()) {
                     // Open connection with the database
                     DatabaseBridge db = DatabaseBridge.instance();
-                    System.out.println("Attempting to connect to database...");
                     try{
                         db.openConnection();
-                        System.out.println("Successfully connected to database");
                         // Create a new address
                         Address newAddress = new Address(
                             houseNumber.getText(),
@@ -151,7 +136,7 @@ public class Register extends JPanel{
                             cityName.getText(),
                             postCode.getText()
                         );
-                        DatabaseOperation.CreateAddress(newAddress);
+                        Address.CreateAddress(newAddress);
 
                         // Create new person
                         String passwordHash = Crypto.hashString(password.getText());
@@ -165,16 +150,15 @@ public class Register extends JPanel{
                             1 // TODO: Change this to the correct bank details ID
                         );
 
-                        DatabaseOperation.CreatePerson(newPerson);
-                        System.out.println("Successfully created new person");
+                        Person.createPerson(newPerson);
 
-                        // Close register window and open login window
-                        Window w = SwingUtilities.getWindowAncestor(Register.this);
-                        w.dispose();
-//                        Login.startLogin();
+                        AppContext.setEncryptionKey(Crypto.deriveEncryptionKey(password.getText()));
+                        AppContext.setCurrentUser(newPerson);
+                        app.userState(newPerson.getRole());
+
                         JOptionPane.showMessageDialog(null, "Registration successful");
-                    } catch (SQLException throwables) {
-                        JOptionPane.showMessageDialog(null, throwables.getMessage());
+                    } catch (SQLException sqlError) {
+                        JOptionPane.showMessageDialog(null, sqlError.getMessage());
                     } finally {
                         db.closeConnection();
                     }
@@ -230,7 +214,7 @@ public class Register extends JPanel{
         try {
             DatabaseBridge db = DatabaseBridge.instance();
             db.openConnection();
-            if (DatabaseOperation.GetPersonByEmail(email.getText()) != null) {
+            if (Person.getPersonByEmail(email.getText()) != null) {
                 JOptionPane.showMessageDialog(null, "Email already exists");
                 return false;
             }
@@ -246,19 +230,19 @@ public class Register extends JPanel{
         String emailRegex = "^[a-zA-Z0-9_+&*-]+(?:\\."+ "[a-zA-Z0-9_+&*-]+)*@" + "(?:[a-zA-Z0-9-]+\\.)+[a-z" + "A-Z]{2,7}$";
         String postcodeRegex = "^[A-Z]{1,2}[0-9]{1,2}\s[A-Z]?[0-9][A-Z]{2}$";
         // 8-20 characters long, contain at least one digit, one upper case letter, one lower case letter and one special character
-        String passwordRegex = "^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=.*[@#$%^&+=!()]).{8,20}$";
+//        String passwordRegex = "^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=.*[@#$%^&+=!()]).{8,20}$";
 
         // Validate the fields with the regular expressions
         if (!email.getText().matches(emailRegex)) {
             JOptionPane.showMessageDialog(null, "Invalid email");
             return false;
         }
-        if (!postCode.getText().matches(postcodeRegex)) {
-            JOptionPane.showMessageDialog(null, "Invalid postcode");
-            return false;
-        }
-        if (!password.getText().matches(passwordRegex)) {
-            JOptionPane.showMessageDialog(null, "Password must be 8-20 characters long, contain at least one digit, one upper case letter, one lower case letter and one special character");
+//        if (!postCode.getText().matches(postcodeRegex)) {
+//            JOptionPane.showMessageDialog(null, "Invalid postcode");
+//            return false;
+//        }
+        if (password.getText().length() < 12 || password.getText().length() > 40) {
+            JOptionPane.showMessageDialog(null, "Password must be 12-40 characters long");
             return false;
         }
         return true;

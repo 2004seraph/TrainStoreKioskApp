@@ -1,8 +1,9 @@
-package gui;
+package gui.person;
 
 import controllers.AppContext;
 import controllers.LoginController;
 import entity.user.Person;
+import gui.App;
 import utils.Crypto;
 
 import java.awt.event.*;
@@ -97,7 +98,7 @@ public class Login extends JPanel implements TabbedGUIContainer.TabPanel {
                     System.out.println("Successfully authenticated user");
                     AppContext.setEncryptionKey(Crypto.deriveEncryptionKey(pwd));
                     AppContext.setCurrentUser(user);
-                    app.userState();
+                    app.userState(user.getRole());
                 } else {
                     JOptionPane.showMessageDialog(null, "Incorrect email or password");
                     System.out.println("Authentication was unsuccessful");

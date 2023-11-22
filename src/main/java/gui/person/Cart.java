@@ -1,4 +1,4 @@
-package gui;
+package gui.person;
 
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
@@ -86,7 +86,7 @@ public class Cart extends JPanel {
     // Helper method to format currency
     private String formatCurrency(double amount) {
         DecimalFormat decimalFormat = new DecimalFormat("#,##0.00");
-        return "$" + decimalFormat.format(amount);
+        return "£" + decimalFormat.format(amount);
     }
 
     public static void main(String[] args) {

@@ -1,5 +1,4 @@
-package gui;
-import controllers.AppContext;
+package gui.person;
 import org.javatuples.*;
 
 import javax.swing.*;
@@ -10,7 +9,9 @@ import java.util.*;
 import java.util.List;
 import java.util.stream.IntStream;
 
-
+/**
+ * THIS FILE WORKS, DO NOT CHANGE IT
+ */
 public class TabbedGUIContainer extends JPanel {
     public interface ScreenRequirement {
         public boolean canOpen();
@@ -98,6 +99,20 @@ public class TabbedGUIContainer extends JPanel {
 
     public TabbedGUIContainer(float splitRatio) {
         this.initPanel(splitRatio);
+    }
+
+    /**
+     * Inserts a tab into the screen, with no requirements
+     * @param name The UNIQUELY IDENTIFYING name for this panel, also the text for the button
+     * @param root The root JPanel of this specific page, containing it completely
+     */
+    public void insertTab(String name, JPanel root) {
+        this.insertTab(name, root, new ScreenRequirement() {
+            @Override
+            public boolean canOpen() {
+                return true;
+            }
+        });
     }
 
     /**
