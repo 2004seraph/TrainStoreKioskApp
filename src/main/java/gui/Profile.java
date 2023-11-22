@@ -24,7 +24,7 @@ public class Profile extends JPanel{
     private JLabel email;
 
     public Profile() {
-//        add(profilePanel);
+//        this.add(profilePanel);
 //        myProfileLabel = new JLabel("My Profile");
 //        button1 = new JButton("Button 1");
 //        button2 = new JButton("Logout");
@@ -51,7 +51,7 @@ public class Profile extends JPanel{
 
     public static void main(String[] args) {
         JFrame frame = new JFrame("Profile");
-        frame.setContentPane(new Profile().profilePanel);
+        frame.setContentPane(new Profile());
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 //      Make it full screen
         frame.setExtendedState(JFrame.MAXIMIZED_BOTH);

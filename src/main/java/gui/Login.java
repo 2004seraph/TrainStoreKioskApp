@@ -97,8 +97,7 @@ public class Login extends JPanel implements TabbedGUIContainer.TabPanel {
                     System.out.println("Successfully authenticated user");
                     AppContext.setEncryptionKey(Crypto.deriveEncryptionKey(pwd));
                     AppContext.setCurrentUser(user);
-                    App.loggedInScreen();
-                    Dashboard.generateDashboard();
+//                    Dashboard.generateDashboard();
                     app.userState();
 
                 } else {
