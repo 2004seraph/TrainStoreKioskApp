@@ -1,6 +1,5 @@
-package gui;
+package gui.person;
 
-import java.awt.*;
 import javax.swing.*;
 import java.awt.event.*;
 import java.sql.SQLException;
@@ -9,6 +8,7 @@ import controllers.AppContext;
 import db.*;
 import entity.user.*;
 import entity.*;
+import gui.App;
 import utils.*;
 
 public class Register extends JPanel{
@@ -136,7 +136,7 @@ public class Register extends JPanel{
                             cityName.getText(),
                             postCode.getText()
                         );
-                        DatabaseOperation.CreateAddress(newAddress);
+                        Address.CreateAddress(newAddress);
 
                         // Create new person
                         String passwordHash = Crypto.hashString(password.getText());
@@ -150,7 +150,7 @@ public class Register extends JPanel{
                             1 // TODO: Change this to the correct bank details ID
                         );
 
-                        DatabaseOperation.CreatePerson(newPerson);
+                        Person.CreatePerson(newPerson);
 
                         AppContext.setEncryptionKey(Crypto.deriveEncryptionKey(password.getText()));
                         AppContext.setCurrentUser(newPerson);
@@ -214,7 +214,7 @@ public class Register extends JPanel{
         try {
             DatabaseBridge db = DatabaseBridge.instance();
             db.openConnection();
-            if (DatabaseOperation.GetPersonByEmail(email.getText()) != null) {
+            if (Person.GetPersonByEmail(email.getText()) != null) {
                 JOptionPane.showMessageDialog(null, "Email already exists");
                 return false;
             }

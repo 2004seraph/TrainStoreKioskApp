@@ -1,8 +1,16 @@
 package entity;
 
+import controllers.AppContext;
+import db.DatabaseBridge;
 import db.DatabaseOperation;
 import db.DatabaseRecord;
+import org.apache.commons.validator.routines.checkdigit.LuhnCheckDigit;
+import utils.Crypto;
 
+import java.security.InvalidKeyException;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
@@ -40,13 +48,100 @@ public class BankDetail extends DatabaseOperation.Entity implements DatabaseReco
         this.securityCode = securityCode;
     }
 
+
+    /**
+     * Creates an entry in the database for a new set of bank details, it also returns a constructed class representation.
+     * @param cardNumber
+     * @param expiryDate
+     * @param securityCode
+     * @return A new instance of BankDetail referencing an entry in the DB
+     * @throws SQLException
+     * @throws InvalidBankDetailsException
+     */
+    public static BankDetail CreatePaymentInfo(String cardNumber, java.sql.Date expiryDate, String securityCode)
+            throws SQLException, InvalidBankDetailsException {
+        int id = -1;
+        boolean isCardValid = LuhnCheckDigit.LUHN_CHECK_DIGIT.isValid(cardNumber);
+        if (!isCardValid) {
+            throw new InvalidBankDetailsException("Card number invalid, failed Luhn check ["+cardNumber+"]");
+        }
+        // Expiry date should be in the format MM/YY
+        if (expiryDate.before(new java.util.Date())) {
+            throw new InvalidBankDetailsException("Card is expired ["+expiryDate.toLocalDate()+"]");
+        }
+
+        if (securityCode.length() != 3) {
+            throw new InvalidBankDetailsException("Security code was an invalid length ["+securityCode+"]");
+        }
+
+        String cardName = "Card ending in " + cardNumber.substring(cardNumber.length() - 4);
+        try (PreparedStatement cardQuery = prepareStatement("INSERT INTO CardDetails VALUES (?, ?, ?, ?")) {
+            byte[] encryptionKey = AppContext.getEncryptionKey();
+            String encryptedCardNumber = Crypto.encryptString(cardNumber, encryptionKey);
+            String encryptedSecurityCode = Crypto.encryptString(securityCode, encryptionKey);
+
+            cardQuery.setString(1, cardName);
+            cardQuery.setString(2, encryptedCardNumber);
+            cardQuery.setDate(3, expiryDate);
+            cardQuery.setString(4, encryptedSecurityCode);
+
+            cardQuery.executeUpdate();
+            ResultSet rs = cardQuery.getGeneratedKeys();
+
+            if (rs.next()) {
+                id = rs.getInt(1);
+            } else {
+                throw new InternalError("Failed to insert into BankDetails table");
+            }
+
+            return new BankDetail(id, cardName, cardNumber, expiryDate, securityCode);
+        } catch (SQLException e) {
+            DatabaseBridge.databaseError("Failed to insert new payment info ["+cardName+"]", e);
+            throw e;
+        } catch (InvalidKeyException e) {
+            Crypto.cryptoError("Error whilst encrypting card number, encryption key was invalid", e);
+            throw new RuntimeException(e);
+        }
+    }
+
+    public static BankDetail GetBankDetailsById(int id) throws SQLException, InvalidKeyException {
+        try(PreparedStatement bankQuery = prepareStatement("SELECT * FROM BankDetails WHERE paymentId = ?")) {
+            bankQuery.setInt(1, id);
+            ResultSet rs = bankQuery.executeQuery();
+
+            if (!rs.next()) {
+                throw new BankAccountNotFoundException("Failed to find bank details with id ["+id+"]");
+            }
+
+            byte[] encryptionKey = AppContext.getEncryptionKey();
+            String decryptedCardNumber = Crypto.decryptString(rs.getString("cardNumber"), encryptionKey);
+            String decryptedSecurityCode = Crypto.decryptString(rs.getString("securityCode"), encryptionKey);
+
+            return new BankDetail(
+                    rs.getInt("paymentId"),
+                    rs.getString("cardName"),
+                    decryptedCardNumber,
+                    rs.getDate("expiryDate"),
+                    decryptedSecurityCode
+            );
+        } catch (SQLException e) {
+            DatabaseBridge.databaseError("Failed to fetch bank details with id ["+id+"]", e);
+            throw e;
+        } catch (InvalidKeyException e) {
+            // Thrown when the user tries to decrypt another user's card with an invalid encryption key
+            // I.e. they are trying to decrypt a card that isn't theirs
+            Crypto.cryptoError("User tried to decrypt card with id ["+id+"] but they used the wrong encryption key", e);
+            throw e;
+        }
+    }
+
+    @Override
     public List<Object> GetFields() {
-        List<Object> list = Arrays.asList(
+        return Arrays.asList(
                 cardName,
                 cardNumber,
                 expiryDate,
                 securityCode
         );
-        return list;
     }
 }

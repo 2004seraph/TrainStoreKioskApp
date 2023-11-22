@@ -37,7 +37,7 @@ public final class LoginController {
         DatabaseBridge db = DatabaseBridge.instance();
         try {
             db.openConnection();
-            Person user = DatabaseOperation.GetPersonByEmail(email);
+            Person user = Person.GetPersonByEmail(email);
             if (user == null) {
                 return null;
             }

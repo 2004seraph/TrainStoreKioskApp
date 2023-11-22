@@ -1,5 +1,4 @@
-package gui;
-import controllers.AppContext;
+package gui.person;
 import org.javatuples.*;
 
 import javax.swing.*;

@@ -1,8 +1,9 @@
-package gui;
+package gui.person;
 
 import controllers.AppContext;
 import controllers.LoginController;
 import entity.user.Person;
+import gui.App;
 import utils.Crypto;
 
 import java.awt.event.*;

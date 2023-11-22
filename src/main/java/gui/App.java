@@ -2,9 +2,11 @@ package gui;
 
 import controllers.AppContext;
 import entity.StoreAttributes;
+import gui.person.Login;
+import gui.person.Register;
+import gui.person.TabbedGUIContainer;
 
 import javax.swing.*;
-import java.awt.*;
 
 public class App {
     private final TabbedGUIContainer screenController;

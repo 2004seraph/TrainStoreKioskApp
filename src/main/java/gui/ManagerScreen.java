@@ -3,22 +3,14 @@ package gui;
 import db.DatabaseBridge;
 import db.DatabaseOperation;
 import entity.StoreAttributes;
-import entity.order.Order;
-import entity.user.Manager;
 import entity.user.Person;
+import gui.person.TabbedGUIContainer;
 
 import javax.swing.*;
 import javax.swing.table.AbstractTableModel;
-import javax.swing.table.DefaultTableModel;
-import javax.swing.table.TableColumn;
 import javax.swing.table.TableModel;
-import javax.swing.text.TableView;
-import java.awt.*;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.Arrays;
-import java.util.Objects;
-import java.util.stream.Stream;
 
 public class ManagerScreen extends JPanel implements TabbedGUIContainer.TabPanel {
     private TabbedGUIContainer parent;
@@ -62,10 +54,10 @@ public class ManagerScreen extends JPanel implements TabbedGUIContainer.TabPanel
         DatabaseBridge db = DatabaseBridge.instance();
         try {
             db.openConnection();
-            ResultSet allPeople = DatabaseOperation.GetAllPersons();
+            ResultSet allPeople = Person.GetAllPersons();
 
             while (allPeople.next()) {
-                Person them = DatabaseOperation.GetPersonByEmail(allPeople.getString("email"));
+                Person them = Person.GetPersonByEmail(allPeople.getString("email"));
                 assert them != null;
                 this.addUser(them.getFullName(), them.getRole());
             }
