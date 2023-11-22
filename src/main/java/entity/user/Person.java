@@ -41,7 +41,7 @@ public class Person extends DatabaseOperation.Entity implements DatabaseRecord {
     /**
      * This blank constructor is for creating a brand-new Person (not in the database yet)
      */
-    public Person() {
+    private Person() {
 
     }
 
@@ -86,7 +86,7 @@ public class Person extends DatabaseOperation.Entity implements DatabaseRecord {
      * @param postCode
      * @param bankDetailsID
      */
-    public Person(
+    private Person(
             int id,
             String forename,
             String surname,
