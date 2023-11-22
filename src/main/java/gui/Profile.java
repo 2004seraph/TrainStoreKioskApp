@@ -52,6 +52,7 @@ public class Profile extends JPanel{
         gbc.anchor = GridBagConstraints.CENTER;
         add(updateButton, gbc);
 
+
     }
 
     private void addField(GridBagConstraints gbc, JLabel label, JTextField textField, int row) {
@@ -64,10 +65,5 @@ public class Profile extends JPanel{
         add(textField, gbc);
     }
 
-//    public static void main(String[] args) {
-//        JFrame frame = AppContext.getWindow();
-//        frame.setExtendedState(JFrame.MAXIMIZED_BOTH);
-//        frame.setContentPane(new Profile());
-//        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-//    }
+
 }

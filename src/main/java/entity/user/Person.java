@@ -24,16 +24,20 @@ public class Person extends DatabaseOperation.Entity implements DatabaseRecord {
     private String surname;
     private String email;
     private String password;
-    private String houseName;
+    private String houseNumber;
     private String postCode;
     private int bankDetailsID;
 
     private StoreAttributes.Role role = StoreAttributes.Role.USER;
 
+    public int getId() { return personID; }
     public StoreAttributes.Role getRole() { return role; }
     public String getEmail() { return email; }
     public String getPassword() { return password; }
     public String getFullName() { return forename + " " + surname; }
+    public int getBankDetailsId() { return bankDetailsID; }
+    public String getHouseNumber() { return houseNumber; }
+    public String getPostCode() { return postCode; }
 
     public static void main(String[] args){
         System.out.println("Hello World");
@@ -53,7 +57,7 @@ public class Person extends DatabaseOperation.Entity implements DatabaseRecord {
      * @param surname
      * @param email
      * @param password
-     * @param houseName
+     * @param houseNumber
      * @param postCode
      * @param bankDetailsID
      */
@@ -62,7 +66,7 @@ public class Person extends DatabaseOperation.Entity implements DatabaseRecord {
             String surname,
             String email,
             String password,
-            String houseName,
+            String houseNumber,
             String postCode,
             int bankDetailsID
     ) {
@@ -70,7 +74,7 @@ public class Person extends DatabaseOperation.Entity implements DatabaseRecord {
         this.surname =       surname;
         this.email =         email;
         this.password =      password;
-        this.houseName =     houseName;
+        this.houseNumber =     houseNumber;
         this.postCode =      postCode;
         this.bankDetailsID = bankDetailsID;
     }
@@ -83,7 +87,7 @@ public class Person extends DatabaseOperation.Entity implements DatabaseRecord {
      * @param surname
      * @param email
      * @param password
-     * @param houseName
+     * @param houseNumber
      * @param postCode
      * @param bankDetailsID
      */
@@ -93,7 +97,7 @@ public class Person extends DatabaseOperation.Entity implements DatabaseRecord {
             String surname,
             String email,
             String password,
-            String houseName,
+            String houseNumber,
             String postCode,
             int bankDetailsID,
             StoreAttributes.Role role
@@ -103,7 +107,7 @@ public class Person extends DatabaseOperation.Entity implements DatabaseRecord {
         this.surname =       surname;
         this.email =         email;
         this.password =      password;
-        this.houseName =     houseName;
+        this.houseNumber =     houseNumber;
         this.postCode =      postCode;
         this.bankDetailsID = bankDetailsID;
         this.role = role;
@@ -189,7 +193,7 @@ public class Person extends DatabaseOperation.Entity implements DatabaseRecord {
                         res.getString(3),   // surname
                         res.getString(4),   // email
                         res.getString(5),   // password (this is horrible)
-                        res.getString(6),   // houseName
+                        res.getString(6),   // houseNumber
                         res.getString(7),   // postcode
                         res.getInt(8),      // bank details
                         userRole
@@ -294,7 +298,7 @@ public class Person extends DatabaseOperation.Entity implements DatabaseRecord {
                 surname,
                 email,
                 password,
-                houseName,
+                houseNumber,
                 postCode,
                 bankDetailsID
         );

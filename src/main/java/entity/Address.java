@@ -58,6 +58,27 @@ public class Address extends DatabaseOperation.Entity implements DatabaseRecord{
         return true;
     }
 
+    public static Address getAddressById(String houseNumber, String postcode) throws SQLException {
+        try (PreparedStatement s = prepareStatement("SELECT * FROM Address WHERE houseNumber=? AND postCode=?")){
+            s.setString(1, houseNumber);
+            s.setString(2, postcode);
+            ResultSet res = s.executeQuery();
+            if(res.next()){
+                return new Address(
+                        res.getString("houseNumber"),
+                        res.getString("streetName"),
+                        res.getString("cityName"),
+                        res.getString("postCode")
+                );
+            }
+        } catch (SQLException e) {
+            DatabaseBridge.databaseError("Failed to get address");
+            throw e;
+        }
+        return null;
+
+    }
+
     @Override
     public List<Object> getFields() {
         return Arrays.asList(
