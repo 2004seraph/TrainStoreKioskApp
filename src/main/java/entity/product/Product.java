@@ -35,9 +35,9 @@ public class Product extends DatabaseOperation.Entity {
         }
     }
 
-    public static Product getProductByID(String productCode) throws SQLException {
-
-    }
+//    public static Product getProductByID(String productCode) throws SQLException {
+//
+//    }
 
     /**
      * Gets all the products to display in a view
