@@ -19,6 +19,7 @@ public class App {
 
         loginState();
 
+        frame.setExtendedState(JFrame.MAXIMIZED_BOTH);
         frame.setVisible(true);
     }
 
@@ -60,5 +61,43 @@ public class App {
         }
 
 
+        JPanel shopPage = new Shop();
+        JPanel ordersPage = new Orders();
+        JPanel profilePage = new Profile();
+        JPanel cartPage = new Cart();
+        JPanel logoutPage = new Logout();
+
+        screenController.insertTab("Logout", logoutPage, new TabbedGUIContainer.ScreenRequirement() {
+            @Override
+            public boolean canOpen() {
+                return true;
+            }
+        });
+        screenController.insertTab("Cart", cartPage, new TabbedGUIContainer.ScreenRequirement() {
+            @Override
+            public boolean canOpen() {
+                return true;
+            }
+        });
+        screenController.insertTab("Profile", profilePage, new TabbedGUIContainer.ScreenRequirement() {
+            @Override
+            public boolean canOpen() {
+                return true;
+            }
+        });
+        screenController.insertTab("My Orders", ordersPage, new TabbedGUIContainer.ScreenRequirement() {
+            @Override
+            public boolean canOpen() {
+                return true;
+            }
+        });
+        screenController.insertTab("Shop", shopPage, new TabbedGUIContainer.ScreenRequirement() {
+            @Override
+            public boolean canOpen() {
+                return true;
+            }
+        });
+
+        screenController.switchTab("Profile");
     }
 }
