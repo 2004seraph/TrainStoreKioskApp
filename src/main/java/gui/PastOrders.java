@@ -1,4 +1,4 @@
-package gui.person;
+package gui;
 
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
@@ -8,9 +8,9 @@ import java.text.DecimalFormat;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
-public class Cart extends JPanel {
+public class PastOrders extends JPanel {
 
-    public Cart() {
+    public PastOrders() {
         Map<String, CartItem> cartItems = new LinkedHashMap<>(); // Use LinkedHashMap to preserve order
         cartItems.put("Product 1", new CartItem("Product 1", 2, "$10.99"));
         cartItems.put("Product 2", new CartItem("Product 2", 1, "$19.99"));
@@ -95,7 +95,7 @@ public class Cart extends JPanel {
         // Show this on the screen
         JFrame frame = new JFrame("Cart");
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        frame.add(new Cart());
+        frame.add(new PastOrders());
         frame.pack();
         frame.setVisible(true);
     }

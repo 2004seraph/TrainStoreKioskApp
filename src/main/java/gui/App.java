@@ -3,6 +3,7 @@ package gui;
 import controllers.AppContext;
 import entity.StoreAttributes;
 import gui.person.*;
+import gui.staff.ManagerScreen;
 import gui.staff.StockManagementScreen;
 
 import javax.swing.*;
@@ -53,7 +54,7 @@ public class App {
 
 
         JPanel shopPage = new Shop();
-        JPanel ordersPage = new Orders();
+        JPanel ordersPage = new PastOrders();
         JPanel profilePage = new Profile();
         JPanel cartPage = new Cart();
         JPanel logoutPage = new Logout();
