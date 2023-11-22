@@ -32,13 +32,10 @@ public class Person extends DatabaseOperation.Entity implements DatabaseRecord {
 
     private StoreAttributes.Role role = StoreAttributes.Role.USER;
 
-    public StoreAttributes.Role getRole() {
-        return role;
-    }
-    public String getEmail() {
-        return email;
-    }
+    public StoreAttributes.Role getRole() { return role; }
+    public String getEmail() { return email; }
     public String getPassword() { return password; }
+    public String getFullName() { return forename + " " + surname; }
 
     public static void main(String[] args){
         System.out.println("Hello World");
