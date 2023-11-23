@@ -33,6 +33,20 @@ public class BankDetail extends DatabaseOperation.Entity implements DatabaseReco
     private Date expiryDate;
     private String securityCode;
 
+
+    public String getCardName() {
+        return cardName;
+    }
+    public String getCardNumber() {
+        return cardNumber;
+    }
+    public Date getExpiryDate() {
+        return expiryDate;
+    }
+    public String getSecurityCode() {
+        return securityCode;
+    }
+
     public BankDetail(String cardName, String cardNumber, Date expiryDate, String securityCode) {
         this.cardName = cardName;
         this.cardNumber = cardNumber;

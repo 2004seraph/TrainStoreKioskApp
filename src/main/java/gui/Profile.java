@@ -61,12 +61,7 @@ public class Profile extends JPanel{
         addField(gbc, cityLabel, city, 5);
         addField(gbc, postCodeLabel, postCode, 6);;
 
-        gbc.gridx = 0;
-        gbc.gridy = 7;
-        gbc.gridwidth = 2;
-        gbc.fill = GridBagConstraints.NONE;
-        gbc.anchor = GridBagConstraints.CENTER;
-        add(updateButton, gbc);
+
 
         Person person = AppContext.getCurrentUser();
         DatabaseBridge db = DatabaseBridge.instance();
@@ -80,6 +75,51 @@ public class Profile extends JPanel{
             street.setText(person.getAddress().getStreetName());
             city.setText(person.getAddress().getCityName());
             postCode.setText(person.getAddress().getPostcode());
+
+            if (person.getBankDetail() != null) {
+//                Add bank details to the profile
+                gbc.anchor = GridBagConstraints.WEST;
+                addField(gbc, cardNameLabel, cardName, 7);
+                addField(gbc, cardNumberLabel, cardNumber, 8);
+                addField(gbc, expiryDateLabel, expiryDate, 9);
+                addField(gbc, securityCodeLabel, securityCode, 10);
+                cardName.setText(person.getBankDetail().getCardName());
+                cardNumber.setText(person.getBankDetail().getCardNumber());
+                expiryDate.setText(person.getBankDetail().getExpiryDate().toString());
+                securityCode.setText(person.getBankDetail().getSecurityCode());
+
+//                For the update button
+                gbc.gridx = 0;
+                gbc.gridy = 11;
+                gbc.gridwidth = 2;
+                gbc.fill = GridBagConstraints.NONE;
+                gbc.anchor = GridBagConstraints.CENTER;
+            } else {
+                gbc.gridx = 2;
+                gbc.gridy = 8;
+                add(addBankDetailsButton, gbc);
+//                For the update button
+                gbc.gridx = 2;
+                gbc.gridy = 8;
+
+                addBankDetailsButton.addActionListener(e -> {
+//                    String cardName = this.cardName.getText();
+//                    String cardNumber = this.cardNumber.getText();
+//                    String expiryDate = this.expiryDate.getText();
+//                    String securityCode = this.securityCode.getText();
+//                    try {
+//                        db.openConnection();
+//                        db.insertBankDetails(cardName, cardNumber, expiryDate, securityCode);
+//                        db.closeConnection();
+//                    } catch (Exception exception) {
+//                        System.out.println(exception.getMessage());
+//                    } finally {
+//                        db.closeConnection();
+//                    }
+                });
+            }
+            add(updateButton, gbc);
+
         } catch (Exception e) {
             System.out.println(e.getMessage());
         } finally {
