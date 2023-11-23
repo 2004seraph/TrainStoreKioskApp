@@ -1,41 +1,110 @@
 package gui;
 
-import entity.product.Product;
+import entity.product.*;
+import entity.product.Component;
+import utils.GUI;
 
 import javax.swing.*;
 import java.awt.*;
+import java.sql.SQLException;
 
 public class ShopCard extends JPanel {
     GridBagConstraints gbc;
     GridBagLayout gbl;
 
     Product product;
+
+    Integer quantity;
+    JTextField quantityBox;
+
     public ShopCard(Product product) {
         this.product = product;
 
         gbc = new GridBagConstraints();
         gbl = new GridBagLayout();
-        gbl.setConstraints(null, gbc);
+        gbl.setConstraints(this, gbc);
 
         gbc.fill = GridBagConstraints.BOTH;
         gbc.gridx = 0;
         gbc.gridy = 0;
 
-        JLabel productName = new JLabel("<html><h1>"+product.getName()+"</h1></html>");
-        add(productName);
+        gbl.setConstraints(this, gbc);
+        setLayout(gbl);
+
+        //setBorder(BorderFactory.createLineBorder(Color.black));
+
+        JLabel productName = new JLabel("<html><h2>"+product.getName()+"</h2></html>");
+        add(productName, gbc);
 
         gbc.gridx = 1;
-        JLabel price = new JLabel("£" + product.getPrice());
-        add(productName);
+        JLabel price = new JLabel("<html><h4>"+GUI.ukCurrencyFormat.format(product.getPrice())+"</h4></html>");
+        price.setHorizontalAlignment(SwingConstants.RIGHT);
+        add(price, gbc);
 
         gbc.gridx = 0;
         gbc.gridy = 1;
 
         JLabel productCode = new JLabel(product.getProductCode());
-        add(productCode);
+        add(productCode, gbc);
 
         gbc.gridy = 2;
 
+        try {
+            if (product.isComponent()) {
+                Component productComponent = product.getComponent();
+
+                JLabel brand = new JLabel("Brand: "+productComponent.getBrand());
+                add(brand, gbc);
+
+                gbc.gridy++;
+
+                JLabel gauge = new JLabel("Gauge: "+productComponent.getGauge().toString());
+                add(gauge, gbc);
+
+                gbc.gridy++;
+
+                JLabel era = new JLabel("Era: "+productComponent.getEra().toString());
+                add(era, gbc);
+
+                if (productComponent.getClass().equals(Locomotive.class)) {
+                    gbc.gridy++;
+                    JLabel priceBracket = new JLabel("Price Bracket: "+((Locomotive) productComponent).getPriceBracket().toString());
+                    add(priceBracket, gbc);
+                }
+
+                if (productComponent.getClass().equals(Track.class)) {
+                    gbc.gridy++;
+                    JLabel curvature = new JLabel("Curvature: "+((Track) productComponent).getCurvature().toString());
+                    add(curvature, gbc);
+                }
+
+                if (productComponent.getClass().equals(Controller.class)) {
+                    gbc.gridy++;
+                    JLabel controllerType = new JLabel("Controller Type: "+((Controller) productComponent).getControlType().toString());
+                    add(controllerType, gbc);
+                }
+
+                JPanel quantityPanel = new JPanel();
+                quantityPanel.setLayout(new BorderLayout());
+
+                JLabel quantityLabel = new JLabel("Quantity: ");
+                quantityLabel.setHorizontalAlignment(SwingConstants.RIGHT);
+                quantityBox = new JTextField();
+                quantityBox.setPreferredSize(new Dimension(30, 24));
+                quantityPanel.add(quantityLabel, BorderLayout.CENTER);
+                quantityPanel.add(quantityBox, BorderLayout.EAST);
+
+                gbc.gridy++;
+                add(quantityPanel, gbc);
+
+                JButton addToCardBtn = new JButton("Add to Cart");
+
+                gbc.gridx = 1;
+                add(addToCardBtn, gbc);
+            }
+        } catch (SQLException e) {
+            add(new JLabel("Catastrophic database failure oops"));
+        }
 
     }
 }
