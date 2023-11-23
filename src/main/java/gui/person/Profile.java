@@ -4,6 +4,7 @@ import javax.swing.*;
 import java.awt.*;
 
 import db.DatabaseBridge;
+import entity.BankDetail;
 import entity.user.Person;
 import controllers.AppContext;
 
@@ -95,27 +96,16 @@ public class Profile extends JPanel{
                 gbc.fill = GridBagConstraints.NONE;
                 gbc.anchor = GridBagConstraints.CENTER;
             } else {
-                gbc.gridx = 2;
-                gbc.gridy = 8;
+                gbc.gridx = 1;
+                gbc.gridy = 7;
                 add(addBankDetailsButton, gbc);
 //                For the update button
-                gbc.gridx = 2;
-                gbc.gridy = 8;
+                gbc.gridx = 0;
+                gbc.gridy = 7;
 
                 addBankDetailsButton.addActionListener(e -> {
-//                    String cardName = this.cardName.getText();
-//                    String cardNumber = this.cardNumber.getText();
-//                    String expiryDate = this.expiryDate.getText();
-//                    String securityCode = this.securityCode.getText();
-//                    try {
-//                        db.openConnection();
-//                        db.insertBankDetails(cardName, cardNumber, expiryDate, securityCode);
-//                        db.closeConnection();
-//                    } catch (Exception exception) {
-//                        System.out.println(exception.getMessage());
-//                    } finally {
-//                        db.closeConnection();
-//                    }
+                    System.out.println("Add bank details button clicked");
+                    BankDetail bankDetail = BankDetail.getBankDetailsFromUser();
                 });
             }
             add(updateButton, gbc);
