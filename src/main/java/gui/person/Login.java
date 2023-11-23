@@ -39,6 +39,7 @@ public class Login extends JPanel implements TabbedGUIContainer.TabPanel {
         password = new JPasswordField (5);
         password.setText("password123");
 
+
         //adjust size and set layout
 //        setPreferredSize (new Dimension (483, 425));
         setLayout (null);
