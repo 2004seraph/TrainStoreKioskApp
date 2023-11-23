@@ -39,6 +39,9 @@ public class StockManagementScreen extends JPanel {
     }
 
     public StockManagementScreen() {
+        String[] columns = new String[]{"Product", "Stock"};
+//        JTable jt = new JTable()
+
         try {
             DatabaseBridge.instance().openConnection();
             ResultSet products = Product.getAllProducts();

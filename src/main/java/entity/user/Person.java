@@ -28,7 +28,7 @@ public class Person extends DatabaseOperation.Entity implements DatabaseRecord {
     private String password;
     private String houseNumber;
     private String postCode;
-    private int bankDetailsID;
+    private int bankDetailsID = -1;
 
     private Address address;
     private BankDetail bankDetail;
