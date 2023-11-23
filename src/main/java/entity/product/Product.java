@@ -114,6 +114,28 @@ public class Product extends DatabaseOperation.Entity implements DatabaseRecord 
         return "[Product " + productCode + " -> { Name: " + name + ", Stock: " + stockLevel + ", Price: " + price + " }]";
     }
 
+    public boolean isBoxedSet() throws SQLException {
+        try (PreparedStatement q = prepareStatement("SELECT boxSetProductCode FROM BoxedSetContent WHERE boxSetProductCode = ?")) {
+            q.setString(1, this.productCode);
+
+            return q.execute();
+        } catch (SQLException e) {
+            DatabaseBridge.databaseError("Failed to verify existence of product ["+productCode+"] in BoxedSetContent");
+            throw e;
+        }
+    }
+
+    public boolean isComponent() throws SQLException {
+        try (PreparedStatement q = prepareStatement("SELECT productCode FROM Component WHERE productCode = ?")) {
+            q.setString(1, this.productCode);
+
+            return q.execute();
+        } catch (SQLException e) {
+            DatabaseBridge.databaseError("Failed to verify existence of product ["+productCode+"] in Component");
+            throw e;
+        }
+    }
+
     public static void main(String[] args) { // FUNCTIONAL
         DatabaseOperation.setConnection(DatabaseBridge.instance());
 

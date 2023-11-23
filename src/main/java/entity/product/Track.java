@@ -8,7 +8,7 @@ public class Track extends Component {
         THIRD_RADIUS,
     }
 
-    public Track(String name, int stock, Double price, String brand, int era) {
-        super(name, stock, price, brand, era);
+    public Track(String name, int stock, Double price, String brand, int era, Gauge gauge) {
+        super(name, stock, price, brand, era, gauge);
     }
 }
