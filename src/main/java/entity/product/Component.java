@@ -23,5 +23,15 @@ public class Component extends Product{
         this.gauge = gauge;
     }
 
+    public String getBrand() {
+        return brand;
+    }
 
+    public Integer getEra() {
+        return era;
+    }
+
+    public Gauge getGauge() {
+        return gauge;
+    }
 }

@@ -195,7 +195,7 @@ public class Product extends DatabaseOperation.Entity implements DatabaseRecord 
                     q.setString(1, productCode);
 
                     ResultSet rs = q.executeQuery();
-                    if (rs == null) {
+                    if (!rs.next()) {
                         throw new Component.ComponentNotFoundException("Could not find locomotive with product code ["+productCode+"]");
                     }
 
@@ -206,10 +206,10 @@ public class Product extends DatabaseOperation.Entity implements DatabaseRecord 
                             rs.getString("brand"),
                             rs.getInt("era"),
                             Component.Gauge.valueOf(rs.getString("gauge")),
-                            Locomotive.PriceBracket.valueOf(rs.getString("priceBracket"))
+                            Locomotive.PriceBracket.get(rs.getString("priceBracket"))
                             );
                 } catch (SQLException e) {
-                    DatabaseBridge.databaseError("Failed to fetch locomotive with product code ["+productCode+"]");
+                    DatabaseBridge.databaseError("Failed to fetch locomotive with product code ["+productCode+"]", e);
                     throw e;
                 }
             case 'C':
@@ -221,7 +221,7 @@ public class Product extends DatabaseOperation.Entity implements DatabaseRecord 
                     q.setString(1, productCode);
 
                     ResultSet rs = q.executeQuery();
-                    if (rs == null) {
+                    if (!rs.next()) {
                         throw new Component.ComponentNotFoundException("Could not find controller with product code ["+productCode+"]");
                     }
 
@@ -234,7 +234,7 @@ public class Product extends DatabaseOperation.Entity implements DatabaseRecord 
                             Controller.ControlType.valueOf(rs.getString("controlType"))
                     );
                 } catch (SQLException e) {
-                    DatabaseBridge.databaseError("Failed to fetch controller with product code ["+productCode+"]");
+                    DatabaseBridge.databaseError("Failed to fetch controller with product code ["+productCode+"]", e);
                     throw e;
                 }
             case 'R':
@@ -246,7 +246,7 @@ public class Product extends DatabaseOperation.Entity implements DatabaseRecord 
                     q.setString(1, productCode);
 
                     ResultSet rs = q.executeQuery();
-                    if (rs == null) {
+                    if (!rs.next()) {
                         throw new Component.ComponentNotFoundException("Could not find track with product code ["+productCode+"]");
                     }
 
@@ -257,10 +257,10 @@ public class Product extends DatabaseOperation.Entity implements DatabaseRecord 
                             rs.getString("brand"),
                             rs.getInt("era"),
                             Component.Gauge.valueOf(rs.getString("gauge")),
-                            Track.Curvature.valueOf(rs.getString("curvature"))
+                            Track.Curvature.get(rs.getString("curvature"))
                     );
                 } catch (SQLException e) {
-                    DatabaseBridge.databaseError("Failed to fetch track with product code ["+productCode+"]");
+                    DatabaseBridge.databaseError("Failed to fetch track with product code ["+productCode+"]", e);
                     throw e;
                 }
             default:
@@ -268,7 +268,7 @@ public class Product extends DatabaseOperation.Entity implements DatabaseRecord 
                     q.setString(1, productCode);
 
                     ResultSet rs = q.executeQuery();
-                    if (rs == null) {
+                    if (!rs.next()) {
                         throw new Component.ComponentNotFoundException("Could not find component with product code ["+productCode+"]");
                     }
 
@@ -281,7 +281,7 @@ public class Product extends DatabaseOperation.Entity implements DatabaseRecord 
                             Component.Gauge.valueOf(rs.getString("gauge"))
                     );
                 } catch (SQLException e) {
-                    DatabaseBridge.databaseError("Failed to fetch component with product code ["+productCode+"]");
+                    DatabaseBridge.databaseError("Failed to fetch component with product code ["+productCode+"]", e);
                     throw e;
                 }
 
