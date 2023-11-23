@@ -1,5 +1,6 @@
 package entity.user;
 
+import db.DatabaseBridge;
 import entity.BankDetail;
 import entity.Address;
 
@@ -37,13 +38,12 @@ public final class PersonCompressed {
             if (address == null) {
                 throw new SQLException("No address found with that house number and postcode");
             }
-//            BankDetail bankDetail = BankDetail.getBankDetailsById(person.getBankDetailsId());
-            BankDetail bankDetail = null;
+            BankDetail bankDetail = BankDetail.getBankDetailsById(person.getBankDetailsId());
             return new PersonCompressed(person, address, bankDetail);
         } catch (SQLException e) {
-            throw new SQLException("Error getting personal details");
-//        } catch (InvalidKeyException e) {
-//            throw new InvalidKeyException(e.getMessage());
+            throw e;
+        } catch (InvalidKeyException e) {
+            throw new InvalidKeyException(e.getMessage());
         }
     }
 }

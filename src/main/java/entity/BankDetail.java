@@ -110,8 +110,10 @@ public class BankDetail extends DatabaseOperation.Entity implements DatabaseReco
             ResultSet rs = bankQuery.executeQuery();
 
             if (!rs.next()) {
-                throw new BankAccountNotFoundException("Failed to find bank details with id ["+id+"]");
+                return null;
+//                throw new BankAccountNotFoundException("Failed to find bank details with id ["+id+"]");
             }
+            System.out.println("Found bank details with id ["+rs.getString("cardNumber")+"]");
 
             byte[] encryptionKey = AppContext.getEncryptionKey();
             String decryptedCardNumber = Crypto.decryptString(rs.getString("cardNumber"), encryptionKey);

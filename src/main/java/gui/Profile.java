@@ -10,12 +10,14 @@ import controllers.AppContext;
 
 public class Profile extends JPanel{
 
+//    Personal Details
     private JLabel forenameLabel = new JLabel("Forename:");
     private JTextField forename = new JTextField(30);
     private JLabel surnameLabel = new JLabel("Surname:");
     private JTextField surname = new JTextField(30);
     private JLabel emailLabel = new JLabel("Email:");
     private JLabel email = new JLabel();
+//    Address
     private JLabel houseNumberLabel = new JLabel("House Number:");
     private JTextField houseNumber = new JTextField(30);
     private JLabel streetLabel = new JLabel("Street:");
@@ -24,7 +26,18 @@ public class Profile extends JPanel{
     private JTextField city = new JTextField(30);
     private JLabel postCodeLabel = new JLabel("PostCode:");
     private JTextField postCode = new JTextField(30);
+//    Bank Details
+    private JLabel cardNameLabel = new JLabel("Card Name:");
+    private JTextField cardName = new JTextField(30);
+    private JLabel cardNumberLabel = new JLabel("Card Number:");
+    private JTextField cardNumber = new JTextField(30);
+    private JLabel expiryDateLabel = new JLabel("Expiry Date:");
+    private JTextField expiryDate = new JTextField(30);
+    private JLabel securityCodeLabel = new JLabel("Security Code:");
+    private JTextField securityCode = new JTextField(30);
+//    Buttons
     private JButton updateButton = new JButton("UPDATE");
+    private JButton addBankDetailsButton = new JButton("ADD BANK DETAILS");
 
 
     public Profile() {
@@ -70,7 +83,6 @@ public class Profile extends JPanel{
             city.setText(personCompressed.getAddress().getCityName());
             postCode.setText(personCompressed.getAddress().getPostcode());
         } catch (Exception e) {
-            System.out.println("Failed to get personal details");
             System.out.println(e.getMessage());
         } finally {
             db.closeConnection();
