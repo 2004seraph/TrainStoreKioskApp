@@ -1,4 +1,4 @@
-package gui;
+package gui.person;
 
 import entity.product.*;
 import entity.product.Component;
@@ -33,7 +33,7 @@ public class ShopCard extends JPanel {
         gbl.setConstraints(this, gbc);
         setLayout(gbl);
 
-        //setBorder(BorderFactory.createLineBorder(Color.black));
+        setBorder(BorderFactory.createLineBorder(Color.black));
 
         JLabel productName = new JLabel("<html><h2>"+product.getName()+"</h2></html>");
         add(productName, gbc);
