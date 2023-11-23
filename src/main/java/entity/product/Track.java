@@ -5,7 +5,17 @@ public class Track extends Component {
         STRAIGHT,
         FIRST_RADIUS,
         SECOND_RADIUS,
-        THIRD_RADIUS,
+        THIRD_RADIUS;
+
+        public static Curvature get(String value) {
+            return switch (value) {
+                case "STRAIGHT" -> Curvature.STRAIGHT;
+                case "FIRST_RADIUS" -> Curvature.FIRST_RADIUS;
+                case "SECOND_RADIUS" -> Curvature.SECOND_RADIUS;
+                case "THIRD_RADIUS" -> Curvature.THIRD_RADIUS;
+                default -> throw new IllegalStateException("Unexpected value: " + value);
+            };
+        }
     }
 
     private Curvature curvature;
@@ -14,5 +24,9 @@ public class Track extends Component {
         super(name, stock, price, brand, era, gauge);
 
         this.curvature = curvature;
+    }
+
+    public Curvature getCurvature() {
+        return curvature;
     }
 }

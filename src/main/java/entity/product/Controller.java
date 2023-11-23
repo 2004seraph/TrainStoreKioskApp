@@ -12,4 +12,8 @@ public class Controller extends Component{
         super(name, stock, price, brand, era, Gauge.NONE);
         this.controlType = controlType;
     }
+
+    public ControlType getControlType() {
+        return controlType;
+    }
 }
