@@ -173,7 +173,8 @@ public class Product extends DatabaseOperation.Entity implements DatabaseRecord 
 
             ResultSet rs = q.executeQuery();
             while (rs.next()) {
-                db.openConnection(); // Hack because connection times-out before this can be finished sometimes
+                // This is stupid
+                db.openConnection();
                 int quantity = rs.getInt("quantity");
                 Product product = getProductByID(rs.getString("contentProductCode"));
                 if (product.isComponent()) {
@@ -183,6 +184,7 @@ public class Product extends DatabaseOperation.Entity implements DatabaseRecord 
                     BoxedSet boxedSet = product.getBoxedSet();
                     boxedSetList.add(new Pair<>(boxedSet, quantity));
                 }
+                db.closeConnection();
             }
 
             return new BoxedSet(name, stockLevel, price, componentList, boxedSetList);

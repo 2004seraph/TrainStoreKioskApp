@@ -110,6 +110,10 @@ public class ShopCard extends JPanel {
 
                 JPanel componentPanel = new JPanel();
                 JScrollPane scrollPane = new JScrollPane(componentPanel);
+                scrollPane.setMaximumSize(new Dimension(0, 70));
+                scrollPane.setMinimumSize(new Dimension(0, 70));
+                scrollPane.setPreferredSize(new Dimension(0, 70));
+                scrollPane.setVerticalScrollBar(new JScrollBar());
 
                 componentPanel.setLayout(new GridLayout(0, 1));
 
