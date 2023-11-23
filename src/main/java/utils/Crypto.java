@@ -19,7 +19,9 @@ import java.util.Base64;
 /**
  * Static utility class for abstracting hash algorithm implementation
  */
-public class Crypto {
+public final class Crypto {
+    private Crypto() {}
+
     public static void cryptoLog(String... msg) {
         System.out.print("[Utils::Crypto] ");
         for (String i : msg) {
