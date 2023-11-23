@@ -8,7 +8,11 @@ public class Track extends Component {
         THIRD_RADIUS,
     }
 
-    public Track(String name, int stock, Double price, String brand, int era, Gauge gauge) {
+    private Curvature curvature;
+
+    public Track(String name, int stock, Double price, String brand, int era, Gauge gauge, Curvature curvature) {
         super(name, stock, price, brand, era, gauge);
+
+        this.curvature = curvature;
     }
 }

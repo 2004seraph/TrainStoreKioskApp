@@ -4,6 +4,7 @@ import db.DatabaseBridge;
 import db.DatabaseOperation;
 import db.DatabaseRecord;
 
+import javax.xml.transform.Result;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -11,6 +12,12 @@ import java.util.Arrays;
 import java.util.List;
 
 public class Product extends DatabaseOperation.Entity implements DatabaseRecord {
+    public class ProductIsNotComponentException extends RuntimeException {
+        public ProductIsNotComponentException(String msg) {super(msg); }
+    }
+    public class ProductIsNotBoxedSetException extends RuntimeException {
+         public ProductIsNotBoxedSetException(String msg) {super(msg); }
+    }
 
     protected String productCode;
     protected String name;
@@ -136,21 +143,119 @@ public class Product extends DatabaseOperation.Entity implements DatabaseRecord 
         }
     }
 
-    public static void main(String[] args) { // FUNCTIONAL
-        DatabaseOperation.setConnection(DatabaseBridge.instance());
-
-        Product thing = null;
-        try {
-            openConnection();
-            thing = getProductByID("S1234");
-        } catch (SQLException e) {
-            e.printStackTrace();
-        } finally {
-            closeConnection();
+    public Component getComponent() throws SQLException {
+        if (!isComponent()) {
+            throw new ProductIsNotComponentException("Tried to get component of product ["+productCode+"]");
         }
 
-        assert thing != null;
-        System.out.println(thing);
+        // First char of product code identifies product type
+        char productTypeIdentifier = productCode.charAt(0);
+
+        switch (productTypeIdentifier) {
+            case 'L':
+                try (PreparedStatement q = prepareStatement("""
+                        SELECT brand, era, gauge, priceBracket
+                        FROM Component
+                                 LEFT OUTER JOIN Locomotive on Component.productCode = Locomotive.productCode
+                        WHERE Component.productCode = ?"""))  {
+                    q.setString(1, productCode);
+
+                    ResultSet rs = q.executeQuery();
+                    if (rs == null) {
+                        throw new Component.ComponentNotFoundException("Could not find locomotive with product code ["+productCode+"]");
+                    }
+
+                    return new Locomotive(
+                            name,
+                            stockLevel,
+                            price,
+                            rs.getString("brand"),
+                            rs.getInt("era"),
+                            Component.Gauge.valueOf(rs.getString("gauge")),
+                            Locomotive.PriceBracket.valueOf(rs.getString("priceBracket"))
+                            );
+                } catch (SQLException e) {
+                    DatabaseBridge.databaseError("Failed to fetch locomotive with product code ["+productCode+"]");
+                    throw e;
+                }
+                break;
+            case 'C':
+                try (PreparedStatement q = prepareStatement("""
+                        SELECT brand, era, gauge, controlType
+                        FROM Component
+                                 LEFT OUTER JOIN Controller on Component.productCode = Controller.productCode
+                        WHERE Component.productCode = ?"""))  {
+                    q.setString(1, productCode);
+
+                    ResultSet rs = q.executeQuery();
+                    if (rs == null) {
+                        throw new Component.ComponentNotFoundException("Could not find controller with product code ["+productCode+"]");
+                    }
+
+                    return new Controller(
+                            name,
+                            stockLevel,
+                            price,
+                            rs.getString("brand"),
+                            rs.getInt("era"),
+                            Controller.ControlType.valueOf(rs.getString("controlType"))
+                    );
+                } catch (SQLException e) {
+                    DatabaseBridge.databaseError("Failed to fetch controller with product code ["+productCode+"]");
+                    throw e;
+                }
+                break;
+            case 'R':
+                try (PreparedStatement q = prepareStatement("""
+                        SELECT brand, era, gauge, curvature
+                        FROM Component
+                                 LEFT OUTER JOIN Track on Component.productCode = Track.productCode
+                        WHERE Component.productCode = ?"""))  {
+                    q.setString(1, productCode);
+
+                    ResultSet rs = q.executeQuery();
+                    if (rs == null) {
+                        throw new Component.ComponentNotFoundException("Could not find track with product code ["+productCode+"]");
+                    }
+
+                    return new Track(
+                            name,
+                            stockLevel,
+                            price,
+                            rs.getString("brand"),
+                            rs.getInt("era"),
+                            Component.Gauge.valueOf(rs.getString("gauge")),
+                            Track.Curvature.valueOf(rs.getString("curvature"))
+                    );
+                } catch (SQLException e) {
+                    DatabaseBridge.databaseError("Failed to fetch track with product code ["+productCode+"]");
+                    throw e;
+                }
+                break;
+            default:
+                try (PreparedStatement q = prepareStatement("SELECT brand, era, gauge FROM Component WHERE productCode = ?"))  {
+                    q.setString(1, productCode);
+
+                    ResultSet rs = q.executeQuery();
+                    if (rs == null) {
+                        throw new Component.ComponentNotFoundException("Could not find component with product code ["+productCode+"]");
+                    }
+
+                    return new Component(
+                            name,
+                            stockLevel,
+                            price,
+                            rs.getString("brand"),
+                            rs.getInt("era"),
+                            Component.Gauge.valueOf(rs.getString("gauge"))
+                    );
+                } catch (SQLException e) {
+                    DatabaseBridge.databaseError("Failed to fetch component with product code ["+productCode+"]");
+                    throw e;
+                }
+                break;
+
+        }
     }
 
     @Override
