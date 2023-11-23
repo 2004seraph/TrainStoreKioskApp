@@ -131,9 +131,14 @@ public class Person extends DatabaseOperation.Entity implements DatabaseRecord {
             if (address == null) {
                 throw new SQLException("No address found with that house number and postcode");
             }
-            BankDetail bankDetail = BankDetail.getBankDetailsById(bankDetailsID);
+            try {
+                BankDetail bankDetail = BankDetail.getBankDetailsById(bankDetailsID);
+                this.bankDetail = bankDetail;
+            } catch (BankDetail.BankAccountNotFoundException e) {
+                this.bankDetail = null;
+            }
+
             this.address = address;
-            this.bankDetail = bankDetail;
         } catch (SQLException | InvalidKeyException e) {
             throw new RuntimeException(e);
         }
