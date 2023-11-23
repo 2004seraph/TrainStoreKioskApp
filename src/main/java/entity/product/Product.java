@@ -3,19 +3,21 @@ package entity.product;
 import db.DatabaseBridge;
 import db.DatabaseOperation;
 import db.DatabaseRecord;
+import org.javatuples.Pair;
 
 import javax.xml.transform.Result;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
 public class Product extends DatabaseOperation.Entity implements DatabaseRecord {
-    public class ProductIsNotComponentException extends RuntimeException {
+    public static class ProductIsNotComponentException extends RuntimeException {
         public ProductIsNotComponentException(String msg) {super(msg); }
     }
-    public class ProductIsNotBoxedSetException extends RuntimeException {
+    public static class ProductIsNotBoxedSetException extends RuntimeException {
          public ProductIsNotBoxedSetException(String msg) {super(msg); }
     }
 
@@ -143,9 +145,41 @@ public class Product extends DatabaseOperation.Entity implements DatabaseRecord 
         }
     }
 
+    public BoxedSet getBoxedSet() throws SQLException {
+        if (!isBoxedSet()) {
+            throw new ProductIsNotBoxedSetException("Tried to get boxedset of product [\" + productCode + \"]");
+        }
+
+        DatabaseBridge db = DatabaseBridge.instance();
+
+        try (PreparedStatement q = prepareStatement("SELECT contentProductCode, quantity FROM BoxedSetContent WHERE boxSetProductCode = ?")) {
+            db.openConnection();
+            q.setString(1, productCode);
+
+            List<Pair<Component, Integer>> componentList = new ArrayList<>();
+
+            ResultSet rs = q.executeQuery();
+            while (rs.next()) {
+                int quantity = rs.getInt("quantity");
+                Product product = getProductByID(rs.getString("contentProductCode"));
+                Component component = product.getComponent();
+
+                componentList.add(new Pair<>(component, quantity));
+            }
+
+            return new BoxedSet(name, stockLevel, price, componentList);
+
+        } catch (SQLException e) {
+            DatabaseBridge.databaseError("Failed to fetch boxed-set components for set ["+productCode+"]");
+            throw e;
+        }finally {
+            db.closeConnection();
+        }
+    }
+
     public Component getComponent() throws SQLException {
         if (!isComponent()) {
-            throw new ProductIsNotComponentException("Tried to get component of product ["+productCode+"]");
+            throw new ProductIsNotComponentException("Tried to get component of product [" + productCode + "]");
         }
 
         // First char of product code identifies product type

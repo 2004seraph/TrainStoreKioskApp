@@ -1,9 +1,14 @@
 package entity.product;
 
-public class BoxedSet extends Product{
-    protected Component[] component;
+import org.javatuples.Pair;
+import java.util.List;
 
-    public BoxedSet(String name, int stock, Double price) {
+public class BoxedSet extends Product{
+    // Each Pair contains the component and the quantity
+    protected List<Pair<Component, Integer>> components;
+
+    public BoxedSet(String name, int stock, Double price, List<Pair<Component, Integer>> components) {
         super(name, stock, price);
+        this.components = components;
     }
 }
