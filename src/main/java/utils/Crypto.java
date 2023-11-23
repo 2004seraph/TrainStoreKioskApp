@@ -7,6 +7,7 @@ import javax.crypto.spec.IvParameterSpec;
 import javax.crypto.spec.PBEKeySpec;
 import javax.crypto.spec.SecretKeySpec;
 import java.io.UnsupportedEncodingException;
+import java.nio.charset.StandardCharsets;
 import java.security.InvalidAlgorithmParameterException;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
@@ -29,7 +30,7 @@ public class Crypto {
     }
 
     /**
-     * Logs a nicely formatted error message concerning the db to the console
+     * Logs a nicely formatted error message concerning the crypto module to the console
      * @param extraContext This is information specific to the place the error happened, a description of what the error would mean
      * @param e This is an exception, it can be one that was caught or one you quickly instantiate yourself
      */
@@ -96,7 +97,7 @@ public class Crypto {
             Cipher cipher = Cipher.getInstance("AES/CBC/PKCS5Padding");
             cipher.init(Cipher.ENCRYPT_MODE, secretKeySpec, ivspec);
 
-            byte[] cipherText = cipher.doFinal(input.getBytes("UTF-8"));
+            byte[] cipherText = cipher.doFinal(input.getBytes(StandardCharsets.UTF_8));
             byte[] encryptedData = new byte[iv.length + cipherText.length];
             System.arraycopy(iv, 0, encryptedData, 0, iv.length);
             System.arraycopy(cipherText, 0, encryptedData, iv.length, cipherText.length);
@@ -109,10 +110,6 @@ public class Crypto {
         } catch(InvalidKeyException e) {
             cryptoError("Encryption key was invalid", e);
             throw e;
-        } catch (UnsupportedEncodingException e) {
-            // Should basically never be raised
-            cryptoError("UTF-8 Encoding is not supported on this system", e);
-            throw new RuntimeException("UTF-8 Encoding is not supported on this system");
         } catch (NoSuchPaddingException | NoSuchAlgorithmException e) {
             // Again, this one should rarely get raised
             cryptoError("AES/CBC/PKCS5Padding is not available on this system", e);
@@ -140,7 +137,7 @@ public class Crypto {
             System.arraycopy(encryptedData, 16, cipherText, 0, cipherText.length);
 
             byte[] decryptedText = cipher.doFinal(cipherText);
-            return new String(decryptedText, "UTF-8");
+            return new String(decryptedText, StandardCharsets.UTF_8);
         }catch(InvalidAlgorithmParameterException e) {
             // This should never be raised because AES is hardcoded
             cryptoError("Algorithm parameter of SecretKeySpec was invalid", e);
@@ -148,10 +145,6 @@ public class Crypto {
         } catch(InvalidKeyException e) {
             cryptoError("Encryption key was invalid", e);
             throw e;
-        } catch (UnsupportedEncodingException e) {
-            // Should basically never be raised
-            cryptoError("UTF-8 Encoding is not supported on this system", e);
-            throw new RuntimeException("UTF-8 Encoding is not supported on this system");
         } catch (NoSuchPaddingException | NoSuchAlgorithmException e) {
             // Again, this one should rarely get raised
             cryptoError("AES/CBC/PKCS5Padding is not available on this system", e);
