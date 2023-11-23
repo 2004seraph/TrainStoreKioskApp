@@ -66,14 +66,12 @@ public class Login extends JPanel implements TabbedGUIContainer.TabPanel {
 
         // this needs to be made to work with tab screen system
 
-//        reigsterLabel.addMouseListener(new MouseAdapter() {
-//            @Override
-//            public void mouseClicked(MouseEvent e) {
-//                Window w = SwingUtilities.getWindowAncestor(Login.this);
-//                w.dispose();
-//                Register.startRegister();
-//            }
-//        });
+        reigsterLabel.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                parent.switchTab("Register");
+            }
+        });
 
         loginButton.addActionListener(new ActionListener() {
             @Override

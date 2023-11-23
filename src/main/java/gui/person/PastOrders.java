@@ -1,4 +1,4 @@
-package gui;
+package gui.person;
 
 import entity.order.Order.OrderStatus;
 

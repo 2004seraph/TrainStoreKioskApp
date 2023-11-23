@@ -7,6 +7,7 @@ import entity.product.Product;
 
 import javax.swing.*;
 import java.awt.*;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.List;
 
@@ -38,7 +39,18 @@ public class StockManagementScreen extends JPanel {
     }
 
     public StockManagementScreen() {
-        add(new StockLine("S1234"));
+        try {
+            DatabaseBridge.instance().openConnection();
+            ResultSet products = Product.getAllProducts();
+            while (products.next()) {
+                System.out.println(products.getString("name"));
+            }
+
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        } finally {
+            DatabaseBridge.instance().closeConnection();
+        }
     }
 
     public static void main(String[] args) {

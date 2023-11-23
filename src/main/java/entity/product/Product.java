@@ -95,8 +95,9 @@ public class Product extends DatabaseOperation.Entity implements DatabaseRecord 
      * @return ResultSet of all products or null if there are no products
      * @throws SQLException
      */
-    public static ResultSet getProducts() throws SQLException {
-        try (PreparedStatement productsQuery = prepareStatement("SELECT * FROM Product")) {
+    public static ResultSet getAllProducts() throws SQLException {
+        try {
+            PreparedStatement productsQuery = prepareStatement("SELECT * FROM Product");
             ResultSet results = productsQuery.executeQuery();
             if (!results.next()) {
                 return null;

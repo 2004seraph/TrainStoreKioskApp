@@ -247,14 +247,4 @@ public class Register extends JPanel{
         }
         return true;
     }
-
-
-    public static void startRegister() {
-        App app = new App();
-        JFrame frame = new JFrame ("Register");
-        frame.setDefaultCloseOperation (JFrame.EXIT_ON_CLOSE);
-        frame.getContentPane().add (new Register(app));
-        frame.pack();
-        frame.setVisible (true);
-    }
 }
