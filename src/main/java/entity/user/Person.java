@@ -3,9 +3,11 @@ package entity.user;
 import db.DatabaseBridge;
 import db.DatabaseOperation;
 import db.DatabaseRecord;
+import entity.Address;
 import entity.BankDetail;
 import entity.StoreAttributes;
 
+import java.security.InvalidKeyException;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -28,7 +30,17 @@ public class Person extends DatabaseOperation.Entity implements DatabaseRecord {
     private String postCode;
     private int bankDetailsID;
 
+    private Address address;
+    private BankDetail bankDetail;
+
     private StoreAttributes.Role role = StoreAttributes.Role.USER;
+
+    public Address getAddress() {
+        return address;
+    }
+    public BankDetail getBankDetail() {
+        return bankDetail;
+    }
 
     public int getId() { return personID; }
     public StoreAttributes.Role getRole() { return role; }
@@ -305,6 +317,27 @@ public class Person extends DatabaseOperation.Entity implements DatabaseRecord {
                 bankDetailsID
         );
         return list;
+    }
+
+    public static Person getPersonalDetails(String email) throws SQLException, InvalidKeyException {
+        try{
+            Person person = Person.getPersonByEmail(email);
+            if (person == null) {
+                throw new SQLException("No person found with that email");
+            }
+            Address address = Address.getAddressById(person.getHouseNumber(), person.getPostCode());
+            if (address == null) {
+                throw new SQLException("No address found with that house number and postcode");
+            }
+            BankDetail bankDetail = BankDetail.getBankDetailsById(person.getBankDetailsId());
+            person.address = address;
+            person.bankDetail = bankDetail;
+            return person;
+        } catch (SQLException e) {
+            throw e;
+        } catch (InvalidKeyException e) {
+            throw new InvalidKeyException(e.getMessage());
+        }
     }
 }
 

@@ -5,7 +5,6 @@ import java.awt.*;
 
 import db.DatabaseBridge;
 import entity.user.Person;
-import entity.user.PersonCompressed;
 import controllers.AppContext;
 
 public class Profile extends JPanel{
@@ -74,10 +73,10 @@ public class Profile extends JPanel{
         //            TODO: HANDLE BANK DETAILS IF NULL
         try {
             db.openConnection();
-            PersonCompressed personCompressed = PersonCompressed.getPersonalDetails(person.getEmail());
-            forename.setText(personCompressed.getPerson().getForename());
-            surname.setText(personCompressed.getPerson().getSurname());
-            email.setText(personCompressed.getPerson().getEmail());
+            Person personCompressed = Person.getPersonalDetails(person.getEmail());
+            forename.setText(personCompressed.getForename());
+            surname.setText(personCompressed.getSurname());
+            email.setText(personCompressed.getEmail());
             houseNumber.setText(personCompressed.getAddress().getHouseNumber());
             street.setText(personCompressed.getAddress().getStreetName());
             city.setText(personCompressed.getAddress().getCityName());
