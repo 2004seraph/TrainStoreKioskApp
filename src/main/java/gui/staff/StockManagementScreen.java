@@ -10,13 +10,11 @@ import javax.swing.table.AbstractTableModel;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.TableCellRenderer;
 import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.text.NumberFormat;
-import java.util.Currency;
-import java.util.List;
-import java.util.Locale;
 
 import static utils.GUI.ukCurrencyFormat;
 
@@ -63,6 +61,8 @@ public class StockManagementScreen extends JPanel {
         jt.getColumnModel().getColumn(4).setCellRenderer(new DeleteCellRenderer());
         JScrollPane scrollPane = new JScrollPane(jt);
         this.add(scrollPane);
+
+        // refresh database view button
     }
 
     public static void main(String[] args) {
@@ -83,12 +83,19 @@ public class StockManagementScreen extends JPanel {
         }
     }
 
+    // https://tips4java.wordpress.com/2009/07/12/table-button-column/
     private static class DeleteCellRenderer extends JButton implements TableCellRenderer {
         public DeleteCellRenderer() {
             setOpaque(true);
         }
         public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
-            setText((value == null) ? "Modify" : value.toString());
+            setText("Delete " + row);
+            addActionListener(new ActionListener() {
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    System.out.println(row + ", " + column);
+                }
+            });
             return this;
         }
     }
@@ -126,6 +133,8 @@ public class StockManagementScreen extends JPanel {
         @Override
         public void setValueAt(Object value, int rowIndex, int columnIndex) {
             this.productData[rowIndex][columnIndex] = value;
+
+            // database command
         }
 
         @Override
