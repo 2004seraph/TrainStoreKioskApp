@@ -15,7 +15,7 @@ public class Shop extends JPanel {
         DatabaseBridge db = DatabaseBridge.instance();
         try {
             db.openConnection();
-            Product thing = Product.getProductByID("L3478");
+            Product thing = Product.getProductByID("M0000");
             ShopCard card = new ShopCard(thing);
             add(card);
         } catch (SQLException e) {

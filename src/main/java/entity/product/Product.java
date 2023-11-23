@@ -124,30 +124,42 @@ public class Product extends DatabaseOperation.Entity implements DatabaseRecord 
     }
 
     public boolean isBoxedSet() throws SQLException {
-        try (PreparedStatement q = prepareStatement("SELECT boxSetProductCode FROM BoxedSetContent WHERE boxSetProductCode = ?")) {
-            q.setString(1, this.productCode);
+//        try (PreparedStatement q = prepareStatement("SELECT boxSetProductCode FROM BoxedSetContent WHERE boxSetProductCode = ?")) {
+//            q.setString(1, this.productCode);
+//
+//            ResultSet rs = q.executeQuery();
+//            return rs.next();
+//        } catch (SQLException e) {
+//            DatabaseBridge.databaseError("Failed to verify existence of product ["+productCode+"] in BoxedSetContent");
+//            throw e;
+//        }
 
-            return q.execute();
-        } catch (SQLException e) {
-            DatabaseBridge.databaseError("Failed to verify existence of product ["+productCode+"] in BoxedSetContent");
-            throw e;
-        }
+        char productTypeIdentifier = productCode.charAt(0);
+        List<Character> componentCodes = Arrays.asList('M', 'P');
+
+        return componentCodes.contains(productTypeIdentifier);
     }
 
     public boolean isComponent() throws SQLException {
-        try (PreparedStatement q = prepareStatement("SELECT productCode FROM Component WHERE productCode = ?")) {
-            q.setString(1, this.productCode);
+//        try (PreparedStatement q = prepareStatement("SELECT productCode FROM Component WHERE productCode = ?")) {
+//            q.setString(1, this.productCode);
+//
+//            ResultSet rs = q.executeQuery();
+//            return rs.next();
+//        } catch (SQLException e) {
+//            DatabaseBridge.databaseError("Failed to verify existence of product ["+productCode+"] in Component");
+//            throw e;
+//        }
 
-            return q.execute();
-        } catch (SQLException e) {
-            DatabaseBridge.databaseError("Failed to verify existence of product ["+productCode+"] in Component");
-            throw e;
-        }
+        char productTypeIdentifier = productCode.charAt(0);
+        List<Character> componentCodes = Arrays.asList('L', 'C', 'R', 'S');
+
+        return componentCodes.contains(productTypeIdentifier);
     }
 
     public BoxedSet getBoxedSet() throws SQLException {
         if (!isBoxedSet()) {
-            throw new ProductIsNotBoxedSetException("Tried to get boxedset of product [\" + productCode + \"]");
+            throw new ProductIsNotBoxedSetException("Tried to get boxedset of product [" + productCode + "]");
         }
 
         DatabaseBridge db = DatabaseBridge.instance();
@@ -157,17 +169,23 @@ public class Product extends DatabaseOperation.Entity implements DatabaseRecord 
             q.setString(1, productCode);
 
             List<Pair<Component, Integer>> componentList = new ArrayList<>();
+            List<Pair<BoxedSet, Integer>> boxedSetList = new ArrayList<>();
 
             ResultSet rs = q.executeQuery();
             while (rs.next()) {
+                db.openConnection(); // Hack because connection times-out before this can be finished sometimes
                 int quantity = rs.getInt("quantity");
                 Product product = getProductByID(rs.getString("contentProductCode"));
-                Component component = product.getComponent();
-
-                componentList.add(new Pair<>(component, quantity));
+                if (product.isComponent()) {
+                    Component component = product.getComponent();
+                    componentList.add(new Pair<>(component, quantity));
+                } else {
+                    BoxedSet boxedSet = product.getBoxedSet();
+                    boxedSetList.add(new Pair<>(boxedSet, quantity));
+                }
             }
 
-            return new BoxedSet(name, stockLevel, price, componentList);
+            return new BoxedSet(name, stockLevel, price, componentList, boxedSetList);
 
         } catch (SQLException e) {
             DatabaseBridge.databaseError("Failed to fetch boxed-set components for set ["+productCode+"]");

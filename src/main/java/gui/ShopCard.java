@@ -2,11 +2,13 @@ package gui;
 
 import entity.product.*;
 import entity.product.Component;
+import org.javatuples.Pair;
 import utils.GUI;
 
 import javax.swing.*;
 import java.awt.*;
 import java.sql.SQLException;
+import java.util.List;
 
 public class ShopCard extends JPanel {
     GridBagConstraints gbc;
@@ -83,6 +85,49 @@ public class ShopCard extends JPanel {
                     JLabel controllerType = new JLabel("Controller Type: "+((Controller) productComponent).getControlType().toString());
                     add(controllerType, gbc);
                 }
+
+                JPanel quantityPanel = new JPanel();
+                quantityPanel.setLayout(new BorderLayout());
+
+                JLabel quantityLabel = new JLabel("Quantity: ");
+                quantityLabel.setHorizontalAlignment(SwingConstants.RIGHT);
+                quantityBox = new JTextField();
+                quantityBox.setPreferredSize(new Dimension(30, 24));
+                quantityPanel.add(quantityLabel, BorderLayout.CENTER);
+                quantityPanel.add(quantityBox, BorderLayout.EAST);
+
+                gbc.gridy++;
+                add(quantityPanel, gbc);
+
+                JButton addToCardBtn = new JButton("Add to Cart");
+
+                gbc.gridx = 1;
+                add(addToCardBtn, gbc);
+            } else {
+                BoxedSet boxedSet = product.getBoxedSet();
+                List<Pair<Component, Integer>> components = boxedSet.getComponents();
+                List<Pair<BoxedSet, Integer>> subBoxedSets = boxedSet.getBoxedSets();
+
+                JPanel componentPanel = new JPanel();
+                JScrollPane scrollPane = new JScrollPane(componentPanel);
+
+                componentPanel.setLayout(new GridLayout(0, 1));
+
+                subBoxedSets.forEach((c) -> {
+                    BoxedSet set = c.getValue0();
+                    Integer amount = c.getValue1();
+                    JLabel label = new JLabel(amount.toString()+"x "+set.getName());
+                    componentPanel.add(label);
+                });
+
+                components.forEach((c) -> {
+                    Product component = c.getValue0();
+                    Integer amount = c.getValue1();
+                    JLabel label = new JLabel(amount.toString()+"x "+component.getName());
+                    componentPanel.add(label);
+                });
+
+                add(scrollPane, gbc);
 
                 JPanel quantityPanel = new JPanel();
                 quantityPanel.setLayout(new BorderLayout());
