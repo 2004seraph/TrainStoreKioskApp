@@ -146,8 +146,7 @@ public class Register extends JPanel{
                             email.getText(),
                             passwordHash,
                             houseNumber.getText(),
-                            postCode.getText(),
-                            1 // TODO: Change this to the correct bank details ID
+                            postCode.getText()
                         );
 
                         Person.createPerson(newPerson);
