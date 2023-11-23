@@ -73,14 +73,13 @@ public class Profile extends JPanel{
         //            TODO: HANDLE BANK DETAILS IF NULL
         try {
             db.openConnection();
-            Person personCompressed = Person.getPersonalDetails(person.getEmail());
-            forename.setText(personCompressed.getForename());
-            surname.setText(personCompressed.getSurname());
-            email.setText(personCompressed.getEmail());
-            houseNumber.setText(personCompressed.getAddress().getHouseNumber());
-            street.setText(personCompressed.getAddress().getStreetName());
-            city.setText(personCompressed.getAddress().getCityName());
-            postCode.setText(personCompressed.getAddress().getPostcode());
+            forename.setText(person.getForename());
+            surname.setText(person.getSurname());
+            email.setText(person.getEmail());
+            houseNumber.setText(person.getAddress().getHouseNumber());
+            street.setText(person.getAddress().getStreetName());
+            city.setText(person.getAddress().getCityName());
+            postCode.setText(person.getAddress().getPostcode());
         } catch (Exception e) {
             System.out.println(e.getMessage());
         } finally {

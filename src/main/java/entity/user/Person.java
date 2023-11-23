@@ -125,10 +125,23 @@ public class Person extends DatabaseOperation.Entity implements DatabaseRecord {
         this.postCode =      postCode;
         this.bankDetailsID = bankDetailsID;
         this.role = role;
+
+        try{
+            Address address = Address.getAddressById(houseNumber, postCode);
+            if (address == null) {
+                throw new SQLException("No address found with that house number and postcode");
+            }
+            BankDetail bankDetail = BankDetail.getBankDetailsById(bankDetailsID);
+            this.address = address;
+            this.bankDetail = bankDetail;
+        } catch (SQLException | InvalidKeyException e) {
+            throw new RuntimeException(e);
+        }
     }
 
 
     public boolean setBankAccountID(int id) {
+        // check if that id exists
         try (PreparedStatement query = prepareStatement("SELECT cardName FROM BankDetails WHERE paymentId = ?")){
             query.setInt(1, id);
             boolean found = query.execute();
@@ -142,7 +155,6 @@ public class Person extends DatabaseOperation.Entity implements DatabaseRecord {
         } catch (BankDetail.BankAccountNotFoundException e) {
             throw new BankDetail.BankAccountNotFoundException(e.getMessage());
         }
-
 
         try (PreparedStatement update = prepareStatement("UPDATE Person UPDATE paymentId = ? WHERE PersonId = ?")) {
             update.setInt(1, id);
@@ -317,27 +329,6 @@ public class Person extends DatabaseOperation.Entity implements DatabaseRecord {
                 bankDetailsID
         );
         return list;
-    }
-
-    public static Person getPersonalDetails(String email) throws SQLException, InvalidKeyException {
-        try{
-            Person person = Person.getPersonByEmail(email);
-            if (person == null) {
-                throw new SQLException("No person found with that email");
-            }
-            Address address = Address.getAddressById(person.getHouseNumber(), person.getPostCode());
-            if (address == null) {
-                throw new SQLException("No address found with that house number and postcode");
-            }
-            BankDetail bankDetail = BankDetail.getBankDetailsById(person.getBankDetailsId());
-            person.address = address;
-            person.bankDetail = bankDetail;
-            return person;
-        } catch (SQLException e) {
-            throw e;
-        } catch (InvalidKeyException e) {
-            throw new InvalidKeyException(e.getMessage());
-        }
     }
 }
 
