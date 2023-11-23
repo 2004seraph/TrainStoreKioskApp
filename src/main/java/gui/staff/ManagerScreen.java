@@ -39,15 +39,31 @@ public class ManagerScreen extends JPanel implements TabbedGUIContainer.TabPanel
 
             roleBox.addActionListener(e -> {
                 StoreAttributes.Role newRole = StoreAttributes.Role.valueOf((String) roleBox.getSelectedItem());
+                StringBuilder sb = new StringBuilder();
+                sb.append("Are you sure you want to ");
+                if (newRole.getLevel() < person.getRole().getLevel()) {
+                    sb.append("demote ");
+                } else {
+                    sb.append("promote ");
+                }
 
-                DatabaseBridge db = DatabaseBridge.instance();
-                try {
-                    db.openConnection();
-                    Person.updateUserRole(person, newRole);
-                } catch (SQLException ex) {
-                    throw new RuntimeException(ex);
-                } finally {
-                    db.closeConnection();
+                sb.append("to ");
+                sb.append(newRole.toString());
+
+                int confirm = JOptionPane.showConfirmDialog(null, sb.toString(), "Confirm Action", JOptionPane.YES_NO_OPTION);
+
+                if (confirm == 0) {
+                    DatabaseBridge db = DatabaseBridge.instance();
+                    try {
+                        db.openConnection();
+                        Person.updateUserRole(person, newRole);
+                    } catch (SQLException ex) {
+                        throw new RuntimeException(ex);
+                    } finally {
+                        db.closeConnection();
+                    }
+                } else {
+                    roleBox.setSelectedItem(person.getRole().toString());
                 }
             });
         }
