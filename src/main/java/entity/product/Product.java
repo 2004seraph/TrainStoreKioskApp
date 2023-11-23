@@ -178,7 +178,6 @@ public class Product extends DatabaseOperation.Entity implements DatabaseRecord 
                     DatabaseBridge.databaseError("Failed to fetch locomotive with product code ["+productCode+"]");
                     throw e;
                 }
-                break;
             case 'C':
                 try (PreparedStatement q = prepareStatement("""
                         SELECT brand, era, gauge, controlType
@@ -204,7 +203,6 @@ public class Product extends DatabaseOperation.Entity implements DatabaseRecord 
                     DatabaseBridge.databaseError("Failed to fetch controller with product code ["+productCode+"]");
                     throw e;
                 }
-                break;
             case 'R':
                 try (PreparedStatement q = prepareStatement("""
                         SELECT brand, era, gauge, curvature
@@ -231,7 +229,6 @@ public class Product extends DatabaseOperation.Entity implements DatabaseRecord 
                     DatabaseBridge.databaseError("Failed to fetch track with product code ["+productCode+"]");
                     throw e;
                 }
-                break;
             default:
                 try (PreparedStatement q = prepareStatement("SELECT brand, era, gauge FROM Component WHERE productCode = ?"))  {
                     q.setString(1, productCode);
@@ -253,7 +250,6 @@ public class Product extends DatabaseOperation.Entity implements DatabaseRecord 
                     DatabaseBridge.databaseError("Failed to fetch component with product code ["+productCode+"]");
                     throw e;
                 }
-                break;
 
         }
     }
