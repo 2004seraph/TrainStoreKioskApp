@@ -37,7 +37,7 @@ public class Login extends JPanel implements TabbedGUIContainer.TabPanel {
         notAUserLabel = new JLabel ("Not a user? ");
         reigsterLabel = new JLabel ("<html><u><font color='blue'>Register Now</font></u></html>");
         password = new JPasswordField (5);
-        password.setText("Pass12345!");
+        password.setText("Naajid12345!");
 
         //adjust size and set layout
 //        setPreferredSize (new Dimension (483, 425));

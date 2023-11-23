@@ -2,6 +2,10 @@ package gui.person;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.sql.Date;
+import java.sql.SQLException;
 
 import db.DatabaseBridge;
 import entity.BankDetail;
@@ -104,8 +108,8 @@ public class Profile extends JPanel{
                 gbc.gridy = 7;
 
                 addBankDetailsButton.addActionListener(e -> {
-                    System.out.println("Add bank details button clicked");
-                    BankDetail bankDetail = BankDetail.getBankDetailsFromUser();
+                    BankDetail bankDetail = getBankDetailsFromUser();
+                    System.out.println(bankDetail.getCardName());
                 });
             }
             add(updateButton, gbc);
@@ -125,6 +129,110 @@ public class Profile extends JPanel{
         gbc.gridx = 1;
         gbc.gridy = row;
         add(textField, gbc);
+    }
+
+    /**
+     * Creates a new JFrame as a pop up that allows the user to enter their bank details
+     * @return A BankDetail object that contains the bank details entered by the user
+     */
+    public static BankDetail getBankDetailsFromUser() {
+        // Create a new JFrame
+        JFrame frame = new JFrame("Bank Details");
+        frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+        frame.setSize(500, 500);
+        frame.setLayout(new GridBagLayout());
+        GridBagConstraints gbc = new GridBagConstraints();
+        gbc.fill = GridBagConstraints.HORIZONTAL;
+        gbc.insets = new Insets(10, 10, 10, 10);
+
+        // Create the labels
+        JLabel cardNumberLabel = new JLabel("Card Number");
+        JLabel expiryDateLabel = new JLabel("Expiry Date (yyyy-mm-dd)");
+        JLabel securityCodeLabel = new JLabel("Security Code");
+
+        // Create the text fields
+        JTextField cardNumber = new JTextField(25);
+        JTextField expiryDate = new JTextField(25);
+        JTextField securityCode = new JTextField(25);
+
+        // Create the button
+        JButton submitButton = new JButton("Submit");
+
+//        Add the title
+        JLabel title = new JLabel("<html><h1>Bank Details</h1></html>");
+        gbc.gridx = 0;
+        gbc.gridy = 0;
+        gbc.gridwidth = 2;
+        gbc.fill = GridBagConstraints.HORIZONTAL;
+        gbc.anchor = GridBagConstraints.CENTER;
+        frame.add(title, gbc);
+
+        // Add the labels and text fields to the JFrame
+        gbc.fill = GridBagConstraints.NONE;
+        gbc.anchor = GridBagConstraints.WEST;
+
+        gbc.gridwidth = 1;
+
+        gbc.gridx = 0;
+        gbc.gridy = 1;
+        frame.add(cardNumberLabel, gbc);
+        gbc.gridx = 1;
+        gbc.gridy = 1;
+        frame.add(cardNumber, gbc);
+
+        gbc.gridx = 0;
+        gbc.gridy = 2;
+        frame.add(expiryDateLabel, gbc);
+        gbc.gridx = 1;
+        gbc.gridy = 2;
+        frame.add(expiryDate, gbc);
+
+        gbc.gridx = 0;
+        gbc.gridy = 3;
+        frame.add(securityCodeLabel, gbc);
+        gbc.gridx = 1;
+        gbc.gridy = 3;
+        frame.add(securityCode, gbc);
+
+        gbc.gridx = 0;
+        gbc.gridy = 4;
+        gbc.gridwidth = 2;
+        gbc.fill = GridBagConstraints.HORIZONTAL;
+        gbc.anchor = GridBagConstraints.CENTER;
+        frame.add(submitButton, gbc);
+
+        frame.setVisible(true);
+
+        // When clicking submitButton, close this window and open Register window
+        BankDetail bankDetail = null;
+        submitButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                String cardNumberInput = cardNumber.getText();
+                String expiryDateInput = expiryDate.getText();
+                String securityCodeInput = securityCode.getText();
+                try{
+                    BankDetail.validateBankDetails(cardNumberInput, expiryDateInput, securityCodeInput);
+                } catch (BankDetail.InvalidBankDetailsException exception) {
+                    JOptionPane.showMessageDialog(null, exception.getMessage());
+                }
+                Date expiryDate = Date.valueOf(expiryDateInput);
+                DatabaseBridge db = DatabaseBridge.instance();
+                try{
+                    db.openConnection();
+                    BankDetail bankDetail = BankDetail.createPaymentInfo(cardNumberInput, expiryDate, securityCodeInput);
+                    System.out.println(bankDetail.getCardName());
+                } catch (BankDetail.InvalidBankDetailsException exception) {
+                    JOptionPane.showMessageDialog(null, exception.getMessage());
+                } catch (SQLException exception) {
+                    throw new RuntimeException(exception);
+                } finally {
+                    db.closeConnection();
+                    frame.dispose();
+                }
+            }
+        });
+        return bankDetail;
     }
 
 
