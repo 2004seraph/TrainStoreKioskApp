@@ -95,8 +95,9 @@ public class Product extends DatabaseOperation.Entity implements DatabaseRecord 
      * @return ResultSet of all products or null if there are no products
      * @throws SQLException
      */
-    public static ResultSet getProducts() throws SQLException {
-        try (PreparedStatement productsQuery = prepareStatement("SELECT * FROM Product")) {
+    public static ResultSet getAllProducts() throws SQLException {
+        try {
+            PreparedStatement productsQuery = prepareStatement("SELECT * FROM Product");
             ResultSet results = productsQuery.executeQuery();
             if (!results.next()) {
                 return null;
@@ -111,6 +112,28 @@ public class Product extends DatabaseOperation.Entity implements DatabaseRecord 
     @Override
     public String toString() {
         return "[Product " + productCode + " -> { Name: " + name + ", Stock: " + stockLevel + ", Price: " + price + " }]";
+    }
+
+    public boolean isBoxedSet() throws SQLException {
+        try (PreparedStatement q = prepareStatement("SELECT boxSetProductCode FROM BoxedSetContent WHERE boxSetProductCode = ?")) {
+            q.setString(1, this.productCode);
+
+            return q.execute();
+        } catch (SQLException e) {
+            DatabaseBridge.databaseError("Failed to verify existence of product ["+productCode+"] in BoxedSetContent");
+            throw e;
+        }
+    }
+
+    public boolean isComponent() throws SQLException {
+        try (PreparedStatement q = prepareStatement("SELECT productCode FROM Component WHERE productCode = ?")) {
+            q.setString(1, this.productCode);
+
+            return q.execute();
+        } catch (SQLException e) {
+            DatabaseBridge.databaseError("Failed to verify existence of product ["+productCode+"] in Component");
+            throw e;
+        }
     }
 
     public static void main(String[] args) { // FUNCTIONAL

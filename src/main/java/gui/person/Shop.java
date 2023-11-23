@@ -1,4 +1,4 @@
-package gui;
+package gui.person;
 
 import javax.swing.*;
 

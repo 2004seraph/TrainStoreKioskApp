@@ -10,8 +10,8 @@ public class Locomotive extends Component{
 
     private PriceBracket priceBracket;
 
-    public Locomotive(String name, int stock, Double price, String brand, int era, PriceBracket priceBracket) {
-        super(name, stock, price, brand, era);
+    public Locomotive(String name, int stock, Double price, String brand, int era, Gauge gauge, PriceBracket priceBracket) {
+        super(name, stock, price, brand, era, gauge);
         this.priceBracket = priceBracket;
     }
 }

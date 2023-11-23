@@ -146,8 +146,7 @@ public class Register extends JPanel{
                             email.getText(),
                             passwordHash,
                             houseNumber.getText(),
-                            postCode.getText(),
-                            1 // TODO: Change this to the correct bank details ID
+                            postCode.getText()
                         );
 
                         Person.createPerson(newPerson);
@@ -246,15 +245,5 @@ public class Register extends JPanel{
             return false;
         }
         return true;
-    }
-
-
-    public static void startRegister() {
-        App app = new App();
-        JFrame frame = new JFrame ("Register");
-        frame.setDefaultCloseOperation (JFrame.EXIT_ON_CLOSE);
-        frame.getContentPane().add (new Register(app));
-        frame.pack();
-        frame.setVisible (true);
     }
 }

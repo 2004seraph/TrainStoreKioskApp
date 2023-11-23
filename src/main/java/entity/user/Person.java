@@ -73,7 +73,6 @@ public class Person extends DatabaseOperation.Entity implements DatabaseRecord {
      * @param password
      * @param houseNumber
      * @param postCode
-     * @param bankDetailsID
      */
     public Person(
             String forename,
@@ -81,8 +80,7 @@ public class Person extends DatabaseOperation.Entity implements DatabaseRecord {
             String email,
             String password,
             String houseNumber,
-            String postCode,
-            int bankDetailsID
+            String postCode
     ) {
         this.forename =      forename;
         this.surname =       surname;
@@ -90,7 +88,6 @@ public class Person extends DatabaseOperation.Entity implements DatabaseRecord {
         this.password =      password;
         this.houseNumber =     houseNumber;
         this.postCode =      postCode;
-        this.bankDetailsID = bankDetailsID;
     }
 
     /**
@@ -257,7 +254,6 @@ public class Person extends DatabaseOperation.Entity implements DatabaseRecord {
         try (PreparedStatement s = prepareStatement("INSERT INTO Person VALUES (default,?,?,?,?,?,?,?)", Statement.RETURN_GENERATED_KEYS);
              PreparedStatement r = prepareStatement("INSERT INTO Role VALUES (?,?)");
         ) {
-
             Object[] fields = person.getFields().toArray();
 
             s.setString(1, (String) fields[0]); // forename
