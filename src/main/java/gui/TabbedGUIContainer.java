@@ -1,4 +1,4 @@
-package gui.person;
+package gui;
 import org.javatuples.*;
 
 import javax.swing.*;

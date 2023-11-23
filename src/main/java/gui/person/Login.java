@@ -4,6 +4,7 @@ import controllers.AppContext;
 import controllers.LoginController;
 import entity.user.Person;
 import gui.App;
+import gui.TabbedGUIContainer;
 import utils.Crypto;
 
 import java.awt.event.*;

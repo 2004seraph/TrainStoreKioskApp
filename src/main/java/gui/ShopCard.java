@@ -1,4 +1,4 @@
-package gui.person;
+package gui;
 
 import javax.swing.*;
 import javax.swing.table.DefaultTableCellRenderer;

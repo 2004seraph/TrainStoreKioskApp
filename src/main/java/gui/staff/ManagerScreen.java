@@ -3,7 +3,7 @@ package gui.staff;
 import db.DatabaseBridge;
 import entity.StoreAttributes;
 import entity.user.Person;
-import gui.person.TabbedGUIContainer;
+import gui.TabbedGUIContainer;
 
 import javax.swing.*;
 import java.awt.*;
