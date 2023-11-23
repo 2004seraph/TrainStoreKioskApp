@@ -92,11 +92,11 @@ public class Login extends JPanel implements TabbedGUIContainer.TabPanel {
                 }
 
                 String pwd = String.valueOf(passwordInput);
+                AppContext.setEncryptionKey(Crypto.deriveEncryptionKey(pwd));
 
                 Person user = LoginController.authenticateUser(emailInput, pwd);
                 if (user != null) {
                     System.out.println("Successfully authenticated user");
-                    AppContext.setEncryptionKey(Crypto.deriveEncryptionKey(pwd));
                     AppContext.setCurrentUser(user);
                     app.userState(user.getRole());
                 } else {
