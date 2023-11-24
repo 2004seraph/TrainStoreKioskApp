@@ -4,18 +4,12 @@ import controllers.AppContext;
 import db.DatabaseBridge;
 import db.DatabaseOperation;
 import entity.product.Product;
-import gui.components.ButtonEditor;
-import gui.components.ButtonRenderer;
+import gui.components.ButtonColumn;
 
 import javax.swing.*;
 import javax.swing.table.AbstractTableModel;
 import javax.swing.table.DefaultTableCellRenderer;
-import javax.swing.table.DefaultTableModel;
-import javax.swing.table.TableCellRenderer;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.KeyEvent;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -62,9 +56,12 @@ public class StockManagementScreen extends JPanel {
 
         JTable jt = new JTable( new StockManagementModel(productData, columns));
         jt.getColumnModel().getColumn(2).setCellRenderer(new CurrencyCellRenderer());
-//        jt.getColumnModel().getColumn(4).setCellRenderer(new DeleteCellRenderer());
-        jt.getColumn("Delete Item").setCellRenderer(new ButtonRenderer("Delete Item"));
-        jt.getColumn("Delete Item").setCellEditor(new ButtonEditor(new JCheckBox()));
+        ButtonColumn.setButtonColumn(jt.getColumn("Delete Item"), new ButtonColumn.TextFunction() {
+            @Override
+            public String setText(int row, int column) {
+                return "Delete row: " + row;
+            }
+        });
 
         JScrollPane scrollPane = new JScrollPane(jt);
         this.add(scrollPane);
@@ -89,23 +86,6 @@ public class StockManagementScreen extends JPanel {
             super.setValue(value);
         }
     }
-
-    // https://tips4java.wordpress.com/2009/07/12/table-button-column/
-//    private static class DeleteCellRenderer extends JButton implements TableCellRenderer {
-//        public DeleteCellRenderer() {
-//            setOpaque(true);
-//        }
-//        public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
-//            setText("Delete " + row);
-//            addActionListener(new ActionListener() {
-//                @Override
-//                public void actionPerformed(ActionEvent e) {
-//                    System.out.println(row + ", " + column);
-//                }
-//            });
-//            return this;
-//        }
-//    }
 
     private static class StockManagementModel extends AbstractTableModel {
 

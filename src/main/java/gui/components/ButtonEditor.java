@@ -5,7 +5,7 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
-public class ButtonEditor extends DefaultCellEditor {
+class ButtonEditor extends DefaultCellEditor {
 
     protected JButton button;
     private String label;
@@ -36,8 +36,7 @@ public class ButtonEditor extends DefaultCellEditor {
             button.setForeground(table.getForeground());
             button.setBackground(table.getBackground());
         }
-//        label = (value == null) ? "" : value.toString();
-        button.setText("hello " + row);
+//        button.setText("hello " + row); // when clicked
         isPushed = true;
         this.row = row;
         return button;
@@ -46,8 +45,7 @@ public class ButtonEditor extends DefaultCellEditor {
     @Override
     public Object getCellEditorValue() {
         if (isPushed) {
-//            JOptionPane.showMessageDialog(button, label + ": Ouch!");
-            System.out.println("pushed editor: " + row);
+            System.out.println("pushed editor: " + row); // here is where we do thing
         }
         isPushed = false;
         return label;

@@ -5,13 +5,13 @@ import java.awt.event.*;
 import javax.swing.*;
 import javax.swing.table.*;
 
-public class ButtonRenderer extends JButton implements TableCellRenderer {
-	private String text;
+class ButtonRenderer extends JButton implements TableCellRenderer {
+	private ButtonColumn.TextFunction textFunction;
 
-	public ButtonRenderer(String text) {
+	public ButtonRenderer(ButtonColumn.TextFunction textFunction) {
 		setOpaque(true);
 
-		this.text = text;
+		this.textFunction = textFunction;
 	}
 
 	@Override
@@ -25,7 +25,7 @@ public class ButtonRenderer extends JButton implements TableCellRenderer {
 			setBackground(UIManager.getColor("Button.background"));
 		}
 
-		setText("Delete1 " + row);
+		setText(this.textFunction.setText(row, column)); // shows unclicked
 		return this;
 	}
 }

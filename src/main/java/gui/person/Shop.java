@@ -23,18 +23,16 @@ public class Shop extends JPanel {
         add(scrollPane, BorderLayout.CENTER);
 
         DatabaseBridge db = DatabaseBridge.instance();
-        int maxLoad = 3;
         ArrayList<Product> productList = new ArrayList<>();
+
+        // TO LOAD THE PRODUCTS
         try {
             db.openConnection();
             ResultSet products = Product.getAllProducts();
             assert products != null;
 
             while (products.next()) {
-//                db.openConnection(); // Le epic
                 productList.add(Product.getProductByID(products.getString(1)));
-                //contentPanel.add(new ShopCard(product));
-//                db.closeConnection();
             }
         } catch (SQLException e) {
             DatabaseBridge.databaseError("Error whilst fetching all products", e);
@@ -43,8 +41,17 @@ public class Shop extends JPanel {
             db.closeConnection();
         }
 
-        for (Product p : productList) {
-            contentPanel.add(new ShopCard(p));
+        // TO LOAD THE SATELLITE DATA AND ADD TO THE UI
+        try {
+            db.openConnection();
+            for (Product p : productList) {
+                contentPanel.add(new ShopCard(p));
+            }
+        } catch (SQLException e) {
+            DatabaseBridge.databaseError("Error whilst fetching all products", e);
+            throw new RuntimeException(e);
+        } finally {
+            db.closeConnection();
         }
     }
 }

@@ -1,5 +1,6 @@
 package gui.person;
 
+import db.DatabaseBridge;
 import entity.product.*;
 import entity.product.Component;
 import org.javatuples.Pair;
@@ -19,7 +20,7 @@ public class ShopCard extends JPanel {
     Integer quantity;
     JTextField quantityBox;
 
-    public ShopCard(Product product) {
+    public ShopCard(Product product) throws SQLException {
         this.product = product;
 
         gbc = new GridBagConstraints();
@@ -152,8 +153,7 @@ public class ShopCard extends JPanel {
                 add(addToCardBtn, gbc);
             }
         } catch (SQLException e) {
-            add(new JLabel("Catastrophic database failure oops"));
+            throw e;
         }
-
     }
 }
