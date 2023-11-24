@@ -154,6 +154,14 @@ public class TabbedGUIContainer extends JPanel {
     }
 
     /**
+     * Inserts a button into the tab menu that does not link to an actual screen
+     * @param button Your beautiful button
+     */
+    public void insertNonTabButton(JButton button) {
+        this.tabButtonList.add(button, this.tabButtonConstraints, 0);
+    }
+
+    /**
      * Adds a division in the button tab list for grouping pages
      */
     public void insertDivider() {

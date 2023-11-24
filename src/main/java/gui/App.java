@@ -59,7 +59,9 @@ public class App {
         JPanel cartPage = new Cart();
         JPanel logoutPage = new Logout();
 
-        screenController.insertTab("Logout", logoutPage);
+//        screenController.insertTab("Logout", logoutPage);
+        screenController.insertNonTabButton(new JButton("Logout"));
+
         screenController.insertTab("Cart", cartPage);
         screenController.insertTab("Profile", profilePage);
         screenController.insertTab("My Orders", ordersPage);
