@@ -153,7 +153,7 @@ public class BankDetail extends DatabaseOperation.Entity implements DatabaseReco
         }
     }
 
-    public static boolean validateBankDetails(String cardNumber, String expiryDate, String securityCode)
+    public static void validateBankDetails(String cardNumber, String expiryDate, String securityCode)
             throws InvalidBankDetailsException{
         if (cardNumber == null || expiryDate == null || securityCode == null) {
             throw new InvalidBankDetailsException("Please enter a valid card number, expiry date and security code");
@@ -172,7 +172,6 @@ public class BankDetail extends DatabaseOperation.Entity implements DatabaseReco
         if (securityCode.length() != 3) {
             throw new InvalidBankDetailsException("Security code was an invalid length ["+securityCode+"]");
         }
-        return true;
     }
 
 
