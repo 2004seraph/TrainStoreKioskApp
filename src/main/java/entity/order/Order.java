@@ -3,6 +3,7 @@ package entity.order;
 import db.DatabaseBridge;
 import db.DatabaseOperation;
 import db.DatabaseRecord;
+import entity.product.Product;
 
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -12,6 +13,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
+import java.util.stream.Stream;
 
 public class Order extends DatabaseOperation.Entity implements DatabaseRecord {
     public static class OrderNotFoundException extends RuntimeException {
@@ -44,6 +46,13 @@ public class Order extends DatabaseOperation.Entity implements DatabaseRecord {
         return items;
     }
 
+    public void setStatus(OrderStatus status) {
+        this.status = status;
+    }
+
+    public OrderStatus getStatus() {
+        return this.status;
+    }
 
     public Order(Integer customerId) {
         this.customerId = customerId;
@@ -158,7 +167,7 @@ public class Order extends DatabaseOperation.Entity implements DatabaseRecord {
 
     public static boolean createOrder(Order order) throws SQLException {
         setAutoCommit(false);
-        int id = -1;
+        int id;
 
         try (PreparedStatement s = prepareStatement("INSERT INTO Order VALUES (default,?,?,?)", Statement.RETURN_GENERATED_KEYS);
              PreparedStatement r = prepareStatement("INSERT INTO OrderLine VALUES (?,?,?)");
@@ -179,11 +188,12 @@ public class Order extends DatabaseOperation.Entity implements DatabaseRecord {
                 throw new InternalError("Failed to insert into Order table");
             }
 
+            int finalId = id;
             order.getItemsList().forEach((item) -> {
                 Object[] olFields = item.getFields().toArray();
 
                 try {
-                    r.setInt(1, (Integer) olFields[0]);
+                    r.setInt(1, finalId);
                     r.setString(2, olFields[1].toString());
                     r.setInt(3, (Integer) olFields[2]);
                     r.executeUpdate();
@@ -237,6 +247,30 @@ public class Order extends DatabaseOperation.Entity implements DatabaseRecord {
         }
     }
 
+    public void addItem(Product product, Integer amount) {
+        OrderLine ol = new OrderLine(orderId, product.getProductCode(), amount);
+        ol.setItem(product);
+
+        items.add(ol);
+    }
+
+    public Double getTotalCost() {
+        if (items.isEmpty()) {
+            return 0.00;
+        }
+
+        Double total = 0.0;
+        try {
+            for (OrderLine line : items) {
+                total += line.getItem().getPrice();
+            }
+        } catch (SQLException e) {
+            DatabaseBridge.databaseError("Failed to get product whilst tallying total cost", e);
+            throw new RuntimeException(e);
+        }
+
+        return total;
+    }
 
     public List<Object> getFields() {
         List<Object> list = Arrays.asList(

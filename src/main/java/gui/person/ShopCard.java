@@ -1,14 +1,19 @@
-package gui;
+package gui.person;
 
+import controllers.OrderController;
 import entity.product.*;
 import entity.product.Component;
+import gui.TabbedGUIContainer;
+import org.javatuples.Pair;
 import utils.GUI;
 
 import javax.swing.*;
 import java.awt.*;
 import java.sql.SQLException;
+import java.util.List;
 
 public class ShopCard extends JPanel {
+    private final JButton addToCardBtn;
     GridBagConstraints gbc;
     GridBagLayout gbl;
 
@@ -17,7 +22,7 @@ public class ShopCard extends JPanel {
     Integer quantity;
     JTextField quantityBox;
 
-    public ShopCard(Product product) {
+    public ShopCard(Product product) throws SQLException {
         this.product = product;
 
         gbc = new GridBagConstraints();
@@ -31,7 +36,7 @@ public class ShopCard extends JPanel {
         gbl.setConstraints(this, gbc);
         setLayout(gbl);
 
-        //setBorder(BorderFactory.createLineBorder(Color.black));
+        setBorder(BorderFactory.createLineBorder(Color.black));
 
         JLabel productName = new JLabel("<html><h2>"+product.getName()+"</h2></html>");
         add(productName, gbc);
@@ -96,15 +101,61 @@ public class ShopCard extends JPanel {
 
                 gbc.gridy++;
                 add(quantityPanel, gbc);
+            } else {
+                BoxedSet boxedSet = product.getBoxedSet();
+                List<Pair<Component, Integer>> components = boxedSet.getComponents();
+                List<Pair<BoxedSet, Integer>> subBoxedSets = boxedSet.getBoxedSets();
 
-                JButton addToCardBtn = new JButton("Add to Cart");
+                JPanel componentPanel = new JPanel();
+                JScrollPane scrollPane = new JScrollPane(componentPanel);
+                scrollPane.setMaximumSize(new Dimension(0, 70));
+                scrollPane.setMinimumSize(new Dimension(0, 70));
+                scrollPane.setPreferredSize(new Dimension(0, 70));
+                scrollPane.setVerticalScrollBar(new JScrollBar());
 
-                gbc.gridx = 1;
-                add(addToCardBtn, gbc);
+                componentPanel.setLayout(new GridLayout(0, 1));
+
+                subBoxedSets.forEach((c) -> {
+                    BoxedSet set = c.getValue0();
+                    Integer amount = c.getValue1();
+                    JLabel label = new JLabel(amount.toString()+"x "+set.getName());
+                    componentPanel.add(label);
+                });
+
+                components.forEach((c) -> {
+                    Product component = c.getValue0();
+                    Integer amount = c.getValue1();
+                    JLabel label = new JLabel(amount.toString()+"x "+component.getName());
+                    componentPanel.add(label);
+                });
+
+                add(scrollPane, gbc);
+
+                JPanel quantityPanel = new JPanel();
+                quantityPanel.setLayout(new BorderLayout());
+
+                JLabel quantityLabel = new JLabel("Quantity: ");
+                quantityLabel.setHorizontalAlignment(SwingConstants.RIGHT);
+                quantityBox = new JTextField();
+                quantityBox.setPreferredSize(new Dimension(30, 24));
+                quantityPanel.add(quantityLabel, BorderLayout.CENTER);
+                quantityPanel.add(quantityBox, BorderLayout.EAST);
+
+                gbc.gridy++;
+                add(quantityPanel, gbc);
             }
         } catch (SQLException e) {
-            add(new JLabel("Catastrophic database failure oops"));
+            throw e;
         }
 
+        addToCardBtn = new JButton("Add to Cart");
+
+        gbc.gridx = 1;
+        add(addToCardBtn, gbc);
+
+        addToCardBtn.addActionListener((e) -> {
+            quantity = Integer.valueOf(quantityBox.getText());
+            OrderController.currentOrder.addItem(product, quantity);
+        });
     }
 }

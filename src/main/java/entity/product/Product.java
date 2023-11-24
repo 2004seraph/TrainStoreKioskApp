@@ -79,7 +79,8 @@ public class Product extends DatabaseOperation.Entity implements DatabaseRecord 
      * @throws SQLException
      */
     public static Product getProductByID(String productCode) throws SQLException {
-        try (PreparedStatement query = prepareStatement("SELECT * FROM Product WHERE productCode = ?")) {
+        try {
+            PreparedStatement query = prepareStatement("SELECT * FROM Product WHERE productCode = ?");
             query.setString(1, productCode);
 
             ResultSet res = query.executeQuery();
@@ -95,7 +96,7 @@ public class Product extends DatabaseOperation.Entity implements DatabaseRecord 
             }
         } catch (SQLException e) {
             DatabaseBridge.databaseError("Failed to update stock with product code ["+productCode+"]", e);
-            throw e;
+            throw new RuntimeException(e);
         }
     }
 
@@ -123,57 +124,51 @@ public class Product extends DatabaseOperation.Entity implements DatabaseRecord 
         return "[Product " + productCode + " -> { Name: " + name + ", Stock: " + stockLevel + ", Price: " + price + " }]";
     }
 
-    public boolean isBoxedSet() throws SQLException {
-        try (PreparedStatement q = prepareStatement("SELECT boxSetProductCode FROM BoxedSetContent WHERE boxSetProductCode = ?")) {
-            q.setString(1, this.productCode);
+    public boolean isBoxedSet() {
+        char productTypeIdentifier = productCode.charAt(0);
+        List<Character> componentCodes = Arrays.asList('M', 'P');
 
-            return q.execute();
-        } catch (SQLException e) {
-            DatabaseBridge.databaseError("Failed to verify existence of product ["+productCode+"] in BoxedSetContent");
-            throw e;
-        }
+        return componentCodes.contains(productTypeIdentifier);
     }
 
     public boolean isComponent() throws SQLException {
-        try (PreparedStatement q = prepareStatement("SELECT productCode FROM Component WHERE productCode = ?")) {
-            q.setString(1, this.productCode);
+        char productTypeIdentifier = productCode.charAt(0);
+        List<Character> componentCodes = Arrays.asList('L', 'C', 'R', 'S');
 
-            return q.execute();
-        } catch (SQLException e) {
-            DatabaseBridge.databaseError("Failed to verify existence of product ["+productCode+"] in Component");
-            throw e;
-        }
+        return componentCodes.contains(productTypeIdentifier);
     }
 
     public BoxedSet getBoxedSet() throws SQLException {
         if (!isBoxedSet()) {
-            throw new ProductIsNotBoxedSetException("Tried to get boxedset of product [\" + productCode + \"]");
+            throw new ProductIsNotBoxedSetException("Tried to get boxedset of product [" + productCode + "]");
         }
 
-        DatabaseBridge db = DatabaseBridge.instance();
-
-        try (PreparedStatement q = prepareStatement("SELECT contentProductCode, quantity FROM BoxedSetContent WHERE boxSetProductCode = ?")) {
-            db.openConnection();
+        try {
+            PreparedStatement q = prepareStatement("SELECT contentProductCode, quantity FROM BoxedSetContent WHERE boxSetProductCode = ?");
             q.setString(1, productCode);
 
             List<Pair<Component, Integer>> componentList = new ArrayList<>();
+            List<Pair<BoxedSet, Integer>> boxedSetList = new ArrayList<>();
 
             ResultSet rs = q.executeQuery();
             while (rs.next()) {
+                // This is stupid
                 int quantity = rs.getInt("quantity");
                 Product product = getProductByID(rs.getString("contentProductCode"));
-                Component component = product.getComponent();
-
-                componentList.add(new Pair<>(component, quantity));
+                if (product.isComponent()) {
+                    Component component = product.getComponent();
+                    componentList.add(new Pair<>(component, quantity));
+                } else {
+                    BoxedSet boxedSet = product.getBoxedSet();
+                    boxedSetList.add(new Pair<>(boxedSet, quantity));
+                }
             }
 
-            return new BoxedSet(name, stockLevel, price, componentList);
+            return new BoxedSet(name, stockLevel, price, componentList, boxedSetList);
 
         } catch (SQLException e) {
             DatabaseBridge.databaseError("Failed to fetch boxed-set components for set ["+productCode+"]");
             throw e;
-        }finally {
-            db.closeConnection();
         }
     }
 
@@ -187,11 +182,12 @@ public class Product extends DatabaseOperation.Entity implements DatabaseRecord 
 
         switch (productTypeIdentifier) {
             case 'L':
-                try (PreparedStatement q = prepareStatement("""
+                try {
+                    PreparedStatement q = prepareStatement("""
                         SELECT brand, era, gauge, priceBracket
                         FROM Component
                                  LEFT OUTER JOIN Locomotive on Component.productCode = Locomotive.productCode
-                        WHERE Component.productCode = ?"""))  {
+                        WHERE Component.productCode = ?""");
                     q.setString(1, productCode);
 
                     ResultSet rs = q.executeQuery();
@@ -213,11 +209,12 @@ public class Product extends DatabaseOperation.Entity implements DatabaseRecord 
                     throw e;
                 }
             case 'C':
-                try (PreparedStatement q = prepareStatement("""
+                try {
+                    PreparedStatement q = prepareStatement("""
                         SELECT brand, era, gauge, controlType
                         FROM Component
                                  LEFT OUTER JOIN Controller on Component.productCode = Controller.productCode
-                        WHERE Component.productCode = ?"""))  {
+                        WHERE Component.productCode = ?""");
                     q.setString(1, productCode);
 
                     ResultSet rs = q.executeQuery();
@@ -238,11 +235,12 @@ public class Product extends DatabaseOperation.Entity implements DatabaseRecord 
                     throw e;
                 }
             case 'R':
-                try (PreparedStatement q = prepareStatement("""
+                try {
+                    PreparedStatement q = prepareStatement("""
                         SELECT brand, era, gauge, curvature
                         FROM Component
                                  LEFT OUTER JOIN Track on Component.productCode = Track.productCode
-                        WHERE Component.productCode = ?"""))  {
+                        WHERE Component.productCode = ?""");
                     q.setString(1, productCode);
 
                     ResultSet rs = q.executeQuery();
@@ -264,7 +262,8 @@ public class Product extends DatabaseOperation.Entity implements DatabaseRecord 
                     throw e;
                 }
             default:
-                try (PreparedStatement q = prepareStatement("SELECT brand, era, gauge FROM Component WHERE productCode = ?"))  {
+                try {
+                    PreparedStatement q = prepareStatement("SELECT brand, era, gauge FROM Component WHERE productCode = ?");
                     q.setString(1, productCode);
 
                     ResultSet rs = q.executeQuery();

@@ -4,7 +4,7 @@ import controllers.AppContext;
 import entity.StoreAttributes;
 import gui.person.*;
 import gui.staff.ManagerScreen;
-import gui.staff.StockManagementScreen;
+import gui.staff.stock.StockManagementScreen;
 
 import javax.swing.*;
 
