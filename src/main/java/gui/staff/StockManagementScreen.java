@@ -5,16 +5,14 @@ import db.DatabaseBridge;
 import db.DatabaseOperation;
 import entity.product.Product;
 import gui.components.ButtonColumn;
+import gui.components.CurrencyCellRenderer;
 
 import javax.swing.*;
 import javax.swing.table.AbstractTableModel;
-import javax.swing.table.DefaultTableCellRenderer;
 import java.awt.*;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-
-import static utils.GUI.ukCurrencyFormat;
 
 public class StockManagementScreen extends JPanel {
     private final String[] columns = new String[]{"Code", "Product", "Price Per Unit", "Stock", "Delete Item"};
@@ -54,12 +52,17 @@ public class StockManagementScreen extends JPanel {
 
         setLayout(new GridLayout());
 
-        JTable jt = new JTable( new StockManagementModel(productData, columns));
+        JTable jt = new JTable(new StockManagementModel(productData, columns));
         jt.getColumnModel().getColumn(2).setCellRenderer(new CurrencyCellRenderer());
         ButtonColumn.setButtonColumn(jt.getColumn("Delete Item"), new ButtonColumn.TextFunction() {
             @Override
             public String setText(int row, int column) {
-                return "Delete row: " + row;
+                return "Delete";
+            }
+        }, new ButtonColumn.ActionFunction() {
+            @Override
+            public void onClick(int row, int column) {
+                System.out.println("pushed editor: " + row);
             }
         });
 
@@ -74,17 +77,6 @@ public class StockManagementScreen extends JPanel {
         JFrame win = AppContext.getWindow();
         win.add(new StockManagementScreen());
         win.setVisible(true);
-    }
-
-    private static class CurrencyCellRenderer extends DefaultTableCellRenderer {
-        @Override
-        public void setValue(Object value)
-        {
-            if (value != null) {
-                value = ukCurrencyFormat.format((Double)value);
-            }
-            super.setValue(value);
-        }
     }
 
     private static class StockManagementModel extends AbstractTableModel {
@@ -119,9 +111,35 @@ public class StockManagementScreen extends JPanel {
 
         @Override
         public void setValueAt(Object value, int rowIndex, int columnIndex) {
-            this.productData[rowIndex][columnIndex] = value;
+            DatabaseBridge db = DatabaseBridge.instance();
+            PreparedStatement update;
+            try {
+                db.openConnection();
+                switch (columnIndex) {
+                    case 1: // name
+                        update = db.prepareStatement("UPDATE Product SET name=? WHERE productCode=?");
+                        update.setString(1, (String)value);
+                        break;
+                    case 2: // price
+                        update = db.prepareStatement("UPDATE Product SET price=? WHERE productCode=?");
+                        update.setDouble(1, (double)value);
+                        break;
+                    case 3: // stock
+                        update = db.prepareStatement("UPDATE Product SET stockLevel=? WHERE productCode=?");
+                        update.setInt(1, (int)value);
+                        break;
+                    default:
+                        return;
+                }
 
-            // database command
+                update.setString(2, (String)productData[rowIndex][0]);
+                update.executeUpdate();
+                this.productData[rowIndex][columnIndex] = value;
+            } catch (SQLException e) {
+                DatabaseBridge.databaseError("Could not edit stock", e);
+            } finally {
+                db.closeConnection();
+            }
         }
 
         @Override
