@@ -1,6 +1,8 @@
 package gui.person;
 
 import javax.swing.*;
+import javax.swing.border.EmptyBorder;
+import java.awt.*;
 import java.awt.event.*;
 import java.sql.SQLException;
 
@@ -9,115 +11,171 @@ import db.*;
 import entity.user.*;
 import entity.*;
 import gui.App;
+import gui.TabbedGUIContainer;
 import utils.*;
 
-public class Register extends JPanel{
-    private JLabel registerLabel;
-    private JTextField forename;
-    private JLabel forenameLabel;
-    private JLabel surnameLabel;
-    private JTextField surname;
-    private JLabel emailLabel;
-    private JTextField email;
-    private JLabel passwordLabel;
-    private JTextField password;
-    private JLabel passwordConfirmationLabel;
-    private JTextField passwordConfirmation;
-    private JLabel addressLabel;
-    private JLabel houseNumberLabel;
-    private JTextField houseNumber;
-    private JLabel streetNameLabel;
-    private JTextField streetName;
-    private JLabel cityNameLabel;
-    private JTextField cityName;
-    private JLabel postCodeLabel;
-    private JTextField postCode;
-    private JButton registerButton;
-    private JLabel alreadyAUserLabel;
-    private JLabel loginLabel;
+public class Register extends JPanel implements TabbedGUIContainer.TabPanel {
+    // only actually storing the fields we are going to use later
+    private final JTextField forename;
+    private final JTextField surname;
+    private final JTextField email;
+    private final JTextField password;
+    private final JTextField passwordConfirmation;
+    private final JTextField houseNumber;
+    private final JTextField streetName;
+    private final JTextField cityName;
+    private final JTextField postCode;
 
+    private TabbedGUIContainer parent;
+
+    private static final int inset = 120;
     private App app;
 
     public Register(App app) {
         this.app = app;
-        //construct components
-        registerLabel = new JLabel ("<html><h1>REGISTER</h1></html>");
-        forename = new JTextField (5);
-        forenameLabel = new JLabel ("Forename:");
-        surnameLabel = new JLabel ("Surname:");
-        surname = new JTextField(5);
-        emailLabel = new JLabel ("Email:");
-        email = new JTextField (5);
-        passwordLabel = new JLabel ("Password:");
-        password = new JPasswordField (5);
-        passwordConfirmationLabel = new JLabel ("Password Confirmation:");
-        passwordConfirmation = new JPasswordField (5);
-        addressLabel = new JLabel ("<html><h2>ADDRESS</h2></html>");
-        houseNumberLabel = new JLabel ("House Number:");
-        houseNumber = new JTextField (5);
-        streetNameLabel = new JLabel ("Street Name:");
-        streetName = new JTextField (5);
-        cityNameLabel = new JLabel ("City Name:");
-        cityName = new JTextField (5);
-        postCodeLabel = new JLabel ("PostCode:");
-        postCode = new JTextField (5);
-        registerButton = new JButton ("Register");
-        alreadyAUserLabel = new JLabel ("Already a user?");
-        loginLabel = new JLabel ("<html><u><font color='blue'>Login</font></u></html>");
 
-        //adjust size and set layout
-//        setPreferredSize (new Dimension (752, 649));
-        setLayout (null);
+        setBorder(new EmptyBorder(inset, inset, inset, inset));
+
+        //construct components
+        JLabel registerLabel = new JLabel("<html><h1>Register a new account</h1></html>");
+        forename = new JTextField ();
+        JLabel forenameLabel = new JLabel("Forename");
+        JLabel surnameLabel = new JLabel("Surname");
+        surname = new JTextField(5);
+        JLabel emailLabel = new JLabel("Email");
+        email = new JTextField (5);
+        JLabel passwordLabel = new JLabel("Password");
+        password = new JPasswordField (5);
+        JLabel passwordConfirmationLabel = new JLabel("Password Confirmation");
+        passwordConfirmation = new JPasswordField (5);
+        JLabel addressLabel = new JLabel("<html><h2>Address</h2></html>");
+        JLabel houseNumberLabel = new JLabel("House Number");
+        houseNumber = new JTextField (5);
+        JLabel streetNameLabel = new JLabel("Street Name");
+        streetName = new JTextField (5);
+        JLabel cityNameLabel = new JLabel("City Name");
+        cityName = new JTextField (5);
+        JLabel postCodeLabel = new JLabel("PostCode");
+        postCode = new JTextField (5);
+        JButton registerButton = new JButton("Create Account");
+        JLabel loginLabel = new JLabel("<html><u><font color='blue'>Login</font></u></html>");
+
+        // using an actual layout manager instead of setting everything manually
+        setLayout (new GridBagLayout());
+        GridBagConstraints gbc = new GridBagConstraints();
+        gbc.fill = GridBagConstraints.BOTH;
+        gbc.weightx = 1;
+        gbc.weighty = 0.001;
+        gbc.gridx = 0;
+        gbc.gridy = 0;
 
         //add components
-        add (registerLabel);
-        add (forename);
-        add (forenameLabel);
-        add (surnameLabel);
-        add (surname);
-        add (emailLabel);
-        add (email);
-        add (passwordLabel);
-        add (password);
-        add (passwordConfirmationLabel);
-        add (passwordConfirmation);
-        add (addressLabel);
-        add (houseNumberLabel);
-        add (houseNumber);
-        add (streetNameLabel);
-        add (streetName);
-        add (cityNameLabel);
-        add (cityName);
-        add (postCodeLabel);
-        add (postCode);
-        add (registerButton);
-        add (alreadyAUserLabel);
-        add (loginLabel);
+        gbc.gridwidth = 2;
+        add(registerLabel, gbc);
+        gbc.gridy++;
+        gbc.gridwidth = 1;
 
-        //set component bounds (only needed by Absolute Positioning)
-        registerLabel.setBounds (318, 35, 140, 25);
-        forename.setBounds (260, 100, 220, 25);
-        forenameLabel.setBounds (260, 80, 100, 25);
-        surnameLabel.setBounds (260, 125, 100, 25);
-        surname.setBounds (260, 145, 220, 25);
-        emailLabel.setBounds (260, 170, 100, 25);
-        email.setBounds (260, 190, 220, 25);
-        passwordLabel.setBounds (260, 215, 100, 25);
-        password.setBounds (260, 235, 220, 25);
-        passwordConfirmationLabel.setBounds (260, 260, 145, 25);
-        passwordConfirmation.setBounds (260, 280, 220, 25);
-        addressLabel.setBounds (326, 319, 140, 25);
-        houseNumberLabel.setBounds (260, 360, 100, 25);
-        houseNumber.setBounds (260, 380, 220, 25);
-        streetNameLabel.setBounds (260, 405, 100, 25);
-        streetName.setBounds (260, 425, 220, 25);
-        cityNameLabel.setBounds (260, 450, 100, 25);
-        cityName.setBounds (260, 470, 220, 25);
-        postCodeLabel.setBounds (260, 500, 100, 25);
-        postCode.setBounds (260, 520, 220, 25);
-        registerButton.setBounds (260, 560, 100, 25);
-        alreadyAUserLabel.setBounds (260, 590, 95, 25);
-        loginLabel.setBounds (355, 590, 100, 25);
+        gbc.gridx = 0;
+        add(forenameLabel, gbc);
+        gbc.gridx++;
+        add(forename, gbc);
+        gbc.gridy++;
+
+        gbc.gridx = 0;
+        add(surnameLabel, gbc);
+        gbc.gridx++;
+        add(surname, gbc);
+        gbc.gridy++;
+
+        gbc.gridx = 0;
+        add(emailLabel, gbc);
+        gbc.gridx++;
+        add(email, gbc);
+        gbc.gridy++;
+
+        gbc.gridx = 0;
+        add(passwordLabel, gbc);
+        gbc.gridx++;
+        add(password, gbc);
+        gbc.gridy++;
+
+        gbc.gridx = 0;
+        add(passwordConfirmationLabel, gbc);
+        gbc.gridx++;
+        add(passwordConfirmation, gbc);
+        gbc.gridy++;
+
+        gbc.gridwidth = 2;
+        gbc.gridx = 0;
+        add(addressLabel, gbc);
+        gbc.gridwidth = 1;
+        gbc.gridy++;
+        add(houseNumberLabel, gbc);
+        gbc.gridx++;
+        add(houseNumber, gbc);
+        gbc.gridy++;
+        gbc.gridx = 0;
+        add(streetNameLabel, gbc);
+        gbc.gridx++;
+        add(streetName, gbc);
+        gbc.gridy++;
+
+        gbc.gridx = 0;
+        add(cityNameLabel, gbc);
+        gbc.gridx++;
+        add(cityName, gbc);
+        gbc.gridy++;
+
+        gbc.gridx = 0;
+        add(postCodeLabel, gbc);
+        gbc.gridx++;
+        add(postCode, gbc);
+        gbc.gridy++;
+
+        gbc.gridx = 0;
+        add(registerButton, gbc);
+        gbc.gridx++;
+        loginLabel.setBorder(new EmptyBorder(0, 7, 0, 0));
+        add (loginLabel, gbc);
+
+        // Adding a blank jpanel to make the layout nicer
+        gbc.gridx = 0;
+        gbc.gridy++;
+        gbc.weighty = 1;
+        add(new JPanel(), gbc);
+
+        loginLabel.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                parent.switchTab("Login");
+            }
+        });
+
+
+        //set component bounds (only needed by Absolute Positioning) - Do not do this
+//        registerLabel.setBounds (318, 35, 140, 25);
+//        forename.setBounds (260, 100, 220, 25);
+//        forenameLabel.setBounds (260, 80, 100, 25);
+//        surnameLabel.setBounds (260, 125, 100, 25);
+//        surname.setBounds (260, 145, 220, 25);
+//        emailLabel.setBounds (260, 170, 100, 25);
+//        email.setBounds (260, 190, 220, 25);
+//        passwordLabel.setBounds (260, 215, 100, 25);
+//        password.setBounds (260, 235, 220, 25);
+//        passwordConfirmationLabel.setBounds (260, 260, 145, 25);
+//        passwordConfirmation.setBounds (260, 280, 220, 25);
+//        addressLabel.setBounds (326, 319, 140, 25);
+//        houseNumberLabel.setBounds (260, 360, 100, 25);
+//        houseNumber.setBounds (260, 380, 220, 25);
+//        streetNameLabel.setBounds (260, 405, 100, 25);
+//        streetName.setBounds (260, 425, 220, 25);
+//        cityNameLabel.setBounds (260, 450, 100, 25);
+//        cityName.setBounds (260, 470, 220, 25);
+//        postCodeLabel.setBounds (260, 500, 100, 25);
+//        postCode.setBounds (260, 520, 220, 25);
+//        registerButton.setBounds (260, 560, 100, 25);
+//        alreadyAUserLabel.setBounds (260, 590, 95, 25);
+//        loginLabel.setBounds (355, 590, 100, 25);
 
         // When clicking registerButton validate the input, then close register window and open login window
         registerButton.addActionListener(new ActionListener() {
@@ -245,5 +303,10 @@ public class Register extends JPanel{
             return false;
         }
         return true;
+    }
+
+    @Override
+    public void setNotebookContainer(TabbedGUIContainer cont) {
+        this.parent = cont;
     }
 }

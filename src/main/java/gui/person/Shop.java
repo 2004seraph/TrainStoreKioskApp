@@ -11,12 +11,14 @@ import java.util.ArrayList;
 
 
 public class Shop extends JPanel {
+    private static final int cardSpacing = 30;
+
     public Shop() {
         this.setLayout(new BorderLayout());
         JPanel contentPanel = new JPanel();
-        GridLayout gl = new GridLayout(0, 3);
-        gl.setHgap(40);
-        gl.setVgap(40);
+        GridLayout gl = new GridLayout(0, 2);
+        gl.setHgap(cardSpacing);
+        gl.setVgap(cardSpacing);
         contentPanel.setLayout(gl);
 
         JScrollPane scrollPane = new JScrollPane(contentPanel);

@@ -8,68 +8,92 @@ import gui.App;
 import gui.TabbedGUIContainer;
 import utils.Crypto;
 
+import java.awt.*;
 import java.awt.event.*;
 import javax.swing.*;
+import javax.swing.border.EmptyBorder;
 
 public class Login extends JPanel implements TabbedGUIContainer.TabPanel {
-    private JButton loginButton;
-    private JLabel passwordLabel;
-    private JTextField email;
-    private JLabel emailLabel;
-    private JLabel loginLabel;
-    private JLabel notAUserLabel;
-    private JLabel reigsterLabel;
-    private JPasswordField password;
+    private final JTextField email;
+    private final JPasswordField password;
 
     private TabbedGUIContainer parent;
 
     private App app;
 
+    private static final int inset = 120;
+
     public Login(App ctx) {
         app = ctx;
 
+        // adds inner padding
+        setBorder(new EmptyBorder(inset, inset, inset, inset));
+
         //construct components
-        loginButton = new JButton ("Login");
-        passwordLabel = new JLabel ("Password:");
+        JLabel loginLabel = new JLabel("<html><h1>Login</h1></html>");
+
+        JLabel emailLabel = new JLabel("Email");
         email = new JTextField (5);
         email.setText("sam@sheffield.ac.uk");
-        emailLabel = new JLabel ("Email:");
-        loginLabel = new JLabel ("<html><h1>LOGIN</h1></html>");
-        notAUserLabel = new JLabel ("Not a user? ");
-        reigsterLabel = new JLabel ("<html><u><font color='blue'>Register Now</font></u></html>");
+
+        JLabel passwordLabel = new JLabel("Password");
         password = new JPasswordField (5);
         password.setText("password123");
 
+        JButton loginButton = new JButton("Login");
+        JLabel registerLabel = new JLabel("<html><u><font color='blue'>Register Now</font></u></html>");
 
-        //adjust size and set layout
-//        setPreferredSize (new Dimension (483, 425));
-        setLayout (null);
+        // please do not ever set a preferred height or width for screens, it ruins the app's responsive design
+
+        // using an actual layout manager instead of setting everything manually
+        setLayout (new GridBagLayout());
+        GridBagConstraints gbc = new GridBagConstraints();
+        gbc.fill = GridBagConstraints.BOTH;
+        gbc.weightx = 1;
+        gbc.weighty = 0.001;
+        gbc.gridx = 0;
+        gbc.gridy = 0;
+
+        gbc.gridwidth = 2;
+        add(loginLabel, gbc);
+        gbc.gridy++;
+        gbc.gridwidth = 1;
 
         //add components
-        add (loginButton);
-        add (passwordLabel);
-        add (email);
-        add (emailLabel);
-        add (loginLabel);
-        add (notAUserLabel);
-        add (reigsterLabel);
-        add (password);
+        add(emailLabel, gbc);
+        gbc.gridx++;
+        add(email, gbc);
+        gbc.gridy++;
 
-        //set component bounds (only needed by Absolute Positioning)
-        loginButton.setBounds (140, 215, 100, 25);
-        passwordLabel.setBounds (140, 155, 100, 25);
-        email.setBounds (140, 130, 200, 25);
-        emailLabel.setBounds (140, 105, 100, 25);
-        loginLabel.setBounds (210, 65, 100, 35);
-        notAUserLabel.setBounds (140, 245, 70, 20);
-        reigsterLabel.setBounds (210, 245, 100, 20);
-        password.setBounds (140, 180, 200, 25);
+        gbc.gridx = 0;
+        add(passwordLabel, gbc);
+        gbc.gridx++;
+        add(password, gbc);
+        gbc.gridy++;
 
-        // When clicking reigsterLabel, close this window and open Register window
+        gbc.gridx = 0;
+        add(loginButton, gbc);
+        gbc.gridx++;
+        registerLabel.setBorder(new EmptyBorder(0, 7, 0, 0));
+        add(registerLabel, gbc);
 
-        // this needs to be made to work with tab screen system
+        // Adding a blank jpanel to make the layout nicer
+        gbc.gridx = 0;
+        gbc.gridy++;
+        gbc.weighty = 1;
+        add(new JPanel(), gbc);
 
-        reigsterLabel.addMouseListener(new MouseAdapter() {
+        //set component bounds (only needed by Absolute Positioning) - Please never do this again
+//        loginButton.setBounds (140, 215, 100, 25);
+//        passwordLabel.setBounds (140, 155, 100, 25);
+//        email.setBounds (140, 130, 200, 25); - Please never do this again
+//        emailLabel.setBounds (140, 105, 100, 25);
+//        loginLabel.setBounds (210, 65, 100, 35);
+//        notAUserLabel.setBounds (140, 245, 70, 20); - Please never do this again
+//        reigsterLabel.setBounds (210, 245, 100, 20);
+//        password.setBounds (140, 180, 200, 25); - Please never do this again
+
+        registerLabel.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
                 parent.switchTab("Register");

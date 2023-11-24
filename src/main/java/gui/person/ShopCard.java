@@ -27,7 +27,7 @@ public class ShopCard extends JPanel {
 
         gbc = new GridBagConstraints();
         gbl = new GridBagLayout();
-        gbl.setConstraints(this, gbc);
+//        gbl.setConstraints(this, gbc);
 
         gbc.fill = GridBagConstraints.BOTH;
         gbc.gridx = 0;
