@@ -7,6 +7,7 @@ import javax.swing.*;
 import java.awt.*;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
 
 
 public class Shop extends JPanel {
@@ -22,22 +23,28 @@ public class Shop extends JPanel {
         add(scrollPane, BorderLayout.CENTER);
 
         DatabaseBridge db = DatabaseBridge.instance();
+        int maxLoad = 3;
+        ArrayList<Product> productList = new ArrayList<>();
         try {
             db.openConnection();
             ResultSet products = Product.getAllProducts();
             assert products != null;
 
             while (products.next()) {
-                db.openConnection(); // Le epic
-                Product product = Product.getProductByID(products.getString(1));
-                contentPanel.add(new ShopCard(product));
-                db.closeConnection();
+//                db.openConnection(); // Le epic
+                productList.add(Product.getProductByID(products.getString(1)));
+                //contentPanel.add(new ShopCard(product));
+//                db.closeConnection();
             }
         } catch (SQLException e) {
             DatabaseBridge.databaseError("Error whilst fetching all products", e);
             throw new RuntimeException(e);
         } finally {
             db.closeConnection();
+        }
+
+        for (Product p : productList) {
+            contentPanel.add(new ShopCard(p));
         }
     }
 }
