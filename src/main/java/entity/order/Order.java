@@ -46,6 +46,13 @@ public class Order extends DatabaseOperation.Entity implements DatabaseRecord {
         return items;
     }
 
+    public void setStatus(OrderStatus status) {
+        this.status = status;
+    }
+
+    public OrderStatus getStatus() {
+        return this.status;
+    }
 
     public Order(Integer customerId) {
         this.customerId = customerId;

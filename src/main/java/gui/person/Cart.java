@@ -112,6 +112,15 @@ public class Cart extends JPanel {
         checkoutPanel.add(totalCost);
         checkoutPanel.add(checkoutBtn);
 
+        checkoutBtn.addActionListener((e) -> {
+            boolean success = OrderController.checkout();
+            if (!success) {
+                JOptionPane.showMessageDialog(this, "Your bank account details are missing or invalid", "Something went wrong", JOptionPane.ERROR_MESSAGE);
+            } else {
+                JOptionPane.showMessageDialog(this, "Order successfully placed");
+            }
+        });
+
         contentPanel.add(checkoutPanel, gbc);
 
         revalidate();
