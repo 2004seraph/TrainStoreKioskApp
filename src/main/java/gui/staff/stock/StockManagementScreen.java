@@ -63,7 +63,7 @@ public class StockManagementScreen extends JPanel {
         this.add(viewContainer, gbc);
 
         gbc.gridy = 2;
-        gbc.weighty = 0.6;
+        gbc.weighty = 1;
         this.add(new CreateProductPanel(), gbc);
     }
 
