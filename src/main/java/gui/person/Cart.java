@@ -1,5 +1,6 @@
 package gui.person;
 
+import controllers.OrderController;
 import db.DatabaseBridge;
 import entity.order.Order;
 import entity.order.OrderLine;
@@ -68,8 +69,8 @@ public class Cart extends JPanel {
         }
     }
 
-    public Cart(Order order) {
-        this.order = order;
+    public Cart() {
+        this.order = OrderController.currentOrder;
         JPanel contentPanel = new JPanel();
         setLayout(new BorderLayout());
 
@@ -84,6 +85,7 @@ public class Cart extends JPanel {
 
         JPanel checkoutPanel = new JPanel();
         checkoutPanel.setLayout(new GridLayout(2, 0));
+        //TODO: Add checkout button
 
         order.getItemsList().forEach((ol) -> {
             gbc.gridy++;

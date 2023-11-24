@@ -57,7 +57,7 @@ public class App {
         JPanel shopPage = new Shop();
         JPanel ordersPage = new PastOrders();
         JPanel profilePage = new Profile();
-        JPanel cartPage = new Cart(OrderController.currentOrder);
+        JPanel cartPage = new Cart();
         JPanel logoutPage = new Logout();
 
         screenController.insertTab("Logout", logoutPage);

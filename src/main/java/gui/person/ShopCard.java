@@ -1,7 +1,9 @@
 package gui.person;
 
+import controllers.OrderController;
 import entity.product.*;
 import entity.product.Component;
+import gui.TabbedGUIContainer;
 import org.javatuples.Pair;
 import utils.GUI;
 
@@ -11,6 +13,7 @@ import java.sql.SQLException;
 import java.util.List;
 
 public class ShopCard extends JPanel {
+    private final JButton addToCardBtn;
     GridBagConstraints gbc;
     GridBagLayout gbl;
 
@@ -98,11 +101,6 @@ public class ShopCard extends JPanel {
 
                 gbc.gridy++;
                 add(quantityPanel, gbc);
-
-                JButton addToCardBtn = new JButton("Add to Cart");
-
-                gbc.gridx = 1;
-                add(addToCardBtn, gbc);
             } else {
                 BoxedSet boxedSet = product.getBoxedSet();
                 List<Pair<Component, Integer>> components = boxedSet.getComponents();
@@ -145,15 +143,19 @@ public class ShopCard extends JPanel {
 
                 gbc.gridy++;
                 add(quantityPanel, gbc);
-
-                JButton addToCardBtn = new JButton("Add to Cart");
-
-                gbc.gridx = 1;
-                add(addToCardBtn, gbc);
             }
         } catch (SQLException e) {
             add(new JLabel("Catastrophic database failure oops"));
         }
 
+        addToCardBtn = new JButton("Add to Cart");
+
+        gbc.gridx = 1;
+        add(addToCardBtn, gbc);
+
+        addToCardBtn.addActionListener((e) -> {
+            quantity = Integer.valueOf(quantityBox.getText());
+            OrderController.currentOrder.addItem(product, quantity);
+        });
     }
 }
