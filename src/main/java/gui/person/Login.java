@@ -2,6 +2,7 @@ package gui.person;
 
 import controllers.AppContext;
 import controllers.LoginController;
+import controllers.OrderController;
 import entity.user.Person;
 import gui.App;
 import gui.TabbedGUIContainer;
@@ -98,6 +99,7 @@ public class Login extends JPanel implements TabbedGUIContainer.TabPanel {
                 if (user != null) {
                     System.out.println("Successfully authenticated user");
                     AppContext.setCurrentUser(user);
+                    OrderController.newOrder();
                     app.userState(user.getRole());
                 } else {
                     JOptionPane.showMessageDialog(null, "Incorrect email or password");

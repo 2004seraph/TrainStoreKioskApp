@@ -1,136 +1,97 @@
 package gui.person;
 
+import controllers.OrderController;
+import db.DatabaseBridge;
+import entity.order.Order;
+import entity.order.OrderLine;
+import entity.product.Product;
+import utils.GUI;
+
 import javax.swing.*;
-import javax.swing.border.EmptyBorder;
-import javax.swing.table.DefaultTableModel;
 import java.awt.*;
-import java.text.DecimalFormat;
-import java.util.LinkedHashMap;
-import java.util.Map;
+import java.sql.SQLException;
 
 public class Cart extends JPanel {
 
-    public Cart() {
-        Map<String, CartItem> cartItems = new LinkedHashMap<>(); // Use LinkedHashMap to preserve order
-        cartItems.put("Product 1", new CartItem("Product 1", 2, "$10.99"));
-        cartItems.put("Product 2", new CartItem("Product 2", 1, "$19.99"));
-        cartItems.put("Product 3", new CartItem("Product 3", 3, "$5.99"));
-        createOrderLine(cartItems);
+    private Order order;
+
+    public class OrderItem extends JPanel {
+        OrderLine ol;
+        Product product;
+
+        JTextField quantityBox;
+        Integer quantity;
+        public OrderItem(OrderLine ol) {
+            this.ol = ol;
+            try {
+                this.product = ol.getItem();
+            } catch (SQLException e) {
+                DatabaseBridge.databaseError("Failed to get product from orderline code ["+ol.getProductCode()+"]", e);
+                throw new RuntimeException(e);
+            }
+
+            this.quantity = ol.getQuantity();
+
+            setBorder(BorderFactory.createLineBorder(Color.black));
+
+            GridBagLayout gbl = new GridBagLayout();
+            GridBagConstraints gbc = new GridBagConstraints();
+            setLayout(gbl);
+
+            gbl.setConstraints(this, gbc);
+
+            gbc.fill = GridBagConstraints.BOTH;
+            gbc.gridx = 0;
+            gbc.gridy = 0;
+
+            JLabel productName = new JLabel("<html><h2>"+product.getName() + " ("+ol.getProductCode()+")</h2></html>");
+            add(productName, gbc);
+
+            gbc.gridy = 1;
+            JLabel quantityLabel = new JLabel("Quantity: ");
+            add(quantityLabel, gbc);
+
+            //TODO: Make functional
+            gbc.gridx = 1;
+            quantityBox = new JTextField();
+            quantityBox.setPreferredSize(new Dimension(30, 24));
+            quantityBox.setText(quantity.toString());
+            add(quantityBox, gbc);
+
+            gbc.gridx = 0;
+            gbc.gridy = 2;
+            JLabel unitPrice = new JLabel("Unit Price: "+ GUI.ukCurrencyFormat.format(product.getPrice()));
+            add(unitPrice, gbc);
+
+            gbc.gridx = 1;
+            JLabel total = new JLabel("Total: "+GUI.ukCurrencyFormat.format(quantity * product.getPrice()));
+            add(total, gbc);
+        }
     }
 
-    public void createOrderLine(Map<String, CartItem> cartItems) {
-        setLayout(new BorderLayout()); // Set layout manager to BorderLayout
+    public Cart() {
+        this.order = OrderController.currentOrder;
+        JPanel contentPanel = new JPanel();
+        setLayout(new BorderLayout());
 
-        // Create a DefaultTableModel with column names and 0 rows
-        DefaultTableModel model = new DefaultTableModel(new Object[]{"Product Name", "Quantity", "Unit Price", "Total"}, 0);
+        GridBagConstraints gbc = new GridBagConstraints();
+        GridBagLayout gbl = new GridBagLayout();
 
-        // Add cart items to the table model
-        double totalPrice = 0.0;
-        for (Map.Entry<String, CartItem> entry : cartItems.entrySet()) {
-            CartItem cartItem = entry.getValue();
-            Object[] rowData = {
-                    cartItem.getProductName(),
-                    cartItem.getQuantity(),
-                    cartItem.getUnitPrice(),
-                    cartItem.getTotal()
-            };
-            model.addRow(rowData);
+        gbc.fill = GridBagConstraints.BOTH;
+        gbc.gridx = 0;
+        gbc.gridy = 0;
+        gbl.setConstraints(contentPanel, gbc);
+        contentPanel.setLayout(gbl);
 
-            // Update total price
-            totalPrice += cartItem.getTotal();
-        }
+        JPanel checkoutPanel = new JPanel();
+        checkoutPanel.setLayout(new GridLayout(2, 0));
+        //TODO: Add checkout button
 
-        // Create the JTable with the model
-        JTable cartTable = new JTable(model);
-
-        // Create a JScrollPane for scrolling
-        JScrollPane scrollPane = new JScrollPane(cartTable);
-
-        // Create a JPanel for the total price and checkout button
-        JPanel totalAndCheckoutPanel = new JPanel();
-        totalAndCheckoutPanel.setLayout(new FlowLayout());
-
-        // Create labels for total price
-        JLabel totalLabel = new JLabel("Total Price: " + formatCurrency(totalPrice));
-        totalLabel.setBorder(new EmptyBorder(5, 5, 5, 5));
-        totalAndCheckoutPanel.add(totalLabel);
-
-        // Create a Checkout button
-        JButton checkoutButton = new JButton("Checkout");
-        checkoutButton.addActionListener(e -> {
-            // Add your checkout logic here
-            System.out.println("Checkout button clicked!");
+        order.getItemsList().forEach((ol) -> {
+            gbc.gridy++;
+            contentPanel.add(new OrderItem(ol));
         });
 
-        // Add Checkout button to the totalAndCheckoutPanel
-        totalAndCheckoutPanel.add(checkoutButton);
-
-        // Add totalAndCheckoutPanel to the main panel
-        add(totalAndCheckoutPanel, BorderLayout.SOUTH);
-
-        // Set the preferred size of the JScrollPane based on the content
-        Dimension preferredSize = scrollPane.getPreferredSize();
-        scrollPane.setPreferredSize(new Dimension(preferredSize.width, preferredSize.height));
-
-        // Add the JScrollPane to the main panel
-        add(scrollPane, BorderLayout.CENTER);
-
-        JFrame frame = (JFrame) SwingUtilities.getWindowAncestor(this); // Get the parent frame
-        if (frame != null) {
-            frame.pack(); // Adjust frame size based on content
-            frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-            frame.setVisible(true);
-        }
-    }
-
-    // Helper method to format currency
-    private String formatCurrency(double amount) {
-        DecimalFormat decimalFormat = new DecimalFormat("#,##0.00");
-        return "£" + decimalFormat.format(amount);
-    }
-
-    public static void main(String[] args) {
-        // Example usage with cart items
-
-        // Show this on the screen
-        JFrame frame = new JFrame("Cart");
-        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        frame.add(new Cart());
-        frame.pack();
-        frame.setVisible(true);
-    }
-
-    // Define a CartItem class to represent a product in the cart
-    public class CartItem {
-        private String productName;
-        private int quantity;
-        private String unitPrice;
-
-        public CartItem(String productName, int quantity, String unitPrice) {
-            this.productName = productName;
-            this.quantity = quantity;
-            this.unitPrice = unitPrice;
-        }
-
-        public String getProductName() {
-            return productName;
-        }
-
-        public int getQuantity() {
-            return quantity;
-        }
-
-        public String getUnitPrice() {
-            return unitPrice;
-        }
-
-        public double getTotal() {
-            return quantity * parseUnitPrice(unitPrice);
-        }
-
-        // Helper method to parse unit price as a double
-        private static double parseUnitPrice(String unitPrice) {
-            return Double.parseDouble(unitPrice.replaceAll("[^\\d.]", ""));
-        }
+        add(contentPanel, BorderLayout.CENTER);
     }
 }
