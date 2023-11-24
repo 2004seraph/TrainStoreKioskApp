@@ -3,6 +3,7 @@ package entity.order;
 import db.DatabaseBridge;
 import db.DatabaseOperation;
 import db.DatabaseRecord;
+import entity.product.Product;
 
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -158,7 +159,7 @@ public class Order extends DatabaseOperation.Entity implements DatabaseRecord {
 
     public static boolean createOrder(Order order) throws SQLException {
         setAutoCommit(false);
-        int id = -1;
+        int id;
 
         try (PreparedStatement s = prepareStatement("INSERT INTO Order VALUES (default,?,?,?)", Statement.RETURN_GENERATED_KEYS);
              PreparedStatement r = prepareStatement("INSERT INTO OrderLine VALUES (?,?,?)");
@@ -179,11 +180,12 @@ public class Order extends DatabaseOperation.Entity implements DatabaseRecord {
                 throw new InternalError("Failed to insert into Order table");
             }
 
+            int finalId = id;
             order.getItemsList().forEach((item) -> {
                 Object[] olFields = item.getFields().toArray();
 
                 try {
-                    r.setInt(1, (Integer) olFields[0]);
+                    r.setInt(1, finalId);
                     r.setString(2, olFields[1].toString());
                     r.setInt(3, (Integer) olFields[2]);
                     r.executeUpdate();
@@ -235,6 +237,11 @@ public class Order extends DatabaseOperation.Entity implements DatabaseRecord {
             DatabaseBridge.databaseError("Failed to update order with orderId ["+orderId+"] to status ["+newStatus+"]", e);
             throw e;
         }
+    }
+
+    public void addItem(Product product, Integer amount) {
+        OrderLine ol = new OrderLine(orderId, product.getProductCode(), amount);
+        ol.setItem(product);
     }
 
 
