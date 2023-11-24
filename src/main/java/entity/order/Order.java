@@ -13,6 +13,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
+import java.util.stream.Stream;
 
 public class Order extends DatabaseOperation.Entity implements DatabaseRecord {
     public static class OrderNotFoundException extends RuntimeException {
@@ -242,8 +243,27 @@ public class Order extends DatabaseOperation.Entity implements DatabaseRecord {
     public void addItem(Product product, Integer amount) {
         OrderLine ol = new OrderLine(orderId, product.getProductCode(), amount);
         ol.setItem(product);
+
+        items.add(ol);
     }
 
+    public Double getTotalCost() {
+        if (items.isEmpty()) {
+            return 0.00;
+        }
+
+        Double total = 0.0;
+        try {
+            for (OrderLine line : items) {
+                total += line.getItem().getPrice();
+            }
+        } catch (SQLException e) {
+            DatabaseBridge.databaseError("Failed to get product whilst tallying total cost", e);
+            throw new RuntimeException(e);
+        }
+
+        return total;
+    }
 
     public List<Object> getFields() {
         List<Object> list = Arrays.asList(

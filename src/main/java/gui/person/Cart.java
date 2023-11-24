@@ -12,8 +12,8 @@ import java.awt.*;
 import java.sql.SQLException;
 
 public class Cart extends JPanel {
-
-    private Order order;
+    private final JPanel contentPanel;
+    private final GridBagConstraints gbc;
 
     public class OrderItem extends JPanel {
         OrderLine ol;
@@ -70,11 +70,10 @@ public class Cart extends JPanel {
     }
 
     public Cart() {
-        this.order = OrderController.currentOrder;
-        JPanel contentPanel = new JPanel();
+        contentPanel = new JPanel();
         setLayout(new BorderLayout());
 
-        GridBagConstraints gbc = new GridBagConstraints();
+        gbc = new GridBagConstraints();
         GridBagLayout gbl = new GridBagLayout();
 
         gbc.fill = GridBagConstraints.BOTH;
@@ -83,15 +82,39 @@ public class Cart extends JPanel {
         gbl.setConstraints(contentPanel, gbc);
         contentPanel.setLayout(gbl);
 
-        JPanel checkoutPanel = new JPanel();
-        checkoutPanel.setLayout(new GridLayout(2, 0));
-        //TODO: Add checkout button
+        add(contentPanel, BorderLayout.CENTER);
 
-        order.getItemsList().forEach((ol) -> {
+        JButton refreshCartBtn = new JButton("Refresh Cart");
+        add(refreshCartBtn, BorderLayout.NORTH);
+
+        refreshCartBtn.addActionListener((e) -> {
+            refreshCart();
+        });
+    }
+
+    public void refreshCart() {
+        contentPanel.removeAll();
+        gbc.gridx = 0;
+        gbc.gridy = 0;
+
+        OrderController.currentOrder.getItemsList().forEach((ol) -> {
             gbc.gridy++;
-            contentPanel.add(new OrderItem(ol));
+            contentPanel.add(new OrderItem(ol), gbc);
         });
 
-        add(contentPanel, BorderLayout.CENTER);
+        gbc.gridy++;
+
+        JPanel checkoutPanel = new JPanel();
+        checkoutPanel.setLayout(new GridLayout(1, 2));
+        JLabel totalCost = new JLabel("Total: "
+                + GUI.ukCurrencyFormat.format(OrderController.currentOrder.getTotalCost()));
+        JButton checkoutBtn = new JButton("Checkout");
+        checkoutPanel.add(totalCost);
+        checkoutPanel.add(checkoutBtn);
+
+        contentPanel.add(checkoutPanel, gbc);
+
+        revalidate();
+        repaint();
     }
 }
