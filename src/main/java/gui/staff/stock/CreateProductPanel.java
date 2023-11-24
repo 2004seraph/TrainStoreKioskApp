@@ -104,7 +104,7 @@ public class CreateProductPanel extends JPanel {
         gbc.gridx = 0;
         gbc.gridy = 0;
         gbc.gridwidth = 2;
-        JLabel title = new JLabel("<html><h2>Product Type</h2></html>");
+        JLabel title = new JLabel("<html><h2>UNFINISHED</h2></html>");
         title.setBorder(new EmptyBorder(0,6,0,0));
         panel.add(title, gbc);
 

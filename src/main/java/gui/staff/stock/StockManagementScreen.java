@@ -8,6 +8,7 @@ import gui.components.ButtonColumn;
 import gui.components.CurrencyCellRenderer;
 
 import javax.swing.*;
+import javax.swing.border.EmptyBorder;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -47,6 +48,25 @@ public class StockManagementScreen extends JPanel {
         gbc.weighty = 0;
         gbc.gridx = 0;
         gbc.gridy = 0;
+
+        gbc.gridwidth = 2;
+        JLabel title = new JLabel("<html><h1>Stock Management</h1></html>");
+        title.setBorder(new EmptyBorder(0, 6, 0, 0));
+        add(title, gbc);
+        gbc.gridy++;
+
+        JLabel infoLabel = new JLabel("Double click any cell to update its content and have it immediately written to the stock record.");
+        int infoInset = 7;
+        infoLabel.setBorder(new EmptyBorder(infoInset, infoInset, infoInset, infoInset));
+        add(infoLabel, gbc);
+        gbc.gridy++;
+
+        JSeparator sep = new JSeparator(SwingConstants.HORIZONTAL);
+        sep.setBorder(new EmptyBorder(0, 0, 10, 0));
+        add(sep, gbc);
+        gbc.gridwidth = 1;
+
+        gbc.gridy++;
         add(refreshButton, gbc);
 
         gbc.gridx = 1;
@@ -55,14 +75,14 @@ public class StockManagementScreen extends JPanel {
         gbc.weightx = 1;
         gbc.weighty = 0.2;
         gbc.gridx = 0;
-        gbc.gridy = 1;
+        gbc.gridy++;
         gbc.gridwidth = 2;
         viewContainer = new JPanel();
         viewContainer.setLayout(new GridLayout());
-        updateStockView();
+        createStockView(viewContainer);
         this.add(viewContainer, gbc);
 
-        gbc.gridy = 2;
+        gbc.gridy++;
         gbc.weighty = 1;
         this.add(new CreateProductPanel(), gbc);
     }
