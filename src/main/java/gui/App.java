@@ -1,6 +1,7 @@
 package gui;
 
 import controllers.AppContext;
+import controllers.OrderController;
 import entity.StoreAttributes;
 import gui.person.*;
 import gui.staff.ManagerScreen;
@@ -56,7 +57,7 @@ public class App {
         JPanel shopPage = new Shop();
         JPanel ordersPage = new PastOrders();
         JPanel profilePage = new Profile();
-        JPanel cartPage = new Cart();
+        JPanel cartPage = new Cart(OrderController.currentOrder);
         JPanel logoutPage = new Logout();
 
         screenController.insertTab("Logout", logoutPage);

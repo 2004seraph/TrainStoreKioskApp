@@ -30,6 +30,14 @@ public class OrderLine extends DatabaseOperation.Entity implements DatabaseRecor
         this.item = item;
     }
 
+    public String getProductCode() {
+        return productCode;
+    }
+
+    public Integer getQuantity() {
+        return this.quantity;
+    }
+
     public OrderLine(Integer orderId, String productCode, Integer quantity) {
         this.orderId = orderId;
         this.productCode = productCode;
