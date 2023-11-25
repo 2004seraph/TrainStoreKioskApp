@@ -4,6 +4,7 @@ import controllers.AppContext;
 import entity.StoreAttributes;
 import gui.person.*;
 import gui.staff.ManagerScreen;
+import gui.staff.order.OrderManagementScreen;
 import gui.staff.stock.StockManagementScreen;
 
 import javax.swing.*;
@@ -62,6 +63,9 @@ public class App {
             case STAFF:
                 StockManagementScreen sms = new StockManagementScreen();
                 screenController.insertTab("Stock Management", sms);
+
+                OrderManagementScreen oms = new OrderManagementScreen();
+                screenController.insertTab("Order Management", oms);
                 screenController.insertDivider();
                 break;
         }
