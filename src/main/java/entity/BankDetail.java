@@ -7,10 +7,6 @@ import db.DatabaseRecord;
 import org.apache.commons.validator.routines.checkdigit.LuhnCheckDigit;
 import utils.Crypto;
 
-import javax.swing.*;
-import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.security.InvalidKeyException;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -18,6 +14,8 @@ import java.sql.SQLException;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
+
+import static utils.Java.createDate;
 
 public class BankDetail extends DatabaseOperation.Entity implements DatabaseRecord {
     public static class BankAccountNotFoundException extends RuntimeException {
@@ -32,10 +30,10 @@ public class BankDetail extends DatabaseOperation.Entity implements DatabaseReco
         }
     }
     private int bankDetailID = -1;
-    private String cardName;
-    private String cardNumber;
-    private Date expiryDate;
-    private String securityCode;
+    private final String cardName;
+    private final String cardNumber;
+    private final Date expiryDate;
+    private final String securityCode;
 
 
     public String getCardName() {
@@ -188,7 +186,8 @@ public class BankDetail extends DatabaseOperation.Entity implements DatabaseReco
 
     public static void main(String[] args) {
         String cardNumber = "4012888888881881";
-        Date expiryDate = new Date(2024, 1, 1);
+
+        Date expiryDate = createDate(2024, 1, 1);
         String securityCode = "123";
 
         DatabaseBridge db = DatabaseBridge.instance();

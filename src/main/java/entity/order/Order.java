@@ -53,6 +53,8 @@ public class Order extends DatabaseOperation.Entity implements DatabaseRecord {
     public OrderStatus getStatus() {
         return this.status;
     }
+    public Date getDate() { return date; }
+    public int getCustomerID() { return customerId; }
 
     public Order(Integer customerId) {
         this.customerId = customerId;
@@ -66,14 +68,14 @@ public class Order extends DatabaseOperation.Entity implements DatabaseRecord {
         this.status = status;
     }
 
-    public Order(Integer orderId, Integer customerId, Date date, OrderStatus status) {
+    private Order(Integer orderId, Integer customerId, Date date, OrderStatus status) {
         this.orderId = orderId;
         this.customerId = customerId;
         this.date = date;
         this.status = status;
     }
 
-    public Order(Integer orderId, Integer customerId, Date date, OrderStatus status, List<OrderLine> items) {
+    private Order(Integer orderId, Integer customerId, Date date, OrderStatus status, List<OrderLine> items) {
         this.orderId = orderId;
         this.customerId = customerId;
         this.date = date;
@@ -87,7 +89,7 @@ public class Order extends DatabaseOperation.Entity implements DatabaseRecord {
      * @return Order entity with order lines
      * @throws SQLException
      */
-    public static Order getOrderWithOrderLine(Integer orderId) throws SQLException {
+    public static Order getOrderWithID(Integer orderId) throws SQLException {
         try (PreparedStatement findQuery = prepareStatement("SELECT * FROM Order WHERE orderId = ?")) {
             findQuery.setInt(1, orderId);
             ResultSet rs = findQuery.executeQuery();
@@ -135,18 +137,27 @@ public class Order extends DatabaseOperation.Entity implements DatabaseRecord {
 
     /**
      * Returns all orders with a given status
-     * @param status Either PENDING, CONFIRMED, FULFILLED
+     * @param statuses A variadic list of either PENDING, CONFIRMED, FULFILLED
      * @return List of orders
      * @throws SQLException
      */
-    public static List<Order> getOrdersWithStatus(Order.OrderStatus status) throws SQLException {
-        try (PreparedStatement orderQuery = prepareStatement("SELECT * FROM Order WHERE status = ?")) {
-            orderQuery.setString(1, status.toString());
+    public static List<Order> getOrdersWithStatus(Order.OrderStatus... statuses) throws SQLException {
+        try {
+            // build a query with all the status's the user wants to find
+            StringBuilder statementText = new StringBuilder("SELECT * FROM `Order` WHERE");
+            statementText.append(" status = ? OR".repeat(statuses.length));
+            statementText.delete(statementText.lastIndexOf(" OR"), statementText.length());
+            System.out.println(statementText);
+
+            // populate said query
+            PreparedStatement orderQuery = prepareStatement(statementText.toString());
+            int i = 1;
+            for (OrderStatus s : statuses) {
+                orderQuery.setString(i, s.toString());
+                i++;
+            }
 
             ResultSet rs = orderQuery.executeQuery();
-            if (!rs.next()) {
-                return null;
-            }
 
             List<Order> orders = new ArrayList<Order>();
             while (rs.next()) {
@@ -159,13 +170,13 @@ public class Order extends DatabaseOperation.Entity implements DatabaseRecord {
             }
 
             return orders;
-        }catch (SQLException e) {
-            DatabaseBridge.databaseError("Failed to fetch orders with status ["+status+"]", e);
+        } catch (SQLException e) {
+            DatabaseBridge.databaseError("Failed to fetch orders with statuses: " + Arrays.toString(statuses), e);
             throw e;
         }
     }
 
-    public static boolean createOrder(Order order) throws SQLException {
+    public static void createOrder(Order order) throws SQLException {
         setAutoCommit(false);
         int id;
 
@@ -211,8 +222,6 @@ public class Order extends DatabaseOperation.Entity implements DatabaseRecord {
         } finally {
             setAutoCommit(true);
         }
-
-        return true;
     }
 
     /**

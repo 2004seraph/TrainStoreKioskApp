@@ -72,10 +72,10 @@ public class Login extends JPanel implements TabbedGUIContainer.TabPanel {
         gbc.gridy++;
 
         gbc.gridx = 0;
-        add(loginButton, gbc);
-        gbc.gridx++;
         registerLabel.setBorder(new EmptyBorder(0, 7, 0, 0));
         add(registerLabel, gbc);
+        gbc.gridx++;
+        add(loginButton, gbc);
 
         // Adding a blank jpanel to make the layout nicer
         gbc.gridx = 0;
@@ -107,12 +107,12 @@ public class Login extends JPanel implements TabbedGUIContainer.TabPanel {
                 char[] passwordInput = password.getPassword();
 
                 if (emailInput == null || passwordInput == null) {
-                    JOptionPane.showMessageDialog(null, "Please enter a valid email and password");
+                    JOptionPane.showMessageDialog(AppContext.getWindow(), "Please enter a valid email and password");
                     return;
                 }
 
                 if (emailInput.isEmpty() || passwordInput.length == 0) {
-                    JOptionPane.showMessageDialog(null, "Please enter a valid email and password");
+                    JOptionPane.showMessageDialog(AppContext.getWindow(), "Please enter a valid email and password");
                     return;
                 }
 
@@ -126,7 +126,7 @@ public class Login extends JPanel implements TabbedGUIContainer.TabPanel {
                     OrderController.newOrder();
                     app.userState(user.getRole());
                 } else {
-                    JOptionPane.showMessageDialog(null, "Incorrect email or password");
+                    JOptionPane.showMessageDialog(AppContext.getWindow(), "Incorrect email or password");
                     System.out.println("Authentication was unsuccessful");
                 }
             }

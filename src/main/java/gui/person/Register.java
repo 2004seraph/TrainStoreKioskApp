@@ -133,10 +133,10 @@ public class Register extends JPanel implements TabbedGUIContainer.TabPanel {
         gbc.gridy++;
 
         gbc.gridx = 0;
-        add(registerButton, gbc);
-        gbc.gridx++;
         loginLabel.setBorder(new EmptyBorder(0, 7, 0, 0));
         add (loginLabel, gbc);
+        gbc.gridx++;
+        add(registerButton, gbc);
 
         // Adding a blank jpanel to make the layout nicer
         gbc.gridx = 0;
@@ -213,9 +213,9 @@ public class Register extends JPanel implements TabbedGUIContainer.TabPanel {
                         AppContext.setCurrentUser(newPerson);
                         app.userState(newPerson.getRole());
 
-                        JOptionPane.showMessageDialog(null, "Registration successful");
+                        JOptionPane.showMessageDialog(AppContext.getWindow(), "Registration successful");
                     } catch (SQLException sqlError) {
-                        JOptionPane.showMessageDialog(null, sqlError.getMessage());
+                        JOptionPane.showMessageDialog(AppContext.getWindow(), sqlError.getMessage());
                     } finally {
                         db.closeConnection();
                     }
@@ -229,55 +229,55 @@ public class Register extends JPanel implements TabbedGUIContainer.TabPanel {
 
     private boolean validateCompulsoryInput() {
         if (forename.getText().isEmpty()) {
-            JOptionPane.showMessageDialog(null, "Forename cannot be empty");
+            JOptionPane.showMessageDialog(AppContext.getWindow(), "Forename cannot be empty");
             return false;
         }
         if (surname.getText().isEmpty()) {
-            JOptionPane.showMessageDialog(null, "Surname cannot be empty");
+            JOptionPane.showMessageDialog(AppContext.getWindow(), "Surname cannot be empty");
             return false;
         }
         if (email.getText().isEmpty()) {
-            JOptionPane.showMessageDialog(null, "Email cannot be empty");
+            JOptionPane.showMessageDialog(AppContext.getWindow(), "Email cannot be empty");
             return false;
         }
         if (password.getText().isEmpty()) {
-            JOptionPane.showMessageDialog(null, "Password cannot be empty");
+            JOptionPane.showMessageDialog(AppContext.getWindow(), "Password cannot be empty");
             return false;
         }
         if (passwordConfirmation.getText().isEmpty()) {
-            JOptionPane.showMessageDialog(null, "Password confirmation cannot be empty");
+            JOptionPane.showMessageDialog(AppContext.getWindow(), "Password confirmation cannot be empty");
             return false;
         }
         if (!password.getText().equals(passwordConfirmation.getText())) {
-            JOptionPane.showMessageDialog(null, "Passwords do not match");
+            JOptionPane.showMessageDialog(AppContext.getWindow(), "Passwords do not match");
             return false;
         }
         if (houseNumber.getText().isEmpty()) {
-            JOptionPane.showMessageDialog(null, "House number cannot be empty");
+            JOptionPane.showMessageDialog(AppContext.getWindow(), "House number cannot be empty");
             return false;
         }
         if (streetName.getText().isEmpty()) {
-            JOptionPane.showMessageDialog(null, "Street name cannot be empty");
+            JOptionPane.showMessageDialog(AppContext.getWindow(), "Street name cannot be empty");
             return false;
         }
         if (cityName.getText().isEmpty()) {
-            JOptionPane.showMessageDialog(null, "City name cannot be empty");
+            JOptionPane.showMessageDialog(AppContext.getWindow(), "City name cannot be empty");
             return false;
         }
         if (postCode.getText().isEmpty()) {
-            JOptionPane.showMessageDialog(null, "Postcode cannot be empty");
+            JOptionPane.showMessageDialog(AppContext.getWindow(), "Postcode cannot be empty");
             return false;
         }
         try {
             DatabaseBridge db = DatabaseBridge.instance();
             db.openConnection();
             if (Person.getPersonByEmail(email.getText()) != null) {
-                JOptionPane.showMessageDialog(null, "Email already exists");
+                JOptionPane.showMessageDialog(AppContext.getWindow(), "Email already exists");
                 return false;
             }
             db.closeConnection();
         } catch (SQLException throwables) {
-            JOptionPane.showMessageDialog(null, throwables.getMessage());
+            JOptionPane.showMessageDialog(AppContext.getWindow(), throwables.getMessage());
         }
         return true;
     }
@@ -291,7 +291,7 @@ public class Register extends JPanel implements TabbedGUIContainer.TabPanel {
 
         // Validate the fields with the regular expressions
         if (!email.getText().matches(emailRegex)) {
-            JOptionPane.showMessageDialog(null, "Invalid email");
+            JOptionPane.showMessageDialog(AppContext.getWindow(), "Invalid email");
             return false;
         }
 //        if (!postCode.getText().matches(postcodeRegex)) {
@@ -299,7 +299,7 @@ public class Register extends JPanel implements TabbedGUIContainer.TabPanel {
 //            return false;
 //        }
         if (password.getText().length() < 12 || password.getText().length() > 40) {
-            JOptionPane.showMessageDialog(null, "Password must be 12-40 characters long");
+            JOptionPane.showMessageDialog(AppContext.getWindow(), "Password must be 12-40 characters long");
             return false;
         }
         return true;
