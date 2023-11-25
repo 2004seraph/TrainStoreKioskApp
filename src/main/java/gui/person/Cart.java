@@ -121,7 +121,9 @@ public class Cart extends JPanel {
             }
         });
 
-        contentPanel.add(checkoutPanel, gbc);
+        if (contentPanel.getComponents().length > 0) {
+            contentPanel.add(checkoutPanel, gbc);
+        }
 
         revalidate();
         repaint();
