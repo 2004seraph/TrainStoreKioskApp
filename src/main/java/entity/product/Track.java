@@ -26,7 +26,7 @@ public class Track extends Component {
 
     private Curvature curvature;
 
-    public Track(String name, int stock, Double price, String brand, int era, Gauge gauge, Curvature curvature) {
+    public Track(String name, int stock, Double price, String brand, String era, Gauge gauge, Curvature curvature) {
         super(name, stock, price, brand, era, gauge);
 
         this.curvature = curvature;

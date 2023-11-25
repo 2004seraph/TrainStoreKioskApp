@@ -200,7 +200,7 @@ public class Product extends DatabaseOperation.Entity implements DatabaseRecord 
                             stockLevel,
                             price,
                             rs.getString("brand"),
-                            rs.getInt("era"),
+                            rs.getString("era"),
                             Component.Gauge.valueOf(rs.getString("gauge")),
                             Locomotive.PriceBracket.get(rs.getString("priceBracket"))
                             );
@@ -227,7 +227,7 @@ public class Product extends DatabaseOperation.Entity implements DatabaseRecord 
                             stockLevel,
                             price,
                             rs.getString("brand"),
-                            rs.getInt("era"),
+                            rs.getString("era"),
                             Controller.ControlType.valueOf(rs.getString("controlType"))
                     );
                 } catch (SQLException e) {
@@ -253,7 +253,7 @@ public class Product extends DatabaseOperation.Entity implements DatabaseRecord 
                             stockLevel,
                             price,
                             rs.getString("brand"),
-                            rs.getInt("era"),
+                            rs.getString("era"),
                             Component.Gauge.valueOf(rs.getString("gauge")),
                             Track.Curvature.get(rs.getString("curvature"))
                     );
@@ -276,7 +276,7 @@ public class Product extends DatabaseOperation.Entity implements DatabaseRecord 
                             stockLevel,
                             price,
                             rs.getString("brand"),
-                            rs.getInt("era"),
+                            rs.getString("era"),
                             Component.Gauge.valueOf(rs.getString("gauge"))
                     );
                 } catch (SQLException e) {

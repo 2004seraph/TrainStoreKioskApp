@@ -5,7 +5,7 @@ public class Component extends Product{
         public ComponentNotFoundException(String msg) {super(msg);}
     }
     private String brand;
-    private Integer era;
+    private String era;
 
     public enum Gauge {
         NONE,
@@ -16,7 +16,7 @@ public class Component extends Product{
 
     private Gauge gauge;
 
-    public Component(String name, int stock, Double price, String brand, int era, Gauge gauge) {
+    public Component(String name, int stock, Double price, String brand, String era, Gauge gauge) {
         super(name, stock, price);
         this.brand = brand;
         this.era = era;
@@ -27,7 +27,7 @@ public class Component extends Product{
         return brand;
     }
 
-    public Integer getEra() {
+    public String getEra() {
         return era;
     }
 
