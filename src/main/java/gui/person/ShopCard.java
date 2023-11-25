@@ -149,12 +149,26 @@ public class ShopCard extends JPanel {
         }
 
         addToCardBtn = new JButton("Add to Cart");
+        if (product.getStockLevel() <= 0) {
+            addToCardBtn.setEnabled(false);
+            addToCardBtn.setToolTipText("Out of Stock");
+        }
 
         gbc.gridx = 1;
         add(addToCardBtn, gbc);
 
         addToCardBtn.addActionListener((e) -> {
+            if(quantityBox.getText().isEmpty()) {
+                return;
+            }
+
             quantity = Integer.valueOf(quantityBox.getText());
+            Integer stockLevel = product.getStockLevel();
+            if (quantity > stockLevel) {
+                JOptionPane.showMessageDialog(this, "Sorry we have insufficient stock of this item. We currently only have "+stockLevel+" in stock.");
+                return;
+            }
+
             OrderController.currentOrder.addItem(product, quantity);
         });
     }
