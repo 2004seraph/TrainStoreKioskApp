@@ -2,6 +2,7 @@ package gui.staff.stock;
 
 import db.DatabaseBridge;
 
+import javax.swing.*;
 import javax.swing.table.AbstractTableModel;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
@@ -11,9 +12,12 @@ class StockManagementTableModel extends AbstractTableModel {
     private Object[][] productData;
     private String[] columns;
 
-    public StockManagementTableModel(Object[][] productData, String[] columns) {
+    private Runnable editHook;
+
+    public StockManagementTableModel(Object[][] productData, String[] columns, Runnable editHook) {
         this.productData = productData;
         this.columns = columns;
+        this.editHook = editHook;
     }
 
     @Override
@@ -62,6 +66,8 @@ class StockManagementTableModel extends AbstractTableModel {
             update.setString(2, (String)productData[rowIndex][0]);
             update.executeUpdate();
             this.productData[rowIndex][columnIndex] = value;
+
+            SwingUtilities.invokeLater(this.editHook);
         } catch (SQLException e) {
             DatabaseBridge.databaseError("Could not edit stock", e);
         } finally {

@@ -8,10 +8,9 @@ public class Component extends Product{
     private Integer era;
 
     public enum Gauge {
+        NONE,
         OOGAUGE,
-        TTGUAGE,
-        NGAUGE,
-        NONE
+        TTGUAGE
     }
 
     private Gauge gauge;

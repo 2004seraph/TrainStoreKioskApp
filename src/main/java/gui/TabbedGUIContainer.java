@@ -62,7 +62,7 @@ public class TabbedGUIContainer extends JPanel {
         this.contentConstraints.weighty = 1;
         this.contentConstraints.weightx = 1;
 
-        this.tabContainer.setMinimumSize(new Dimension(150, 0));
+        this.tabContainer.setMinimumSize(new Dimension(170, 0));
 
         initTabButtonContainer();
         resetTabButtonDisplay();

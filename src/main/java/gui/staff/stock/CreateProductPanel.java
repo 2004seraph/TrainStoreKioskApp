@@ -1,5 +1,7 @@
 package gui.staff.stock;
 
+import controllers.AppContext;
+import db.DatabaseBridge;
 import entity.product.Component;
 import entity.product.Controller;
 import entity.product.Locomotive;
@@ -7,15 +9,27 @@ import entity.product.Track;
 import utils.GUI;
 
 import static utils.GUI.*;
+import static utils.GUI.getSelectedButtonFromGroup;
+import static utils.Java.removeMatrixColumn;
+import static utils.Java.setMatrixColumn;
 
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
+import javax.swing.table.TableModel;
+import javax.swing.table.TableRowSorter;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.sql.PreparedStatement;
+import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 
 class CreateProductPanel extends JPanel {
+    JButton newProductButton;
+    JButton finishProductButton;
+    JPanel productData;
     JTextField productCodeInput;
     JTextField nameInput;
     JFormattedTextField stockInput;
@@ -23,11 +37,20 @@ class CreateProductPanel extends JPanel {
 
     JPanel componentSpecializationPanel;
     ButtonGroup productTypeRadioGroup;
+
+    static final String componentText = "Single Component";
+    static final String boxedSetText = "Boxed Set";
+
+    // component fields
     private JTextField brandInput;
     private JTextField eraInput;
     private JComboBox<Component.Gauge> gaugeInput;
-
     ButtonGroup componentTypeRadioGroup;
+
+    static final String trackText = "Track";
+    static final String locomotiveText = "Locomotive";
+    static final String controllerText = "Controller";
+
     JPanel trackContainer;
     private JComboBox<Track.Curvature> curvatureInput;
     JPanel locomotiveContainer;
@@ -35,25 +58,158 @@ class CreateProductPanel extends JPanel {
     JPanel controllerContainer;
     private JComboBox<Controller.ControlType> controllerInput;
 
+    JPanel boxedSetBuilder;
+    String[] buildBoxedSetColumns = new String[]{"ID", "Product", "Amount"};
+    Object[][] productDataSet;
 
-    public CreateProductPanel() {
+    public CreateProductPanel(Object[][] productDataSet) {
+        this.productDataSet = setMatrixColumn(removeMatrixColumn(productDataSet, 2), 2, 0);
+
         GridBagLayout gbl = new GridBagLayout();
         GridBagConstraints gbc = new GridBagConstraints();
 
         this.setLayout(gbl);
 
-        JPanel productData = createProductDataPanel(); // common product data
-        JPanel productType = createProductTypePanel(); // either component data OR boxedSetContentList
+        productData = createProductDataPanel(); // common product data
+        boxedSetBuilder = createComposeBoxedSetPanel(); // either component data OR boxedSetContentList
 
         gbc.fill = GridBagConstraints.BOTH;
-        gbc.weightx = 0.3;
-        gbc.weighty = 1;
+        gbc.weighty = 0;
         gbc.gridx = 0;
         gbc.gridy = 0;
+        newProductButton = new JButton("Create New Product");
+        newProductButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                setProductCreationEnabled(true);
+            }
+        });
+        add(newProductButton, gbc);
+
+        gbc.gridx++;
+        finishProductButton = new JButton("Finish");
+        finishProductButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                setProductCreationEnabled(false);
+                createNewProduct();
+            }
+        });
+        add(finishProductButton, gbc);
+
+        gbc.gridx = 0;
+        gbc.weightx = 0.3;
+        gbc.weighty = 1;
+        gbc.gridy++;
         add(productData, gbc);
         gbc.weightx = 0.7;
         gbc.gridx = 1;
-        add(productType, gbc);
+        add(boxedSetBuilder, gbc);
+
+        SwingUtilities.invokeLater(new Runnable() {
+            @Override
+            public void run() {
+                setProductCreationEnabled(false);
+            }
+        });
+    }
+
+    private void createNewProduct() {
+        DatabaseBridge db = DatabaseBridge.instance();
+        try {
+            db.openConnection();
+            db.setAutoCommit(false);
+
+            // Product table
+            {
+                PreparedStatement newProduct = db.prepareStatement("INSERT INTO Product VALUES (?,?,?,?)");
+                newProduct.setString(1, productCodeInput.getText());
+                newProduct.setString(2, nameInput.getText());
+                newProduct.setInt(3, (Integer) stockInput.getValue());
+                newProduct.setDouble(4, (Double) priceInput.getValue());
+                newProduct.executeUpdate();
+            }
+
+            switch (Objects.requireNonNull(getSelectedButtonFromGroup(productTypeRadioGroup))) {
+                case componentText:
+                    //System.out.println("Component");
+                    {
+                        PreparedStatement newComponent = db.prepareStatement("INSERT INTO Component VALUES (?,?,?,?)");
+                        newComponent.setString(1, productCodeInput.getText());
+                        newComponent.setString(2, brandInput.getText());
+                        newComponent.setString(3, eraInput.getText());
+                        newComponent.setString(4, ((Component.Gauge) Objects.requireNonNull(gaugeInput.getSelectedItem())).toString());
+                        newComponent.executeUpdate();
+                    }
+
+                    switch (Objects.requireNonNull(getSelectedButtonFromGroup(componentTypeRadioGroup))) {
+                        case trackText:
+                            //System.out.println("track");
+                            {
+                                PreparedStatement newTrack = db.prepareStatement("INSERT INTO Track VALUES (?,?)");
+                                newTrack.setString(1, productCodeInput.getText());
+                                newTrack.setString(2, ((Track.Curvature) Objects.requireNonNull(curvatureInput.getSelectedItem())).toString());
+                                newTrack.executeUpdate();
+                            }
+                            break;
+                        case locomotiveText:
+                            //System.out.println("locomotive");
+                            {
+                                PreparedStatement newLocomotive = db.prepareStatement("INSERT INTO Locomotive VALUES (?,?)");
+                                newLocomotive.setString(1, productCodeInput.getText());
+                                newLocomotive.setString(2, ((Locomotive.PriceBracket) Objects.requireNonNull(locomotiveInput.getSelectedItem())).toString());
+                                newLocomotive.executeUpdate();
+                            }
+                            break;
+                        case controllerText:
+                            //System.out.println("controller");
+                            {
+                                PreparedStatement newController = db.prepareStatement("INSERT INTO Controller VALUES (?,?)");
+                                newController.setString(1, productCodeInput.getText());
+                                newController.setString(2, ((Controller.ControlType) Objects.requireNonNull(controllerInput.getSelectedItem())).toString());
+                                newController.executeUpdate();
+                            }
+                            break;
+                    }
+                    break;
+                case boxedSetText:
+                    //System.out.println("Boxed set");
+
+                    break;
+            }
+
+//            db.commit();
+            db.setAutoCommit(true);
+        } catch (Throwable e) {
+            DatabaseBridge.databaseError("Product creation error", e);
+            try {
+                db.rollback();
+            } catch (Throwable i) {
+                DatabaseBridge.databaseError("Product creation rollbackerror", i);
+            }
+            JOptionPane.showMessageDialog(
+                    AppContext.getWindow(),
+                    "Could not insert new product entry.",
+                    "Stock Insertion Error",
+                    JOptionPane.ERROR_MESSAGE);
+        } finally {
+            db.closeConnection();
+        }
+    }
+
+    private void setProductCreationEnabled(boolean status) {
+        if (status) {
+            setEnabledRecursively(productData, true);
+            setEnabledRecursively(boxedSetBuilder, true);
+            selectBoxedSetRadioButton();
+            newProductButton.setEnabled(false);
+            finishProductButton.setEnabled(true);
+        } else {
+            setEnabledRecursively(productData, false);
+            setEnabledRecursively(boxedSetBuilder, false);
+            newProductButton.setEnabled(true);
+            finishProductButton.setEnabled(false);
+        }
     }
 
     /**
@@ -121,6 +277,52 @@ class CreateProductPanel extends JPanel {
         return panel;
     }
 
+    private void selectBoxedSetRadioButton() {
+        setEnabledRecursively(componentSpecializationPanel, false);
+        setEnabledRecursively(boxedSetBuilder, true);
+        boxedSet.setSelected(true);
+    }
+    private void selectComponentRadioButton() {
+        setEnabledRecursively(componentSpecializationPanel, true);
+        setEnabledRecursively(boxedSetBuilder, false);
+        // enable correct component type panel
+        switch (Objects.requireNonNull(getSelectedButtonFromGroup(componentTypeRadioGroup))) {
+            case trackText:
+                GUI.setEnabledRecursively(trackContainer, true);
+                GUI.setEnabledRecursively(locomotiveContainer, false);
+                GUI.setEnabledRecursively(controllerContainer, false);
+                break;
+            case locomotiveText:
+                GUI.setEnabledRecursively(trackContainer, false);
+                GUI.setEnabledRecursively(locomotiveContainer, true);
+                GUI.setEnabledRecursively(controllerContainer, false);
+                break;
+            case controllerText:
+                GUI.setEnabledRecursively(trackContainer, false);
+                GUI.setEnabledRecursively(locomotiveContainer, false);
+                GUI.setEnabledRecursively(controllerContainer, true);
+                break;
+        }
+    }
+    private void selectComponentTypeRadioButton(Class<?> productType) {
+        if (productType.equals(Track.class)) {
+            GUI.setEnabledRecursively(trackContainer, true);
+            GUI.setEnabledRecursively(locomotiveContainer, false);
+            GUI.setEnabledRecursively(controllerContainer, false);
+        } else if (productType.equals(Locomotive.class)) {
+            GUI.setEnabledRecursively(trackContainer, false);
+            GUI.setEnabledRecursively(locomotiveContainer, true);
+            GUI.setEnabledRecursively(controllerContainer, false);
+        } else if (productType.equals(Controller.class)) {
+            GUI.setEnabledRecursively(trackContainer, false);
+            GUI.setEnabledRecursively(locomotiveContainer, false);
+            GUI.setEnabledRecursively(controllerContainer, true);
+        } else {
+            throw new IllegalArgumentException("Must be a component type");
+        }
+    }
+
+    private JRadioButton boxedSet; // dumb hack
     /**
      * Entering the component data and selecting the type or specifying it's a boxedset
      * @return
@@ -148,8 +350,8 @@ class CreateProductPanel extends JPanel {
         {
             gbc.gridy++;
             productTypeRadioGroup = new ButtonGroup();
-            JRadioButton component = new JRadioButton("Single Component");
-            JRadioButton boxedSet = new JRadioButton("Boxed Set");
+            JRadioButton component = new JRadioButton(componentText);
+            boxedSet = new JRadioButton(boxedSetText);
             productTypeRadioGroup.add(component);
             productTypeRadioGroup.add(boxedSet);
 
@@ -159,25 +361,7 @@ class CreateProductPanel extends JPanel {
                     SwingUtilities.invokeLater(new Runnable() {
                         @Override
                         public void run() {
-                            setEnabledRecursively(componentSpecializationPanel, true);
-                            // enable correct component type panel
-                            switch (Objects.requireNonNull(getSelectedButtonFromGroup(componentTypeRadioGroup))) {
-                                case "Track":
-                                    GUI.setEnabledRecursively(trackContainer, true);
-                                    GUI.setEnabledRecursively(locomotiveContainer, false);
-                                    GUI.setEnabledRecursively(controllerContainer, false);
-                                    break;
-                                case "Locomotive":
-                                    GUI.setEnabledRecursively(trackContainer, false);
-                                    GUI.setEnabledRecursively(locomotiveContainer, true);
-                                    GUI.setEnabledRecursively(controllerContainer, false);
-                                    break;
-                                case "Controller":
-                                    GUI.setEnabledRecursively(trackContainer, false);
-                                    GUI.setEnabledRecursively(locomotiveContainer, false);
-                                    GUI.setEnabledRecursively(controllerContainer, true);
-                                    break;
-                            }
+                            selectComponentRadioButton();
                         }
                     });
                 }
@@ -188,7 +372,7 @@ class CreateProductPanel extends JPanel {
                     SwingUtilities.invokeLater(new Runnable() {
                         @Override
                         public void run() {
-                            setEnabledRecursively(componentSpecializationPanel, false);
+                            selectBoxedSetRadioButton();
                         }
                     });
                 }
@@ -198,7 +382,13 @@ class CreateProductPanel extends JPanel {
             gbc.gridx++;
             panel.add(boxedSet, gbc);
 
-            component.setSelected(true);
+            boxedSet.setSelected(true);
+            SwingUtilities.invokeLater(new Runnable() {
+                @Override
+                public void run() {
+                    selectBoxedSetRadioButton();
+                }
+            });
         }
         gbc.gridwidth = 2;
         {
@@ -273,9 +463,9 @@ class CreateProductPanel extends JPanel {
         }
         { // special component type and data
             componentTypeRadioGroup = new ButtonGroup();
-            JRadioButton track = new JRadioButton("Track");
-            JRadioButton locomotive = new JRadioButton("Locomotive");
-            JRadioButton controller = new JRadioButton("Controller");
+            JRadioButton track = new JRadioButton(trackText);
+            JRadioButton locomotive = new JRadioButton(locomotiveText);
+            JRadioButton controller = new JRadioButton(controllerText);
             componentTypeRadioGroup.add(track);
             componentTypeRadioGroup.add(locomotive);
             componentTypeRadioGroup.add(controller);
@@ -306,7 +496,7 @@ class CreateProductPanel extends JPanel {
             panel.add(controller, gbc);
             {
                 gbc.gridx++;
-                JLabel controllerLabel = new JLabel("Price Bracket");
+                JLabel controllerLabel = new JLabel("Wiring");
                 controllerInput = new JComboBox<>(Controller.ControlType.values());
                 controllerContainer = createLabelInputRow(controllerLabel, controllerInput);
                 panel.add(controllerContainer, gbc);
@@ -318,9 +508,7 @@ class CreateProductPanel extends JPanel {
                     SwingUtilities.invokeLater(new Runnable() {
                         @Override
                         public void run() {
-                            GUI.setEnabledRecursively(trackContainer, true);
-                            GUI.setEnabledRecursively(locomotiveContainer, false);
-                            GUI.setEnabledRecursively(controllerContainer, false);
+                            selectComponentTypeRadioButton(Track.class);
                         }
                     });
                 }
@@ -331,9 +519,7 @@ class CreateProductPanel extends JPanel {
                     SwingUtilities.invokeLater(new Runnable() {
                         @Override
                         public void run() {
-                            GUI.setEnabledRecursively(trackContainer, false);
-                            GUI.setEnabledRecursively(locomotiveContainer, true);
-                            GUI.setEnabledRecursively(controllerContainer, false);
+                            selectComponentTypeRadioButton(Locomotive.class);
                         }
                     });
                 }
@@ -344,9 +530,7 @@ class CreateProductPanel extends JPanel {
                     SwingUtilities.invokeLater(new Runnable() {
                         @Override
                         public void run() {
-                            GUI.setEnabledRecursively(trackContainer, false);
-                            GUI.setEnabledRecursively(locomotiveContainer, false);
-                            GUI.setEnabledRecursively(controllerContainer, true);
+                            selectComponentTypeRadioButton(Controller.class);
                         }
                     });
                 }
@@ -354,9 +538,7 @@ class CreateProductPanel extends JPanel {
 
             // initial selection
             track.setSelected(true);
-            GUI.setEnabledRecursively(trackContainer, true);
-            GUI.setEnabledRecursively(locomotiveContainer, false);
-            GUI.setEnabledRecursively(controllerContainer, false);
+            selectComponentTypeRadioButton(Track.class);
         }
 
         return panel;
@@ -366,11 +548,13 @@ class CreateProductPanel extends JPanel {
      * Either a panel entering the specific specialization data or looking up stuff to add to the boxedset
      * @return
      */
-    private JPanel createProductTypePanel() {
+    private JPanel createComposeBoxedSetPanel() {
         GridBagConstraints gbc = new GridBagConstraints();
         JPanel panel = new JPanel();
         panel.setLayout(new GridBagLayout());
-        panel.setBackground(Color.PINK);
+//        panel.setBackground(Color.PINK);
+
+        panel.setBorder(new EmptyBorder(14, 6, 6, 6));
 
         gbc.fill = GridBagConstraints.BOTH;
         gbc.anchor = GridBagConstraints.NORTHWEST;
@@ -378,17 +562,24 @@ class CreateProductPanel extends JPanel {
         gbc.weighty = 0;
         gbc.gridx = 0;
         gbc.gridy = 0;
-        gbc.gridwidth = 2;
         JLabel title = new JLabel("<html><h3>Boxed Set Contents</h3></html>");
         title.setBorder(new EmptyBorder(0,6,0,0));
         panel.add(title, gbc);
 
         {
+            gbc.gridy++;
             gbc.weighty = 1;
-            gbc.gridy = 5;
-            JPanel filler = new JPanel();
-            filler.setOpaque(false);
-            panel.add(filler, gbc);
+            JTable jt = new JTable(new BoxedSetConstructionTableModel(productDataSet, buildBoxedSetColumns));
+            jt.setRowHeight(24);
+            JScrollPane scrollPane = new JScrollPane(jt);
+            panel.add(scrollPane, gbc);
+
+            TableRowSorter<TableModel> sorter = new TableRowSorter<TableModel>(jt.getModel());
+            jt.setRowSorter(sorter);
+
+            List<RowSorter.SortKey> sortKeys = new ArrayList<>(1);
+            sortKeys.add(new RowSorter.SortKey(2, SortOrder.ASCENDING));
+            sorter.setSortKeys(sortKeys);
         }
 
         return panel;

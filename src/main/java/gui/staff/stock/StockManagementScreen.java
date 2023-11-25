@@ -21,6 +21,10 @@ public class StockManagementScreen extends JPanel {
 
     JPanel viewContainer;
 
+    JPanel productCreationContainer;
+
+    Object[][] productData;
+
     public StockManagementScreen() {
         GridBagLayout gbl = new GridBagLayout();
         GridBagConstraints gbc = new GridBagConstraints();
@@ -31,14 +35,6 @@ public class StockManagementScreen extends JPanel {
         refreshButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                updateStockView();
-            }
-        });
-        JButton newProductButton = new JButton("Add new product");
-        refreshButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                System.out.println("New product");
                 updateStockView();
             }
         });
@@ -69,11 +65,11 @@ public class StockManagementScreen extends JPanel {
         gbc.gridy++;
         add(refreshButton, gbc);
 
-        gbc.gridx = 1;
-        add(newProductButton, gbc);
+//        gbc.gridx = 1;
+//        add(newProductButton, gbc);
 
         gbc.weightx = 1;
-        gbc.weighty = 0.2;
+        gbc.weighty = 0.5;
         gbc.gridx = 0;
         gbc.gridy++;
         gbc.gridwidth = 2;
@@ -83,21 +79,35 @@ public class StockManagementScreen extends JPanel {
         this.add(viewContainer, gbc);
 
         gbc.gridy++;
-        gbc.weighty = 1;
-        this.add(new CreateProductPanel(), gbc);
+        gbc.weighty = 0.2;
+
+        productCreationContainer = new JPanel();
+        GridBagLayout gbl2 = new GridBagLayout();
+        productCreationContainer.setLayout(gbl2);
+        createProductForm();
+        this.add(productCreationContainer, gbc);
+    }
+
+    private void createProductForm() {
+        productCreationContainer.removeAll();
+        GridBagConstraints gbc2 = new GridBagConstraints();
+        gbc2.fill = GridBagConstraints.BOTH;
+        gbc2.weighty = 1;
+        gbc2.weightx = 1;
+        CreateProductPanel cpp = new CreateProductPanel(productData);
+        productCreationContainer.add(cpp, gbc2);
     }
 
     private void updateStockView() {
         viewContainer.removeAll();
         createStockView(viewContainer);
+        createProductForm();
 
         revalidate();
         repaint();
     }
 
     private void createStockView(JPanel container) {
-        Object[][] productData;
-
         try {
             DatabaseBridge.instance().openConnection();
             PreparedStatement countQuery = DatabaseBridge.instance().prepareStatement("SELECT COUNT(*) FROM Product;");
@@ -127,7 +137,12 @@ public class StockManagementScreen extends JPanel {
             DatabaseBridge.instance().closeConnection();
         }
 
-        JTable jt = new JTable(new StockManagementTableModel(productData, columns));
+        JTable jt = new JTable(new StockManagementTableModel(productData, columns, new Runnable() {
+            @Override
+            public void run() {
+                createProductForm();
+            }
+        }));
         jt.setRowHeight(24);
         jt.getColumnModel().getColumn(2).setCellRenderer(new CurrencyCellRenderer());
         ButtonColumn.setButtonColumn(jt.getColumn("Delete Item"), new ButtonColumn.TextFunction() {
