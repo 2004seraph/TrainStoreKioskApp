@@ -31,6 +31,7 @@ public final class GUI {
     public static NumberFormatter getCurrencyFormatter() {
         NumberFormat format = NumberFormat.getNumberInstance();
         format.setMaximumFractionDigits(2);
+        format.setMinimumFractionDigits(2);
 //        format.setGroupingUsed(false);
         NumberFormatter numberFormatter = new NumberFormatter(format);
         numberFormatter.setValueClass(Double.class);

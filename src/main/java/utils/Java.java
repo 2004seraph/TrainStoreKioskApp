@@ -1,5 +1,8 @@
 package utils;
 
+import java.util.Calendar;
+import java.util.Date;
+
 public final class Java {
     private Java() {}
 
@@ -46,5 +49,20 @@ public final class Java {
             }
         }
         return array;
+    }
+
+    /**
+     * Creates a date object WITHOUT USING DEPRECATED APIS
+     * @param day
+     * @param month Can be something like Calendar.JANUARY
+     * @param year
+     * @return
+     */
+    public static Date createDate(int year, int month, int day) {
+        Calendar cal = Calendar.getInstance();
+        cal.set(Calendar.YEAR, year);
+        cal.set(Calendar.MONTH, month);
+        cal.set(Calendar.DAY_OF_MONTH, day);
+        return cal.getTime();
     }
 }

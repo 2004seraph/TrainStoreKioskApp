@@ -7,17 +7,16 @@ import db.DatabaseRecord;
 import org.apache.commons.validator.routines.checkdigit.LuhnCheckDigit;
 import utils.Crypto;
 
-import javax.swing.*;
-import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.security.InvalidKeyException;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
+
+import static utils.Java.createDate;
 
 public class BankDetail extends DatabaseOperation.Entity implements DatabaseRecord {
     public static class BankAccountNotFoundException extends RuntimeException {
@@ -32,10 +31,10 @@ public class BankDetail extends DatabaseOperation.Entity implements DatabaseReco
         }
     }
     private int bankDetailID = -1;
-    private String cardName;
-    private String cardNumber;
-    private Date expiryDate;
-    private String securityCode;
+    private final String cardName;
+    private final String cardNumber;
+    private final Date expiryDate;
+    private final String securityCode;
 
 
     public String getCardName() {
@@ -76,7 +75,7 @@ public class BankDetail extends DatabaseOperation.Entity implements DatabaseReco
      * @throws SQLException
      * @throws InvalidBankDetailsException
      */
-    public static BankDetail createPaymentInfo(String cardNumber, java.sql.Date expiryDate, String securityCode)
+    public static BankDetail createPaymentInfo(String cardNumber, Date expiryDate, String securityCode)
             throws SQLException, InvalidBankDetailsException {
         int id = -1;
         boolean isCardValid = LuhnCheckDigit.LUHN_CHECK_DIGIT.isValid(cardNumber);
@@ -84,8 +83,8 @@ public class BankDetail extends DatabaseOperation.Entity implements DatabaseReco
             throw new InvalidBankDetailsException("Card number invalid, failed Luhn check ["+cardNumber+"]");
         }
         // Expiry date should be in the format MM/YY
-        if (expiryDate.before(new java.util.Date())) {
-            throw new InvalidBankDetailsException("Card is expired ["+expiryDate.toLocalDate()+"]");
+        if (expiryDate.before(new Date())) {
+            throw new InvalidBankDetailsException("Card is expired ["+expiryDate+"]");
         }
 
         if (securityCode.length() != 3) {
@@ -94,14 +93,15 @@ public class BankDetail extends DatabaseOperation.Entity implements DatabaseReco
 
         String cardName = "Card ending in " + cardNumber.substring(cardNumber.length() - 4);
         System.out.println("Card name: " + cardName);
-        try (PreparedStatement cardQuery = prepareStatement("INSERT INTO BankDetails (cardName, cardNumber, expiryDate, securityCode) VALUES (?, ?, ?, ?)")) {
+        try (PreparedStatement cardQuery = prepareStatement("INSERT INTO BankDetails (cardName, cardNumber, expiryDate, securityCode) VALUES (?, ?, ?, ?)",
+                Statement.RETURN_GENERATED_KEYS)) {
             byte[] encryptionKey = AppContext.getEncryptionKey();
             String encryptedCardNumber = Crypto.encryptString(cardNumber, encryptionKey);
             String encryptedSecurityCode = Crypto.encryptString(securityCode, encryptionKey);
 
             cardQuery.setString(1, cardName);
             cardQuery.setString(2, encryptedCardNumber);
-            cardQuery.setDate(3, expiryDate);
+            cardQuery.setDate(3, new java.sql.Date(expiryDate.getTime()));
             cardQuery.setString(4, encryptedSecurityCode);
 
             cardQuery.executeUpdate();
@@ -184,21 +184,5 @@ public class BankDetail extends DatabaseOperation.Entity implements DatabaseReco
                 expiryDate,
                 securityCode
         );
-    }
-
-    public static void main(String[] args) {
-        String cardNumber = "4012888888881881";
-        Date expiryDate = new Date(2024, 1, 1);
-        String securityCode = "123";
-
-        DatabaseBridge db = DatabaseBridge.instance();
-        try{
-            db.openConnection();
-            BankDetail detail = createPaymentInfo(cardNumber, new java.sql.Date(expiryDate.getTime()), securityCode);
-        } catch (SQLException | InvalidBankDetailsException e) {
-            e.printStackTrace();
-        } finally {
-            db.closeConnection();
-        }
     }
 }
