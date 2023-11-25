@@ -1,5 +1,6 @@
 package gui.staff;
 
+import controllers.AppContext;
 import db.DatabaseBridge;
 import entity.StoreAttributes;
 import entity.user.Person;
@@ -22,6 +23,11 @@ public class ManagerScreen extends JPanel implements TabbedGUIContainer.TabPanel
             person = user;
             JComboBox<String> roleBox = new JComboBox<>(roleNames);
             roleBox.setSelectedItem(user.getRole().toString());
+
+            // Can't promote/demote yourself
+            if (AppContext.getCurrentUser().getFullName().equals(person.getFullName())) {
+                roleBox.setEnabled(false);
+            }
 
             JLabel nameLabel = new JLabel(user.getFullName());
 
