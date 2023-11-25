@@ -35,6 +35,11 @@ public class Address extends DatabaseOperation.Entity implements DatabaseRecord{
         this.postcode = postcode;
     }
 
+    public static boolean validatePostcode(String postcode) {
+        String regex = "^[A-Z]{1,2}[0-9]{1,2}[A-Z]? [0-9][A-Z]{2}$";
+        return postcode.matches(regex);
+    }
+
     /**
      * Inserts a new address into the database
      * @param address A non-null address that doesn't have any null fields either
