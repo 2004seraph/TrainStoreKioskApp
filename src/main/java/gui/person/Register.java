@@ -152,31 +152,6 @@ public class Register extends JPanel implements TabbedGUIContainer.TabPanel {
         });
 
 
-        //set component bounds (only needed by Absolute Positioning) - Do not do this
-//        registerLabel.setBounds (318, 35, 140, 25);
-//        forename.setBounds (260, 100, 220, 25);
-//        forenameLabel.setBounds (260, 80, 100, 25);
-//        surnameLabel.setBounds (260, 125, 100, 25);
-//        surname.setBounds (260, 145, 220, 25);
-//        emailLabel.setBounds (260, 170, 100, 25);
-//        email.setBounds (260, 190, 220, 25);
-//        passwordLabel.setBounds (260, 215, 100, 25);
-//        password.setBounds (260, 235, 220, 25);
-//        passwordConfirmationLabel.setBounds (260, 260, 145, 25);
-//        passwordConfirmation.setBounds (260, 280, 220, 25);
-//        addressLabel.setBounds (326, 319, 140, 25);
-//        houseNumberLabel.setBounds (260, 360, 100, 25);
-//        houseNumber.setBounds (260, 380, 220, 25);
-//        streetNameLabel.setBounds (260, 405, 100, 25);
-//        streetName.setBounds (260, 425, 220, 25);
-//        cityNameLabel.setBounds (260, 450, 100, 25);
-//        cityName.setBounds (260, 470, 220, 25);
-//        postCodeLabel.setBounds (260, 500, 100, 25);
-//        postCode.setBounds (260, 520, 220, 25);
-//        registerButton.setBounds (260, 560, 100, 25);
-//        alreadyAUserLabel.setBounds (260, 590, 95, 25);
-//        loginLabel.setBounds (355, 590, 100, 25);
-
         // When clicking registerButton validate the input, then close register window and open login window
         registerButton.addActionListener(new ActionListener() {
             @Override
@@ -219,8 +194,6 @@ public class Register extends JPanel implements TabbedGUIContainer.TabPanel {
                     } finally {
                         db.closeConnection();
                     }
-                    
-
                 }
             }
     

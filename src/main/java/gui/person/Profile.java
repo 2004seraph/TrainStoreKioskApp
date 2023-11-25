@@ -133,7 +133,6 @@ public class Profile extends JPanel{
     /**
      * Updates the user's personal details
      */
-//    TODO: IF THE ADDRESS PRIMARY KEY IS CHANGED, ERROR OCCURS
     public void updateDetails(){
         String forenameInput = forename.getText();
         String surnameInput = surname.getText();

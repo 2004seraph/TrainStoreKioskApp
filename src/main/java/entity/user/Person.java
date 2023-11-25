@@ -383,14 +383,18 @@ public class Person extends DatabaseOperation.Entity implements DatabaseRecord {
 //        DatabaseBridge db = DatabaseBridge.instance();
         try {
             openConnection();
-            PreparedStatement s = prepareStatement("UPDATE Address SET houseNumber=?, streetName=?, cityName=?, postCode=? WHERE houseNumber=? AND postCode=?");
-            s.setString(1, houseNumber);
-            s.setString(2, streetName);
-            s.setString(3, cityName);
-            s.setString(4, postCode);
-            s.setString(5, houseNumber);
-            s.setString(6, postCode);
-            s.executeUpdate();
+            if (Address.getAddressById(houseNumber, postCode) == null) {
+                Address.CreateAddress(new Address(houseNumber, streetName, cityName, postCode));
+            } else {
+                PreparedStatement s = prepareStatement("UPDATE Address SET houseNumber=?, streetName=?, cityName=?, postCode=? WHERE houseNumber=? AND postCode=?");
+                s.setString(1, houseNumber);
+                s.setString(2, streetName);
+                s.setString(3, cityName);
+                s.setString(4, postCode);
+                s.setString(5, houseNumber);
+                s.setString(6, postCode);
+                s.executeUpdate();
+            }
         } catch (SQLException e) {
             DatabaseBridge.databaseError("Failed to update address", e);
             throw e;

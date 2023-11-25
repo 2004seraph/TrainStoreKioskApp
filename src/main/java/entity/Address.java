@@ -106,4 +106,5 @@ public class Address extends DatabaseOperation.Entity implements DatabaseRecord{
                 postcode
         );
     }
+
 }
