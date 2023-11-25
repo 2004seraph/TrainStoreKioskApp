@@ -37,6 +37,7 @@ public class BankDetail extends DatabaseOperation.Entity implements DatabaseReco
     private final String securityCode;
 
 
+    public int getBankDetailID() { return bankDetailID; }
     public String getCardName() {
         return cardName;
     }
