@@ -1,5 +1,7 @@
 package entity.product;
 
+import java.util.Arrays;
+
 public class Track extends Component {
     public enum Curvature {
         STRAIGHT,
@@ -15,6 +17,10 @@ public class Track extends Component {
                 case "THIRD_RADIUS" -> Curvature.THIRD_RADIUS;
                 default -> throw new IllegalStateException("Unexpected value: " + value);
             };
+        }
+
+        public static String[] getStringValues() {
+            return Arrays.stream(values()).map(Enum::toString).toArray(String[]::new);
         }
     }
 

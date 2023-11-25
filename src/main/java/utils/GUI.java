@@ -1,11 +1,15 @@
 package utils;
 
+import gui.TabbedGUIContainer;
+
 import javax.swing.*;
 import javax.swing.border.Border;
 import javax.swing.border.EmptyBorder;
 import javax.swing.border.EtchedBorder;
 import java.awt.*;
 import java.text.NumberFormat;
+import java.util.Arrays;
+import java.util.Enumeration;
 import java.util.Locale;
 import javax.swing.text.NumberFormatter;
 
@@ -41,10 +45,10 @@ public final class GUI {
      * @param input
      * @return A JPanel containing the layout of the label and input
      */
-    public static JPanel createLabelInputRow(JLabel label, JTextField input) {
+    public static JPanel createLabelInputRow(JLabel label, Component input) {
         JPanel panel = new JPanel();
         panel.setLayout(new GridBagLayout());
-        panel.setBackground(Color.DARK_GRAY);
+//        panel.setBackground(Color.DARK_GRAY);
         GridBagConstraints gbc = new GridBagConstraints();
 
         Border raisedEtched = BorderFactory.createEtchedBorder(EtchedBorder.RAISED, Color.LIGHT_GRAY, Color.GRAY);
@@ -61,10 +65,37 @@ public final class GUI {
 
         gbc.weightx = 0;
         gbc.gridx = 1;
-        input.setColumns(16);
-        input.setBorder(new EmptyBorder(2, 7, 2, 2));
+
+        if (input instanceof JTextField) {
+            ((JTextField)input).setColumns(16);
+            ((JTextField)input).setBorder(new EmptyBorder(3, 7, 3, 3));
+        }
         panel.add(input, gbc);
 
         return panel;
+    }
+
+    public static void setEnabledRecursively(Component panel, boolean status) {
+        panel.setEnabled(status);
+        for (Component cp : ((Container)panel).getComponents()) {
+            setEnabledRecursively(cp, status);
+        }
+    }
+
+    /**
+     * Returns the selected button from a button group (radio buttons)
+     * @param buttonGroup Your set of radio buttons
+     * @return The text of the selected button, or null
+     */
+    public static String getSelectedButtonFromGroup(ButtonGroup buttonGroup) {
+        for (Enumeration<AbstractButton> buttons = buttonGroup.getElements(); buttons.hasMoreElements();) {
+            AbstractButton button = buttons.nextElement();
+
+            if (button.isSelected()) {
+                return button.getText();
+            }
+        }
+
+        return null;
     }
 }

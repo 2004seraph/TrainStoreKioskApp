@@ -7,6 +7,8 @@ import gui.staff.ManagerScreen;
 import gui.staff.stock.StockManagementScreen;
 
 import javax.swing.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 
 public class App {
     private final TabbedGUIContainer screenController;
@@ -58,8 +60,15 @@ public class App {
         JPanel profilePage = new Profile();
         JPanel cartPage = new Cart();
 
-//        screenController.insertTab("Logout", logoutPage);
-        screenController.insertNonTabButton(new JButton("Logout"));
+        JButton logOutButton = new JButton("Logout");
+        logOutButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                AppContext.logOut();
+                loginState();
+            }
+        });
+        screenController.insertNonTabButton(logOutButton);
 
         screenController.insertTab("Cart", cartPage);
         screenController.insertTab("Profile", profilePage);
