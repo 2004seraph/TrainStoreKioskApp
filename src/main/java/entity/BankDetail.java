@@ -175,6 +175,14 @@ public class BankDetail extends DatabaseOperation.Entity implements DatabaseReco
         }
     }
 
+    @Override
+    public String toString() {
+        StringBuilder sb = new StringBuilder();
+        sb.append(cardName);
+        sb.append(", ");
+        sb.append(cardNumber.substring(12)); // last 4 digits
+        return sb.toString();
+    }
 
     @Override
     public List<Object> getFields() {

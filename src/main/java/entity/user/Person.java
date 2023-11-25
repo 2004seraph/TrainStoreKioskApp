@@ -203,47 +203,65 @@ public class Person extends DatabaseOperation.Entity implements DatabaseRecord {
      * @return A Person object with all of its fields set, or null if there was no one with that email
      * @throws SQLException
      */
-    public static Person getPersonByEmail(
-            String email
-    ) throws SQLException {
-        try (PreparedStatement personQuery = prepareStatement("SELECT * FROM Person WHERE email=?");
-             PreparedStatement roleQuery = prepareStatement("SELECT * FROM Role WHERE personId=?");
-        ) {
-            personQuery.setString(1, email);
-            ResultSet res = personQuery.executeQuery();
+    public static Person getPersonByEmail(String email) throws SQLException {
+        PreparedStatement personQuery = prepareStatement("SELECT * FROM Person WHERE email=?");
+        personQuery.setString(1, email);
+        ResultSet res = personQuery.executeQuery();
+        return personFromResultSet(res);
+    }
 
-            Person person;
-            if (res.next()) {
-                int id = res.getInt(1);
-                roleQuery.setInt(1, id);
-                ResultSet roles = roleQuery.executeQuery();
+    /**
+     * Gets a person from the database using their email
+     * @param id The id of a person
+     * @return A Person object with all of its fields set, or null if there was no one with that id
+     * @throws SQLException
+     */
+    public static Person getPersonByID(int id) throws SQLException {
+        PreparedStatement personQuery = prepareStatement("SELECT * FROM Person WHERE personId=?");
+        personQuery.setInt(1, id);
+        ResultSet res = personQuery.executeQuery();
+        return personFromResultSet(res);
+    }
 
-                StoreAttributes.Role userRole = StoreAttributes.Role.USER;
-                // get the highest priviledge role this user has and use that
-                while (roles.next()) {
-                    StoreAttributes.Role roleValue = StoreAttributes.Role.valueOf(roles.getString(2));
-                    if (roleValue.getLevel() > userRole.getLevel())
-                        userRole = roleValue;
-                }
+    public static Person getPersonByID(int id, boolean decrypt) throws SQLException {
+        PreparedStatement personQuery = prepareStatement("SELECT * FROM Person WHERE personId=?");
+        personQuery.setInt(1, id);
+        ResultSet res = personQuery.executeQuery();
+        return personFromResultSet(res);
+    }
 
-                person = new Person(
-                        id,                            // id
-                        res.getString(2),   // forename
-                        res.getString(3),   // surname
-                        res.getString(4),   // email
-                        res.getString(5),   // password (this is horrible)
-                        res.getString(6),   // houseNumber
-                        res.getString(7),   // postcode
-                        res.getInt(8),      // bank details
-                        userRole
-                );
+    private static Person personFromResultSet(ResultSet res) throws SQLException {
+        Person person;
+        if (res.next()) {
+            PreparedStatement roleQuery = prepareStatement("SELECT * FROM Role WHERE personId=?");
 
-                return person;
-            } else {
-                return null;
+            int id = res.getInt(1);
+            roleQuery.setInt(1, id);
+            ResultSet roles = roleQuery.executeQuery();
+
+            StoreAttributes.Role userRole = StoreAttributes.Role.USER;
+            // get the highest priviledge role this user has and use that
+            while (roles.next()) {
+                StoreAttributes.Role roleValue = StoreAttributes.Role.valueOf(roles.getString(2));
+                if (roleValue.getLevel() > userRole.getLevel())
+                    userRole = roleValue;
             }
-        } catch (SQLException e) {
-            throw e;
+
+            person = new Person(
+                    id,                            // id
+                    res.getString(2),   // forename
+                    res.getString(3),   // surname
+                    res.getString(4),   // email
+                    res.getString(5),   // password (this is horrible)
+                    res.getString(6),   // houseNumber
+                    res.getString(7),   // postcode
+                    res.getInt(8),      // bank details
+                    userRole
+            );
+
+            return person;
+        } else {
+            return null;
         }
     }
 

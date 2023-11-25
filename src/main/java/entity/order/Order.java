@@ -147,7 +147,6 @@ public class Order extends DatabaseOperation.Entity implements DatabaseRecord {
             StringBuilder statementText = new StringBuilder("SELECT * FROM `Order` WHERE");
             statementText.append(" status = ? OR".repeat(statuses.length));
             statementText.delete(statementText.lastIndexOf(" OR"), statementText.length());
-            System.out.println(statementText);
 
             // populate said query
             PreparedStatement orderQuery = prepareStatement(statementText.toString());

@@ -94,7 +94,19 @@ public class Address extends DatabaseOperation.Entity implements DatabaseRecord{
             throw e;
         }
         return null;
+    }
 
+    @Override
+    public String toString() {
+        StringBuilder sb = new StringBuilder();
+        sb.append(houseNumber);
+        sb.append(" ");
+        sb.append(streetName);
+        sb.append(", ");
+        sb.append(postcode);
+        sb.append(", ");
+        sb.append(cityName);
+        return sb.toString();
     }
 
     @Override

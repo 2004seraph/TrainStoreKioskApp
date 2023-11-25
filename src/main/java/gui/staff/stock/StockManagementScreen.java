@@ -9,12 +9,16 @@ import gui.components.CurrencyCellRenderer;
 
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
+import javax.swing.table.TableModel;
+import javax.swing.table.TableRowSorter;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
 
 public class StockManagementScreen extends JPanel {
     private final String[] columns = new String[]{"Code", "Product", "Price Per Unit", "Stock", "Delete Item"};
@@ -179,6 +183,14 @@ public class StockManagementScreen extends JPanel {
                 }
             }
         });
+
+        TableRowSorter<TableModel> sorter = new TableRowSorter<TableModel>(jt.getModel());
+        jt.setRowSorter(sorter);
+        List<RowSorter.SortKey> sortKeys = new ArrayList<>(3);
+        sortKeys.add(new RowSorter.SortKey(1, SortOrder.ASCENDING));
+        sortKeys.add(new RowSorter.SortKey(2, SortOrder.ASCENDING));
+        sortKeys.add(new RowSorter.SortKey(3, SortOrder.ASCENDING));
+        sorter.setSortKeys(sortKeys);
 
         JScrollPane scrollPane = new JScrollPane(jt);
         container.add(scrollPane);
