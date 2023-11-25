@@ -63,8 +63,11 @@ class CreateProductPanel extends JPanel {
     String[] buildBoxedSetColumns = new String[]{"ID", "Product", "Amount"};
     Object[][] productDataSet;
 
-    public CreateProductPanel(Object[][] productDataSet) {
+    Runnable alterEvent;
+
+    public CreateProductPanel(Object[][] productDataSet, Runnable alterEvent) {
         this.productDataSet = setMatrixColumn(removeMatrixColumn(productDataSet, 2), 2, 0);
+        this.alterEvent = alterEvent;
 
         GridBagLayout gbl = new GridBagLayout();
         GridBagConstraints gbc = new GridBagConstraints();
@@ -232,6 +235,8 @@ class CreateProductPanel extends JPanel {
         } finally {
             db.closeConnection();
         }
+
+        SwingUtilities.invokeLater(alterEvent);
     }
 
     private boolean validateProductForm(StringBuilder message) {

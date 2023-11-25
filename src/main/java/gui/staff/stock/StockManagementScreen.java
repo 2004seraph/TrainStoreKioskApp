@@ -94,7 +94,12 @@ public class StockManagementScreen extends JPanel {
         gbc2.fill = GridBagConstraints.BOTH;
         gbc2.weighty = 1;
         gbc2.weightx = 1;
-        CreateProductPanel cpp = new CreateProductPanel(productData);
+        CreateProductPanel cpp = new CreateProductPanel(productData, new Runnable() {
+            @Override
+            public void run() {
+                updateStockView();
+            }
+        });
         productCreationContainer.add(cpp, gbc2);
     }
 
