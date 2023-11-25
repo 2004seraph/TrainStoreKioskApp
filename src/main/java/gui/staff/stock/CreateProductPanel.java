@@ -135,7 +135,7 @@ class CreateProductPanel extends JPanel {
                 PreparedStatement newProduct = db.prepareStatement("INSERT INTO Product VALUES (?,?,?,?)");
                 newProduct.setString(1, productCodeInput.getText());
                 newProduct.setString(2, nameInput.getText());
-                newProduct.setInt(3, (Integer) stockInput.getValue());
+                newProduct.setInt(3, Math.toIntExact(((Long) stockInput.getValue())));
                 newProduct.setDouble(4, (Double) priceInput.getValue());
                 newProduct.executeUpdate();
             }
