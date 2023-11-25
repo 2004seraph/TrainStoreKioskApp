@@ -663,7 +663,6 @@ class CreateProductPanel extends JPanel {
 
             TableRowSorter<TableModel> sorter = new TableRowSorter<TableModel>(boxedSetContentSelection.getModel());
             boxedSetContentSelection.setRowSorter(sorter);
-
             List<RowSorter.SortKey> sortKeys = new ArrayList<>(1);
             sortKeys.add(new RowSorter.SortKey(2, SortOrder.ASCENDING));
             sorter.setSortKeys(sortKeys);

@@ -11,6 +11,7 @@ import db.DatabaseBridge;
 import entity.BankDetail;
 import entity.user.Person;
 import controllers.AppContext;
+import gui.App;
 
 public class Profile extends JPanel{
 
@@ -132,7 +133,8 @@ public class Profile extends JPanel{
      */
     public void getBankDetailsFromUser() {
         // Create a new JFrame
-        JFrame frame = new JFrame("Bank Details");
+        JDialog frame = new JDialog(AppContext.getWindow());
+        frame.setTitle("Bank Details");
         frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         frame.setSize(500, 500);
         frame.setLayout(new GridBagLayout());
