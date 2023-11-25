@@ -436,5 +436,21 @@ public class Person extends DatabaseOperation.Entity implements DatabaseRecord {
             closeConnection();
         }
     }
+
+
+    public static void addBankDetailsToPerson(BankDetail bankDetail) throws Exception {
+        try {
+            openConnection();
+            PreparedStatement s = prepareStatement("UPDATE Person SET paymentId=? WHERE email=?");
+            s.setInt(1, bankDetail.getBankDetailID());
+            s.setString(2, AppContext.getCurrentUser().getEmail());
+            s.executeUpdate();
+        } catch (SQLException e) {
+            DatabaseBridge.databaseError("Failed to update person", e);
+            throw e;
+        }finally {
+            closeConnection();
+        }
+    }
 }
 

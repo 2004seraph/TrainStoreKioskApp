@@ -240,7 +240,7 @@ public class Profile extends JPanel{
                 String expiryDateInput = expiryDate.getText();
                 String securityCodeInput = securityCode.getText();
                 try{
-                    BankDetail.validateBankDetails(cardNumberInput, expiryDateInput, securityCodeInput);
+                   BankDetail.validateBankDetails(cardNumberInput, expiryDateInput, securityCodeInput);
                 } catch (BankDetail.InvalidBankDetailsException exception) {
                     JOptionPane.showMessageDialog(AppContext.getWindow(), exception.getMessage());
                 }
@@ -249,10 +249,14 @@ public class Profile extends JPanel{
                 try{
                     db.openConnection();
                     bankDetail = BankDetail.createPaymentInfo(cardNumberInput, expiryDate, securityCodeInput);
-                    System.out.println(bankDetail.getCardName());
+//                    Add the bank details to the user
+                    Person.addBankDetailsToPerson(bankDetail);
+                    JOptionPane.showMessageDialog(AppContext.getWindow(), "Bank Details Added");
                 } catch (BankDetail.InvalidBankDetailsException exception) {
                     JOptionPane.showMessageDialog(AppContext.getWindow(), exception.getMessage());
                 } catch (SQLException exception) {
+                    throw new RuntimeException(exception);
+                } catch (Exception exception) {
                     throw new RuntimeException(exception);
                 } finally {
                     db.closeConnection();
