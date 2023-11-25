@@ -270,7 +270,7 @@ public class Order extends DatabaseOperation.Entity implements DatabaseRecord {
         Double total = 0.0;
         try {
             for (OrderLine line : items) {
-                total += line.getItem().getPrice();
+                total += line.getItem().getPrice() * line.getQuantity();
             }
         } catch (SQLException e) {
             DatabaseBridge.databaseError("Failed to get product whilst tallying total cost", e);
