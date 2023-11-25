@@ -256,6 +256,13 @@ public class Order extends DatabaseOperation.Entity implements DatabaseRecord {
     }
 
     public void addItem(Product product, Integer amount) {
+        for (OrderLine line : items) {
+            if (line.getProductCode().equals(product.getProductCode())) {
+                line.setQuantity(line.getQuantity() + amount);
+                return;
+            }
+        }
+
         OrderLine ol = new OrderLine(orderId, product.getProductCode(), amount);
         ol.setItem(product);
 
