@@ -39,23 +39,23 @@ public class Register extends JPanel implements TabbedGUIContainer.TabPanel {
         //construct components
         JLabel registerLabel = new JLabel("<html><h1>Register a new account</h1></html>");
         forename = new JTextField ();
-        JLabel forenameLabel = new JLabel("Forename");
-        JLabel surnameLabel = new JLabel("Surname");
+        JLabel forenameLabel = new JLabel("Forename*");
+        JLabel surnameLabel = new JLabel("Surname*");
         surname = new JTextField(5);
-        JLabel emailLabel = new JLabel("Email");
+        JLabel emailLabel = new JLabel("Email*");
         email = new JTextField (5);
-        JLabel passwordLabel = new JLabel("Password");
+        JLabel passwordLabel = new JLabel("Password*");
         password = new JPasswordField (5);
-        JLabel passwordConfirmationLabel = new JLabel("Password Confirmation");
+        JLabel passwordConfirmationLabel = new JLabel("Password Confirmation*");
         passwordConfirmation = new JPasswordField (5);
         JLabel addressLabel = new JLabel("<html><h2>Address</h2></html>");
-        JLabel houseNumberLabel = new JLabel("House Number");
+        JLabel houseNumberLabel = new JLabel("House Number*");
         houseNumber = new JTextField (5);
-        JLabel streetNameLabel = new JLabel("Street Name");
+        JLabel streetNameLabel = new JLabel("Street Name*");
         streetName = new JTextField (5);
-        JLabel cityNameLabel = new JLabel("City Name");
+        JLabel cityNameLabel = new JLabel("City Name*");
         cityName = new JTextField (5);
-        JLabel postCodeLabel = new JLabel("PostCode");
+        JLabel postCodeLabel = new JLabel("PostCode*");
         postCode = new JTextField (5);
         JButton registerButton = new JButton("Create Account");
         JLabel loginLabel = new JLabel("<html><u><font color='blue'>Login</font></u></html>");
@@ -284,22 +284,22 @@ public class Register extends JPanel implements TabbedGUIContainer.TabPanel {
 
     private boolean validateFormat(){
         // regular expressions for email, postcode and password
-        String emailRegex = "^[a-zA-Z0-9_+&*-]+(?:\\."+ "[a-zA-Z0-9_+&*-]+)*@" + "(?:[a-zA-Z0-9-]+\\.)+[a-z" + "A-Z]{2,7}$";
-        String postcodeRegex = "^[A-Z]{1,2}[0-9]{1,2}\s[A-Z]?[0-9][A-Z]{2}$";
-        // 8-20 characters long, contain at least one digit, one upper case letter, one lower case letter and one special character
-//        String passwordRegex = "^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=.*[@#$%^&+=!()]).{8,20}$";
 
         // Validate the fields with the regular expressions
-        if (!email.getText().matches(emailRegex)) {
+        if (!Person.validateEmail(email.getText())) {
             JOptionPane.showMessageDialog(AppContext.getWindow(), "Invalid email");
             return false;
         }
-//        if (!postCode.getText().matches(postcodeRegex)) {
-//            JOptionPane.showMessageDialog(null, "Invalid postcode");
-//            return false;
-//        }
-        if (password.getText().length() < 12 || password.getText().length() > 40) {
-            JOptionPane.showMessageDialog(AppContext.getWindow(), "Password must be 12-40 characters long");
+        if (!Address.validatePostcode(postCode.getText())) {
+            JOptionPane.showMessageDialog(AppContext.getWindow(), "Invalid postcode");
+            return false;
+        }
+        if (!Person.validatePassword(password.getText())) {
+            JOptionPane.showMessageDialog(
+                    AppContext.getWindow(),
+                    "Password must be at least 8 characters long and contain at least one number, " +
+                            "one uppercase letter and one lowercase letter"
+            );
             return false;
         }
         return true;

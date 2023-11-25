@@ -109,6 +109,9 @@ public class Profile extends JPanel{
                 });
             }
             add(updateButton, gbc);
+            updateButton.addActionListener(e -> {
+                updateDetails();
+            });
 
         } catch (Exception e) {
             System.out.println(e.getMessage());
@@ -127,9 +130,40 @@ public class Profile extends JPanel{
         add(textField, gbc);
     }
 
+
+    /**
+     * Updates the user's personal details
+     */
+//    TODO: IF THE ADDRESS PRIMARY KEY IS CHANGED, ERROR OCCURS
+    public void updateDetails(){
+        String forenameInput = forename.getText();
+        String surnameInput = surname.getText();
+        String houseNumberInput = houseNumber.getText();
+        String streetInput = street.getText();
+        String cityInput = city.getText();
+        String postCodeInput = postCode.getText();
+//        Validate the data
+        try {
+            Person.validatePersonalDetails(forenameInput, surnameInput, houseNumberInput, streetInput, cityInput, postCodeInput);
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(AppContext.getWindow(), e.getMessage());
+        }
+        DatabaseBridge db = DatabaseBridge.instance();
+        try {
+            db.openConnection();
+            Person.updatePersonalDetails(forenameInput, surnameInput, houseNumberInput, streetInput, cityInput, postCodeInput);
+            JOptionPane.showMessageDialog(AppContext.getWindow(), "Personal Details Updated");
+        } catch (Exception exception) {
+            throw new RuntimeException(exception);
+        } finally {
+            db.closeConnection();
+        }
+
+    }
+
+
     /**
      * Creates a new JFrame as a pop up that allows the user to enter their bank details
-     * @return A BankDetail object that contains the bank details entered by the user
      */
     public void getBankDetailsFromUser() {
         // Create a new JFrame

@@ -6,6 +6,7 @@ import db.DatabaseRecord;
 import entity.Address;
 import entity.BankDetail;
 import entity.StoreAttributes;
+import controllers.AppContext;
 
 import java.security.InvalidKeyException;
 import java.sql.*;
@@ -52,6 +53,16 @@ public class Person extends DatabaseOperation.Entity implements DatabaseRecord {
     public int getBankDetailsId() { return bankDetailsID; }
     public String getHouseNumber() { return houseNumber; }
     public String getPostCode() { return postCode; }
+
+    public static boolean validateEmail(String email) {
+        String emailRegex = "^[a-zA-Z0-9_+&*-]+(?:\\."+ "[a-zA-Z0-9_+&*-]+)*@" + "(?:[a-zA-Z0-9-]+\\.)+[a-z" + "A-Z]{2,7}$";
+        return email.matches(emailRegex);
+    }
+
+    public static boolean validatePassword(String password) {
+        String passwordRegex = "^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=.*[@#$%^&+=!()]).{8,20}$";
+        return password.matches(passwordRegex);
+    }
 
     public static void main(String[] args){
         System.out.println("Hello World");
@@ -348,6 +359,78 @@ public class Person extends DatabaseOperation.Entity implements DatabaseRecord {
                 bankDetailsID
         );
         return list;
+    }
+
+    public static void validatePersonalDetails(
+            String forename,
+            String surname,
+            String houseNumber,
+            String streetName,
+            String cityName,
+            String postCode
+    ) throws Exception {
+        if (forename.isEmpty() || forename == null) {
+            throw new Exception("Forename is a compulsory field");
+        }
+        if (surname.isEmpty() || surname == null) {
+            throw new Exception("Surname is a compulsory field");
+        }
+        if (houseNumber.isEmpty() || houseNumber == null) {
+            throw new Exception("House number is a compulsory field");
+        }
+        if (streetName.isEmpty() || streetName == null) {
+            throw new Exception("Street name is a compulsory field");
+        }
+        if (cityName.isEmpty() || cityName == null) {
+            throw new Exception("City name is a compulsory field");
+        }
+        if(!Address.validatePostcode(postCode)){
+            throw new Exception("Invalid postcode");
+        }
+    }
+
+    public static void updatePersonalDetails(
+            String forename,
+            String surname,
+            String houseNumber,
+            String streetName,
+            String cityName,
+            String postCode
+    ) throws Exception {
+        validatePersonalDetails(forename, surname, houseNumber, streetName, cityName, postCode);
+//        DatabaseBridge db = DatabaseBridge.instance();
+        try {
+            openConnection();
+            PreparedStatement s = prepareStatement("UPDATE Address SET houseNumber=?, streetName=?, cityName=?, postCode=? WHERE houseNumber=? AND postCode=?");
+            s.setString(1, houseNumber);
+            s.setString(2, streetName);
+            s.setString(3, cityName);
+            s.setString(4, postCode);
+            s.setString(5, houseNumber);
+            s.setString(6, postCode);
+            s.executeUpdate();
+        } catch (SQLException e) {
+            DatabaseBridge.databaseError("Failed to update address", e);
+            throw e;
+        }finally {
+            closeConnection();
+        }
+
+        try {
+            openConnection();
+            PreparedStatement s = prepareStatement("UPDATE Person SET forename=?, surname=?, houseName=?, postCode=? WHERE email=?");
+            s.setString(1, forename);
+            s.setString(2, surname);
+            s.setString(3, houseNumber);
+            s.setString(4, postCode);
+            s.setString(5, AppContext.getCurrentUser().getEmail());
+            s.executeUpdate();
+        } catch (SQLException e) {
+            DatabaseBridge.databaseError("Failed to update person", e);
+            throw e;
+        }finally {
+            closeConnection();
+        }
     }
 }
 
