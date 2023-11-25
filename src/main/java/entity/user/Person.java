@@ -7,6 +7,7 @@ import entity.Address;
 import entity.BankDetail;
 import entity.StoreAttributes;
 import controllers.AppContext;
+import entity.order.Order;
 
 import java.security.InvalidKeyException;
 import java.sql.*;
@@ -450,6 +451,25 @@ public class Person extends DatabaseOperation.Entity implements DatabaseRecord {
             throw e;
         }finally {
             closeConnection();
+        }
+    }
+
+    public List<Order> getAllOrders() {
+        List<Order> orders = new ArrayList<>();
+        try {
+            openConnection();
+            PreparedStatement s = prepareStatement("SELECT orderId FROM Order WHERE personId = ?");
+            s.setInt(1, personID);
+
+            ResultSet rs = s.executeQuery();
+            while (rs.next()) {
+                orders.add(Order.getOrderWithID(rs.getInt("orderId")));
+            }
+
+            return orders;
+        } catch (SQLException e) {
+            DatabaseBridge.databaseError("Error fetching all orders for user ["+personID+"]");
+            throw new RuntimeException(e);
         }
     }
 }
