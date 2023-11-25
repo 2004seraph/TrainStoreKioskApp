@@ -41,24 +41,6 @@ public class App {
      */
     public void userState(StoreAttributes.Role userRole) {
         screenController.removeAllTabs();
-        switch (userRole) {
-            case MANAGER:
-                ManagerScreen manScreen = new ManagerScreen();
-                screenController.insertDivider();
-                screenController.insertTab("User Management", manScreen);
-                // deliberate fallthrough
-            case STAFF:
-                StockManagementScreen sms = new StockManagementScreen();
-                screenController.insertTab("Stock Management", sms);
-                screenController.insertDivider();
-                break;
-        }
-
-
-        JPanel shopPage = new Shop();
-        JPanel ordersPage = new PastOrders();
-        JPanel profilePage = new Profile();
-        JPanel cartPage = new Cart();
 
         JButton logOutButton = new JButton("Logout");
         logOutButton.addActionListener(new ActionListener() {
@@ -69,6 +51,25 @@ public class App {
             }
         });
         screenController.insertNonTabButton(logOutButton);
+        screenController.insertDivider();
+
+        switch (userRole) {
+            case MANAGER:
+                ManagerScreen manScreen = new ManagerScreen();
+                screenController.insertTab("User Management", manScreen);
+                screenController.insertDivider();
+                // deliberate fallthrough
+            case STAFF:
+                StockManagementScreen sms = new StockManagementScreen();
+                screenController.insertTab("Stock Management", sms);
+                screenController.insertDivider();
+                break;
+        }
+
+        JPanel shopPage = new Shop();
+        JPanel ordersPage = new PastOrders();
+        JPanel profilePage = new Profile();
+        JPanel cartPage = new Cart();
 
         screenController.insertTab("Cart", cartPage);
         screenController.insertTab("Profile", profilePage);

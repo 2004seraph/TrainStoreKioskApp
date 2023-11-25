@@ -160,6 +160,7 @@ public class TabbedGUIContainer extends JPanel {
      * @param button Your beautiful button
      */
     public void insertNonTabButton(JButton button) {
+        this.tabButtonConstraints.weighty = 0;
         this.tabButtonList.add(button, this.tabButtonConstraints, 0);
     }
 
