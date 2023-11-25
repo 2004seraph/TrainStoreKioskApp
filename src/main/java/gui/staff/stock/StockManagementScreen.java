@@ -157,9 +157,9 @@ public class StockManagementScreen extends JPanel {
                 try {
                     db.openConnection();
                     // THIS CODE WORKS BUT I DO NOT WANT STUFF TO BE DELETED RIGHT NOW, WE NEED TO TEST THE APP
-//                    PreparedStatement productDeletion = DatabaseBridge.instance().prepareStatement("DELETE FROM Product WHERE productCode=?;");
-//                    productDeletion.setString(1, (String)jt.getValueAt(row, 0));
-//                    productDeletion.executeUpdate();
+                    PreparedStatement productDeletion = DatabaseBridge.instance().prepareStatement("DELETE FROM Product WHERE productCode=?;");
+                    productDeletion.setString(1, (String)jt.getValueAt(row, 0));
+                    productDeletion.executeUpdate();
                     JOptionPane.showMessageDialog(AppContext.getWindow(), "Deleted '" + (String)jt.getValueAt(row, 1) + "' from products.");
                     SwingUtilities.invokeLater(new Runnable() {
                         @Override

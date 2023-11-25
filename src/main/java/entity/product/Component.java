@@ -10,7 +10,8 @@ public class Component extends Product{
     public enum Gauge {
         NONE,
         OOGAUGE,
-        TTGUAGE
+        TTGUAGE,
+        NGAUGE
     }
 
     private Gauge gauge;

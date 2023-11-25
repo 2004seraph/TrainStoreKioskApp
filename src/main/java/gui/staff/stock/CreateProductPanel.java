@@ -59,6 +59,7 @@ class CreateProductPanel extends JPanel {
     private JComboBox<Controller.ControlType> controllerInput;
 
     JPanel boxedSetBuilder;
+    JTable boxedSetContentSelection;
     String[] buildBoxedSetColumns = new String[]{"ID", "Product", "Amount"};
     Object[][] productDataSet;
 
@@ -120,6 +121,12 @@ class CreateProductPanel extends JPanel {
             db.openConnection();
             db.setAutoCommit(false);
 
+            StringBuilder validationErrorMessage = new StringBuilder();
+
+            if (!validateProductForm(validationErrorMessage)) {
+                throw new IllegalStateException(validationErrorMessage.toString());
+            }
+
             // Product table
             {
                 PreparedStatement newProduct = db.prepareStatement("INSERT INTO Product VALUES (?,?,?,?)");
@@ -132,6 +139,10 @@ class CreateProductPanel extends JPanel {
 
             switch (Objects.requireNonNull(getSelectedButtonFromGroup(productTypeRadioGroup))) {
                 case componentText:
+                    if (!validateComponentForm(validationErrorMessage)) {
+                        throw new IllegalStateException(validationErrorMessage.toString());
+                    }
+
                     //System.out.println("Component");
                     {
                         PreparedStatement newComponent = db.prepareStatement("INSERT INTO Component VALUES (?,?,?,?)");
@@ -173,13 +184,39 @@ class CreateProductPanel extends JPanel {
                     }
                     break;
                 case boxedSetText:
+                    if (!validateBoxedSetForm(validationErrorMessage)) {
+                        throw new IllegalStateException(validationErrorMessage.toString());
+                    }
                     //System.out.println("Boxed set");
+                    {
+                        PreparedStatement newBoxSetItem = db.prepareStatement("INSERT INTO BoxedSetContent VALUES (?,?,?)");
+                        newBoxSetItem.setString(1, productCodeInput.getText());
 
+                        for (int i = 0; i < boxedSetContentSelection.getRowCount(); i++) {
+                            int quantity = (Integer) boxedSetContentSelection.getValueAt(i, 2);
+                            if (quantity == 0) continue;
+
+                            newBoxSetItem.setString(2, (String) boxedSetContentSelection.getValueAt(i, 0));
+                            newBoxSetItem.setInt(3, quantity);
+                            newBoxSetItem.executeUpdate();
+                        }
+                    }
                     break;
             }
 
-//            db.commit();
+            db.commit();
             db.setAutoCommit(true);
+        } catch (IllegalStateException e) {
+            try {
+                db.rollback();
+            } catch (Throwable i) {
+                DatabaseBridge.databaseError("Product creation rollbackerror", i);
+            }
+            JOptionPane.showMessageDialog(
+                    AppContext.getWindow(),
+                    "Could not insert new product: " + e.getMessage(),
+                    "Invalid Form Input",
+                    JOptionPane.ERROR_MESSAGE);
         } catch (Throwable e) {
             DatabaseBridge.databaseError("Product creation error", e);
             try {
@@ -195,6 +232,51 @@ class CreateProductPanel extends JPanel {
         } finally {
             db.closeConnection();
         }
+    }
+
+    private boolean validateProductForm(StringBuilder message) {
+        String pc = productCodeInput.getText();
+        String n = nameInput.getText();
+        String s = stockInput.getText();
+        String p = priceInput.getText();
+
+        if (pc.isEmpty() || n.isEmpty() || s.isEmpty() || p.isEmpty()) {
+            message.append("Empty product data fields");
+            return false;
+        }
+        if (!pc.matches("^(R|C|L|S|M|P)[a-zA-Z0-9]*$") || pc.length() > 7 || pc.length() < 4) {
+            message.append("Malformed product code");
+            return false;
+        }
+        return true;
+    }
+    private boolean validateComponentForm(StringBuilder message) {
+        String b = brandInput.getText();
+        String e = eraInput.getText();
+
+        if (b.isEmpty() || e.isEmpty()) {
+            message.append("Empty component data fields");
+            return false;
+        }
+        if (!e.matches("^([0-9]{1,2}|[0-9]{1,2}-[0-9]{1,2})$") || e.length() > 5) {
+            message.append("Malformed era range");
+            return false;
+        }
+
+        return true;
+    }
+    private boolean validateBoxedSetForm(StringBuilder message) {
+        int selectedItems = 0;
+        for (int i = 0; i < boxedSetContentSelection.getRowCount(); i++) {
+            int quantity = (Integer) boxedSetContentSelection.getValueAt(i, 2);
+            if (quantity == 0) continue;
+            selectedItems++;
+        }
+        if (selectedItems == 0) {
+            message.append("No content selected for the boxed set");
+            return false;
+        }
+        return true;
     }
 
     private void setProductCreationEnabled(boolean status) {
@@ -569,13 +651,13 @@ class CreateProductPanel extends JPanel {
         {
             gbc.gridy++;
             gbc.weighty = 1;
-            JTable jt = new JTable(new BoxedSetConstructionTableModel(productDataSet, buildBoxedSetColumns));
-            jt.setRowHeight(24);
-            JScrollPane scrollPane = new JScrollPane(jt);
+            boxedSetContentSelection = new JTable(new BoxedSetConstructionTableModel(productDataSet, buildBoxedSetColumns));
+            boxedSetContentSelection.setRowHeight(24);
+            JScrollPane scrollPane = new JScrollPane(boxedSetContentSelection);
             panel.add(scrollPane, gbc);
 
-            TableRowSorter<TableModel> sorter = new TableRowSorter<TableModel>(jt.getModel());
-            jt.setRowSorter(sorter);
+            TableRowSorter<TableModel> sorter = new TableRowSorter<TableModel>(boxedSetContentSelection.getModel());
+            boxedSetContentSelection.setRowSorter(sorter);
 
             List<RowSorter.SortKey> sortKeys = new ArrayList<>(1);
             sortKeys.add(new RowSorter.SortKey(2, SortOrder.ASCENDING));
