@@ -138,7 +138,25 @@ public class StockManagementScreen extends JPanel {
         }, new ButtonColumn.ActionFunction() {
             @Override
             public void onClick(int row, int column) {
-                System.out.println("pushed editor: " + row);
+                DatabaseBridge db = DatabaseBridge.instance();
+                try {
+                    db.openConnection();
+                    // THIS CODE WORKS BUT I DO NOT WANT STUFF TO BE DELETED RIGHT NOW, WE NEED TO TEST THE APP
+//                    PreparedStatement productDeletion = DatabaseBridge.instance().prepareStatement("DELETE FROM Product WHERE productCode=?;");
+//                    productDeletion.setString(1, (String)jt.getValueAt(row, 0));
+//                    productDeletion.executeUpdate();
+                    JOptionPane.showMessageDialog(AppContext.getWindow(), "Deleted '" + (String)jt.getValueAt(row, 1) + "' from products.");
+                    SwingUtilities.invokeLater(new Runnable() {
+                        @Override
+                        public void run() {
+                            StockManagementScreen.this.updateStockView();
+                        }
+                    });
+                } catch (SQLException e) {
+
+                } finally {
+                    db.closeConnection();
+                }
             }
         });
 
