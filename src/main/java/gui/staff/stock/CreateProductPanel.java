@@ -21,10 +21,14 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.sql.PreparedStatement;
-import java.sql.SQLException;
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import javax.swing.JFormattedTextField;
+import javax.swing.text.DefaultFormatter;
+import javax.swing.text.DefaultFormatterFactory;
+import javax.swing.text.NumberFormatter;
 
 class CreateProductPanel extends JPanel {
     JButton newProductButton;
@@ -253,6 +257,10 @@ class CreateProductPanel extends JPanel {
             message.append("Malformed product code");
             return false;
         }
+        if (!p.matches("[0-9]*\\.[0-9]+")) {
+            message.append("Invalid price");
+            return false;
+        }
         return true;
     }
     private boolean validateComponentForm(StringBuilder message) {
@@ -344,7 +352,13 @@ class CreateProductPanel extends JPanel {
         }
         {
             JLabel priceLabel = new JLabel("Price per Unit");
-            priceInput = new JFormattedTextField(getCurrencyFormatter());
+
+            DefaultFormatter fmt = new NumberFormatter(new DecimalFormat("0.##"));
+            fmt.setValueClass(Double.class);
+            DefaultFormatterFactory fmtFactory = new DefaultFormatterFactory(fmt, fmt, fmt);
+
+            priceInput = new JFormattedTextField();
+            priceInput.setFormatterFactory(fmtFactory);
             JPanel container = createLabelInputRow(priceLabel, priceInput);
             gbc.gridy++;
             panel.add(container, gbc);
