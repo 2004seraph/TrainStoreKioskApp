@@ -6,6 +6,7 @@ import entity.order.Order;
 import entity.user.Person;
 
 import java.sql.SQLException;
+import java.text.SimpleDateFormat;
 
 public final class OrderController {
     public static Order currentOrder;
@@ -23,7 +24,8 @@ public final class OrderController {
         }
 
         try {
-            BankDetail.validateBankDetails(bankDetail.getCardNumber(), bankDetail.getExpiryDate().toString(), bankDetail.getSecurityCode());
+            SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd");
+            BankDetail.validateBankDetails(bankDetail.getCardNumber(), df.format(bankDetail.getExpiryDate()), bankDetail.getSecurityCode());
         } catch (BankDetail.InvalidBankDetailsException e) {
             return false;
         }
