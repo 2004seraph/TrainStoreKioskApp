@@ -93,7 +93,8 @@ public class BankDetail extends DatabaseOperation.Entity implements DatabaseReco
         }
 
         String cardName = "Card ending in " + cardNumber.substring(cardNumber.length() - 4);
-        try (PreparedStatement cardQuery = prepareStatement("INSERT INTO CardDetails VALUES (?, ?, ?, ?)")) {
+        System.out.println("Card name: " + cardName);
+        try (PreparedStatement cardQuery = prepareStatement("INSERT INTO BankDetails (cardName, cardNumber, expiryDate, securityCode) VALUES (?, ?, ?, ?)")) {
             byte[] encryptionKey = AppContext.getEncryptionKey();
             String encryptedCardNumber = Crypto.encryptString(cardNumber, encryptionKey);
             String encryptedSecurityCode = Crypto.encryptString(securityCode, encryptionKey);
@@ -164,7 +165,7 @@ public class BankDetail extends DatabaseOperation.Entity implements DatabaseReco
         }
         // Expiry date should be in the format yyyy-MM-dd
         String pattern = "^\\d{4}-\\d{2}-\\d{2}$";
-        if (!expiryDate.matches(pattern)) { //2023-01-01
+        if (!expiryDate.matches(pattern)) { //2024-01-01
             throw new InvalidBankDetailsException("Expiry date was an invalid format");
         }
 //        Check if card is expired
@@ -183,5 +184,21 @@ public class BankDetail extends DatabaseOperation.Entity implements DatabaseReco
                 expiryDate,
                 securityCode
         );
+    }
+
+    public static void main(String[] args) {
+        String cardNumber = "4012888888881881";
+        Date expiryDate = new Date(2024, 1, 1);
+        String securityCode = "123";
+
+        DatabaseBridge db = DatabaseBridge.instance();
+        try{
+            db.openConnection();
+            BankDetail detail = createPaymentInfo(cardNumber, new java.sql.Date(expiryDate.getTime()), securityCode);
+        } catch (SQLException | InvalidBankDetailsException e) {
+            e.printStackTrace();
+        } finally {
+            db.closeConnection();
+        }
     }
 }

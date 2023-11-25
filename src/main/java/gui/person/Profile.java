@@ -31,8 +31,6 @@ public class Profile extends JPanel{
     private JLabel postCodeLabel = new JLabel("PostCode:");
     private JTextField postCode = new JTextField(30);
 //    Bank Details
-    private JLabel cardNameLabel = new JLabel("Card Name:");
-    private JTextField cardName = new JTextField(30);
     private JLabel cardNumberLabel = new JLabel("Card Number:");
     private JTextField cardNumber = new JTextField(30);
     private JLabel expiryDateLabel = new JLabel("Expiry Date:");
@@ -43,12 +41,12 @@ public class Profile extends JPanel{
     private JButton updateButton = new JButton("UPDATE");
     private JButton addBankDetailsButton = new JButton("ADD BANK DETAILS");
 
+    private BankDetail bankDetail;
 
     public Profile() {
         setLayout(new GridBagLayout());
         GridBagConstraints gbc = new GridBagConstraints();
         gbc.insets = new Insets(1, 10, 1, 1);
-//        gbc.fill = GridBagConstraints.HORIZONTAL;
         gbc.anchor = GridBagConstraints.WEST;
 
         addField(gbc, forenameLabel, forename, 0);
@@ -84,11 +82,9 @@ public class Profile extends JPanel{
             if (person.getBankDetail() != null) {
 //                Add bank details to the profile
                 gbc.anchor = GridBagConstraints.WEST;
-                addField(gbc, cardNameLabel, cardName, 7);
                 addField(gbc, cardNumberLabel, cardNumber, 8);
                 addField(gbc, expiryDateLabel, expiryDate, 9);
                 addField(gbc, securityCodeLabel, securityCode, 10);
-                cardName.setText(person.getBankDetail().getCardName());
                 cardNumber.setText(person.getBankDetail().getCardNumber());
                 expiryDate.setText(person.getBankDetail().getExpiryDate().toString());
                 securityCode.setText(person.getBankDetail().getSecurityCode());
@@ -108,8 +104,7 @@ public class Profile extends JPanel{
                 gbc.gridy = 7;
 
                 addBankDetailsButton.addActionListener(e -> {
-                    BankDetail bankDetail = getBankDetailsFromUser();
-                    System.out.println(bankDetail.getCardName());
+                    getBankDetailsFromUser();
                 });
             }
             add(updateButton, gbc);
@@ -135,7 +130,7 @@ public class Profile extends JPanel{
      * Creates a new JFrame as a pop up that allows the user to enter their bank details
      * @return A BankDetail object that contains the bank details entered by the user
      */
-    public static BankDetail getBankDetailsFromUser() {
+    public void getBankDetailsFromUser() {
         // Create a new JFrame
         JFrame frame = new JFrame("Bank Details");
         frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
@@ -204,9 +199,7 @@ public class Profile extends JPanel{
         frame.setVisible(true);
 
         // When clicking submitButton, close this window and open Register window
-        BankDetail bankDetail = null;
         submitButton.addActionListener(new ActionListener() {
-            @Override
             public void actionPerformed(ActionEvent e) {
                 String cardNumberInput = cardNumber.getText();
                 String expiryDateInput = expiryDate.getText();
@@ -214,16 +207,16 @@ public class Profile extends JPanel{
                 try{
                     BankDetail.validateBankDetails(cardNumberInput, expiryDateInput, securityCodeInput);
                 } catch (BankDetail.InvalidBankDetailsException exception) {
-                    JOptionPane.showMessageDialog(null, exception.getMessage());
+                    JOptionPane.showMessageDialog(AppContext.getWindow(), exception.getMessage());
                 }
                 Date expiryDate = Date.valueOf(expiryDateInput);
                 DatabaseBridge db = DatabaseBridge.instance();
                 try{
                     db.openConnection();
-                    BankDetail bankDetail = BankDetail.createPaymentInfo(cardNumberInput, expiryDate, securityCodeInput);
+                    bankDetail = BankDetail.createPaymentInfo(cardNumberInput, expiryDate, securityCodeInput);
                     System.out.println(bankDetail.getCardName());
                 } catch (BankDetail.InvalidBankDetailsException exception) {
-                    JOptionPane.showMessageDialog(null, exception.getMessage());
+                    JOptionPane.showMessageDialog(AppContext.getWindow(), exception.getMessage());
                 } catch (SQLException exception) {
                     throw new RuntimeException(exception);
                 } finally {
@@ -232,7 +225,7 @@ public class Profile extends JPanel{
                 }
             }
         });
-        return bankDetail;
+
     }
 
 
