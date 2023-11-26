@@ -347,7 +347,7 @@ public class Person extends DatabaseOperation.Entity implements DatabaseRecord {
                 UPDATE Role, Person
                 LEFT JOIN Role R ON Person.PersonId = R.personId
                 SET R.role = ?
-                WHERE PersonId = ?
+                WHERE Person.PersonId = ?
                 """)) {
             query.setString(1, newRole.toString());
             query.setInt(2, person.getId());
