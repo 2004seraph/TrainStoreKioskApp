@@ -1,14 +1,11 @@
 package utils;
 
-import gui.TabbedGUIContainer;
-
 import javax.swing.*;
 import javax.swing.border.Border;
 import javax.swing.border.EmptyBorder;
 import javax.swing.border.EtchedBorder;
 import java.awt.*;
 import java.text.NumberFormat;
-import java.util.Arrays;
 import java.util.Enumeration;
 import java.util.Locale;
 import javax.swing.text.NumberFormatter;

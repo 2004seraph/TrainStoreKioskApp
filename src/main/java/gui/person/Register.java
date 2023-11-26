@@ -11,7 +11,7 @@ import db.*;
 import entity.user.*;
 import entity.*;
 import gui.App;
-import gui.TabbedGUIContainer;
+import gui.components.TabbedGUIContainer;
 import utils.*;
 
 public class Register extends JPanel implements TabbedGUIContainer.TabPanel {

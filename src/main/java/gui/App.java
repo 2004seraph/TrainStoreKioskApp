@@ -2,6 +2,7 @@ package gui;
 
 import controllers.AppContext;
 import entity.StoreAttributes;
+import gui.components.TabbedGUIContainer;
 import gui.person.*;
 import gui.staff.ManagerScreen;
 import gui.staff.order.OrderManagementScreen;

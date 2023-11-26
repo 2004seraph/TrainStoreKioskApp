@@ -3,7 +3,6 @@ package gui.person;
 import controllers.OrderController;
 import entity.product.*;
 import entity.product.Component;
-import gui.TabbedGUIContainer;
 import org.javatuples.Pair;
 import utils.GUI;
 

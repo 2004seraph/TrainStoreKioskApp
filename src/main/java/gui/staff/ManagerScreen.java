@@ -4,7 +4,7 @@ import controllers.AppContext;
 import db.DatabaseBridge;
 import entity.StoreAttributes;
 import entity.user.Person;
-import gui.TabbedGUIContainer;
+import gui.components.TabbedGUIContainer;
 
 import javax.swing.*;
 import java.awt.*;
@@ -56,7 +56,7 @@ public class ManagerScreen extends JPanel implements TabbedGUIContainer.TabPanel
                 sb.append("to ");
                 sb.append(newRole.toString());
 
-                int confirm = JOptionPane.showConfirmDialog(null, sb.toString(), "Confirm Action", JOptionPane.YES_NO_OPTION);
+                int confirm = JOptionPane.showConfirmDialog(AppContext.getWindow(), sb.toString(), "Confirm Action", JOptionPane.YES_NO_OPTION);
 
                 if (confirm == 0) {
                     DatabaseBridge db = DatabaseBridge.instance();

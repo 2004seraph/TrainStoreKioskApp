@@ -1,4 +1,4 @@
-package gui;
+package gui.components;
 import org.javatuples.*;
 
 import javax.swing.*;
