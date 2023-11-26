@@ -22,20 +22,6 @@ public class PastOrders extends JPanel {
     private Map<String, PastOrderItem> pastOrderItems;
 
     public PastOrders() {
-        this.isExpanded = true; // Default to showing full details
-        this.pastOrderItems = new LinkedHashMap<>(); // Initialize the pastOrderItems map
-
-        Map<String, PastOrderItem> pastOrderItems1 = new LinkedHashMap<>();
-        pastOrderItems1.put("Product 1", new PastOrderItem("Product 1", 2, "£10.99"));
-        pastOrderItems1.put("Product 2", new PastOrderItem("Product 2", 1, "£19.99"));
-        pastOrderItems1.put("Product 3", new PastOrderItem("Product 3", 3, "£5.99"));
-        createOrderLine(pastOrderItems1);
-
-        Map<String, PastOrderItem> pastOrderItems2 = new LinkedHashMap<>();
-        pastOrderItems2.put("Product 4", new PastOrderItem("Product 4", 1, "£10.99"));
-        pastOrderItems2.put("Product 5", new PastOrderItem("Product 5", 2, "£19.99"));
-        pastOrderItems2.put("Product 6", new PastOrderItem("Product 6", 1, "£5.99"));
-        createOrderLine(pastOrderItems2);
     }
 
     public void createOrderLine(Map<String, PastOrderItem> PastOrderItems) {
