@@ -6,17 +6,20 @@ import javax.swing.*;
 
 import controllers.AppContext;
 import db.DatabaseBridge;
+import gui.components.TabbedGUIContainer;
 
 import java.awt.*;
 import java.sql.SQLException;
 import java.util.List;
 
-public class PastOrdersScreen extends JPanel {
+public class PastOrdersScreen extends JPanel implements TabbedGUIContainer.TabPanel{
     private static final int orderSpacing = 30;
+
+    JPanel contentPanel;
 
     public PastOrdersScreen() {
         this.setLayout(new BorderLayout());
-        JPanel contentPanel = new JPanel();
+        contentPanel = new JPanel();
         GridLayout gl = new GridLayout(0, 2);
         gl.setHgap(orderSpacing);
         gl.setVgap(orderSpacing);
@@ -40,5 +43,15 @@ public class PastOrdersScreen extends JPanel {
             db.closeConnection();
         }
 
+    }
+
+    @Override
+    public void setNotebookContainer(TabbedGUIContainer cont) {
+        
+    }
+
+    @Override
+    public void onSelected() {
+        
     }
 }

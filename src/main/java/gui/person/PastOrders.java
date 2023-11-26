@@ -10,8 +10,8 @@ import java.sql.SQLException;
 import java.text.SimpleDateFormat;
 
 public class PastOrders extends JPanel {
-    GridBagConstraints gbc;
-    GridBagLayout gbl;
+    private GridBagConstraints gbc;
+    private GridBagLayout gbl;
 
     public PastOrders(Order order) {
         gbc = new GridBagConstraints();
@@ -22,27 +22,44 @@ public class PastOrders extends JPanel {
         setBorder(BorderFactory.createLineBorder(Color.black));
 
         JLabel orderIdLabel = new JLabel("Order ID: " + order.getOrderId());
-        add(orderIdLabel, createGbc(0, 0));
-
-        JLabel statusLabel = new JLabel("Status: " + order.getStatus().toString());
-        add(statusLabel, createGbc(0, 1));
+        gbc.gridy = 0;
+        add(orderIdLabel, gbc);
 
         JLabel dateLabel = new JLabel("Date: " + formatDate(order.getDate()));
-        add(dateLabel, createGbc(0, 2));
+        gbc.gridy++;
+        add(dateLabel, gbc);
+
+        JLabel statusLabel = new JLabel("Status: " + order.getStatus().toString());
+        gbc.gridy++;
+        add(statusLabel, gbc);
 
         JLabel totalCostLabel = new JLabel("Total Cost: " + String.format("%.2f", order.getTotalCost()));
-        add(totalCostLabel, createGbc(0, 3));
+        gbc.gridy++;
+        add(totalCostLabel, gbc);
 
         JLabel itemsLabel = new JLabel("Items:");
-        add(itemsLabel, createGbc(0, 4));
+        gbc.gridy++;
+        add(itemsLabel, gbc);
 
         for (OrderLine orderLine : order.getItemsList()) {
             try {
+                JPanel orderLinePanel = new JPanel(new GridLayout(1, 3));
+
                 Product product = orderLine.getItem();
-                JLabel itemLabel = new JLabel(orderLine.getQuantity() + "x " + product.getName() +
-                        " (Unit Price: " + String.format("%.2f", product.getPrice()) + ")");
-                add(itemLabel, createGbc(0, GridBagConstraints.RELATIVE));
+
+                JLabel itemNameLabel = new JLabel("Product: " + product.getName());
+                orderLinePanel.add(itemNameLabel);
+
+                JLabel quantityLabel = new JLabel("Quantity: " + orderLine.getQuantity());
+                orderLinePanel.add(quantityLabel);
+
+                JLabel unitPriceLabel = new JLabel("Unit Price: " + String.format("%.2f", product.getPrice()));
+                orderLinePanel.add(unitPriceLabel);
+
+                gbc.gridy++;
+                add(orderLinePanel, gbc);
             } catch (SQLException e) {
+                // Handle the exception appropriately in your application or log it
                 e.printStackTrace();
             }
         }
@@ -51,13 +68,5 @@ public class PastOrders extends JPanel {
     private String formatDate(java.util.Date date) {
         SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
         return dateFormat.format(date);
-    }
-
-    private GridBagConstraints createGbc(int x, int y) {
-        GridBagConstraints gbc = new GridBagConstraints();
-        gbc.gridx = x;
-        gbc.gridy = y;
-        gbc.insets = new Insets(5, 5, 5, 5);
-        return gbc;
     }
 }
