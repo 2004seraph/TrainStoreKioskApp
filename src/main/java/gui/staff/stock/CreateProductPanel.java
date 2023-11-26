@@ -6,6 +6,7 @@ import entity.product.Component;
 import entity.product.Controller;
 import entity.product.Locomotive;
 import entity.product.Track;
+import org.jdesktop.swingx.prompt.PromptSupport;
 import utils.GUI;
 
 import static utils.GUI.*;
@@ -333,6 +334,7 @@ class CreateProductPanel extends JPanel {
         {
             JLabel productCodeLabel = new JLabel("Product Code");
             productCodeInput = new JTextField();
+            PromptSupport.setPrompt("Starting with R, C, L, S, M, P", productCodeInput);
             JPanel container = createLabelInputRow(productCodeLabel, productCodeInput);
             gbc.gridy++;
             panel.add(container, gbc);
@@ -340,6 +342,7 @@ class CreateProductPanel extends JPanel {
         {
             JLabel nameLabel = new JLabel("Name");
             nameInput = new JTextField();
+            PromptSupport.setPrompt("Latin letters only", nameInput);
             JPanel container = createLabelInputRow(nameLabel, nameInput);
             gbc.gridy++;
             panel.add(container, gbc);
@@ -347,6 +350,7 @@ class CreateProductPanel extends JPanel {
         {
             JLabel stockLabel = new JLabel("Initial Stock Level");
             stockInput = new JFormattedTextField(getIntegerFormatter());
+            PromptSupport.setPrompt("Integer", stockInput);
             JPanel container = createLabelInputRow(stockLabel, stockInput);
             gbc.gridy++;
             panel.add(container, gbc);
@@ -359,6 +363,7 @@ class CreateProductPanel extends JPanel {
             DefaultFormatterFactory fmtFactory = new DefaultFormatterFactory(fmt, fmt, fmt);
 
             priceInput = new JFormattedTextField();
+            PromptSupport.setPrompt("Currency Amount", priceInput);
             priceInput.setFormatterFactory(fmtFactory);
             JPanel container = createLabelInputRow(priceLabel, priceInput);
             gbc.gridy++;
@@ -532,12 +537,19 @@ class CreateProductPanel extends JPanel {
         gbc.gridx = 0;
         gbc.gridy = 0;
 
+        gbc.gridy++;
+        gbc.gridwidth = 2;
+        JLabel infoLabel = new JLabel("<html><h3>Specific component information</h3></html>");
+        int infoInset = 7;
+        infoLabel.setBorder(new EmptyBorder(infoInset, 0, infoInset, infoInset));
+        panel.add(infoLabel, gbc);
+
         // component field pairs
         // radio list for component type
-        gbc.gridwidth = 2;
         {
             JLabel brandLabel = new JLabel("Brand");
             brandInput = new JTextField();
+            PromptSupport.setPrompt("Dapol, etc.", brandInput);
             JPanel container = createLabelInputRow(brandLabel, brandInput);
             gbc.gridy++;
             panel.add(container, gbc);
@@ -545,6 +557,7 @@ class CreateProductPanel extends JPanel {
         {
             JLabel eraLabel = new JLabel("Era");
             eraInput = new JTextField();
+            PromptSupport.setPrompt("Integer or range (e.g. 7-9)", eraInput);
             JPanel container = createLabelInputRow(eraLabel, eraInput);
             gbc.gridy++;
             panel.add(container, gbc);
@@ -667,6 +680,12 @@ class CreateProductPanel extends JPanel {
         JLabel title = new JLabel("<html><h3>Boxed Set Contents</h3></html>");
         title.setBorder(new EmptyBorder(0,6,0,0));
         panel.add(title, gbc);
+        gbc.gridy++;
+
+        JLabel infoLabel = new JLabel("Set the quantity of each item in the boxed set.");
+        int infoInset = 7;
+        infoLabel.setBorder(new EmptyBorder(infoInset, infoInset, infoInset, infoInset));
+        panel.add(infoLabel, gbc);
 
         {
             gbc.gridy++;
