@@ -73,7 +73,7 @@ public class StockManagementScreen extends JPanel {
 //        add(newProductButton, gbc);
 
         gbc.weightx = 1;
-        gbc.weighty = 0.5;
+        gbc.weighty = 0.8;
         gbc.gridx = 0;
         gbc.gridy++;
         gbc.gridwidth = 2;
@@ -129,16 +129,16 @@ public class StockManagementScreen extends JPanel {
             }
 
             ResultSet products = Product.getAllProducts();
-            productData = new Object[count - 1][columns.length];
+            assert products != null;
+            productData = new Object[count][columns.length];
             int index = 0;
             while (true) {
-                assert products != null;
-                if (!products.next()) break;
                 productData[index][0] = products.getString("productCode");
                 productData[index][1] = products.getString("name");
                 productData[index][2] = products.getDouble("price");
                 productData[index][3] = products.getInt("stockLevel");
-                ++index;
+                if (!products.next()) break;
+                index++;
             }
         } catch (SQLException e) {
             throw new RuntimeException(e);

@@ -9,7 +9,7 @@ public class CurrencyCellRenderer extends DefaultTableCellRenderer {
     public void setValue(Object value)
     {
         if (value != null) {
-            value = ukCurrencyFormat.format((Double)value);
+            value = ukCurrencyFormat.format(value);
         }
         super.setValue(value);
     }

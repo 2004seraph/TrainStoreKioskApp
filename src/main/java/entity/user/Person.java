@@ -111,7 +111,7 @@ public class Person extends DatabaseOperation.Entity implements DatabaseRecord {
             int bankDetailsID,
             StoreAttributes.Role role,
             boolean decrypt
-    ) {
+    ) throws SQLException, InvalidKeyException {
         this.personID =      id;
         this.forename =      forename;
         this.surname =       surname;
@@ -122,23 +122,19 @@ public class Person extends DatabaseOperation.Entity implements DatabaseRecord {
         this.bankDetailsID = bankDetailsID;
         this.role = role;
 
-        try{
-            Address address = Address.getAddressById(houseNumber, postCode);
-            if (address == null) {
-                throw new SQLException("No address found with that house number and postcode");
-            }
-            this.address = address;
+        Address address = Address.getAddressById(houseNumber, postCode);
+        if (address == null) {
+            throw new SQLException("No address found with that house number and postcode");
+        }
+        this.address = address;
 
-            if (decrypt) {
-                try {
-                    BankDetail bankDetail = BankDetail.getBankDetailsById(bankDetailsID);
-                    this.bankDetail = bankDetail;
-                } catch (BankDetail.BankAccountNotFoundException e) {
-                    this.bankDetail = null;
-                }
+        if (decrypt) {
+            try {
+                BankDetail bankDetail = BankDetail.getBankDetailsById(bankDetailsID);
+                this.bankDetail = bankDetail;
+            } catch (BankDetail.BankAccountNotFoundException e) {
+                this.bankDetail = null;
             }
-        } catch (SQLException | InvalidKeyException e) {
-            throw new RuntimeException(e);
         }
     }
 
@@ -206,7 +202,7 @@ public class Person extends DatabaseOperation.Entity implements DatabaseRecord {
      * @return A Person object with all of its fields set, or null if there was no one with that id
      * @throws SQLException
      */
-    public static Person getPersonById(int id) throws SQLException {
+    public static Person getPersonByID(int id) throws SQLException {
         PreparedStatement personQuery = prepareStatement("SELECT * FROM Person WHERE personId=?");
         personQuery.setInt(1, id);
         ResultSet res = personQuery.executeQuery();
@@ -221,38 +217,48 @@ public class Person extends DatabaseOperation.Entity implements DatabaseRecord {
     }
 
     private static Person personFromResultSet(ResultSet res, boolean decrypt) throws SQLException {
-        Person person;
-        if (res.next()) {
-            PreparedStatement roleQuery = prepareStatement("SELECT * FROM Role WHERE personId=?");
+        try {
+            Person person;
+            if (res.next()) {
+                PreparedStatement roleQuery = prepareStatement("SELECT * FROM Role WHERE personId=?");
 
-            int id = res.getInt(1);
-            roleQuery.setInt(1, id);
-            ResultSet roles = roleQuery.executeQuery();
+                int id = res.getInt(1);
+                roleQuery.setInt(1, id);
+                ResultSet roles = roleQuery.executeQuery();
 
-            StoreAttributes.Role userRole = StoreAttributes.Role.USER;
-            // get the highest priviledge role this user has and use that
-            while (roles.next()) {
-                StoreAttributes.Role roleValue = StoreAttributes.Role.valueOf(roles.getString(2));
-                if (roleValue.getLevel() > userRole.getLevel())
-                    userRole = roleValue;
+                StoreAttributes.Role userRole = StoreAttributes.Role.USER;
+                // get the highest priviledge role this user has and use that
+                while (roles.next()) {
+                    StoreAttributes.Role roleValue = StoreAttributes.Role.valueOf(roles.getString(2));
+                    if (roleValue.getLevel() > userRole.getLevel())
+                        userRole = roleValue;
+                }
+
+                // By default, if an integer value is null, JDBC returns 0 - we want it to be -1
+                int paymentID = res.getInt(8);
+                if (res.wasNull()) {
+                    paymentID = -1;
+                }
+
+                person = new Person(
+                        id,                            // id
+                        res.getString(2),   // forename
+                        res.getString(3),   // surname
+                        res.getString(4),   // email
+                        res.getString(5),   // password (this is horrible)
+                        res.getString(6),   // houseNumber
+                        res.getString(7),   // postcode
+                        paymentID,      // bank details
+                        userRole,
+                        decrypt
+                );
+
+                return person;
+            } else {
+                return null;
             }
-
-            person = new Person(
-                    id,                            // id
-                    res.getString(2),   // forename
-                    res.getString(3),   // surname
-                    res.getString(4),   // email
-                    res.getString(5),   // password (this is horrible)
-                    res.getString(6),   // houseNumber
-                    res.getString(7),   // postcode
-                    res.getInt(8),      // bank details
-                    userRole,
-                    decrypt
-            );
-
-            return person;
-        } else {
-            return null;
+        } catch (InvalidKeyException e) {
+            throw new RuntimeException(e);
         }
     }
 

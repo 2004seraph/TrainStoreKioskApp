@@ -4,6 +4,8 @@ import db.DatabaseOperation;
 import db.DatabaseRecord;
 import entity.product.Product;
 
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Arrays;
 import java.util.List;
@@ -45,6 +47,25 @@ public class OrderLine extends DatabaseOperation.Entity implements DatabaseRecor
         this.orderId = orderId;
         this.productCode = productCode;
         this.quantity = quantity;
+    }
+
+    public boolean fulfill() throws SQLException {
+        PreparedStatement getStock = prepareStatement("SELECT stockLevel FROM Product WHERE productCode=?");
+        getStock.setString(1, productCode);
+        ResultSet res = getStock.executeQuery();
+        int stock = -1;
+        if (res.next()) {
+            stock = res.getInt(1);
+        } else {
+            throw new IllegalStateException("No product with that code");
+        }
+
+        PreparedStatement deductStock = prepareStatement("UPDATE Product SET stockLevel=? WHERE productCode=?");
+        deductStock.setInt(1, stock - quantity);
+        deductStock.setString(2, productCode);
+        deductStock.executeUpdate();
+
+        return stock - quantity > 0;
     }
 
     public List<Object> getFields() {

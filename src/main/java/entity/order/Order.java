@@ -68,20 +68,33 @@ public class Order extends DatabaseOperation.Entity implements DatabaseRecord {
         this.status = status;
     }
 
-    private Order(Integer orderId, Integer customerId, Date date, OrderStatus status) {
+    private Order(Integer orderId, Integer customerId, Date date, OrderStatus status) throws SQLException {
         this.orderId = orderId;
         this.customerId = customerId;
         this.date = date;
         this.status = status;
+
+        PreparedStatement orderLineQuery = prepareStatement("SELECT * FROM OrderLine WHERE orderId = ?");
+        orderLineQuery.setInt(1, orderId);
+        ResultSet rsOrderLine = orderLineQuery.executeQuery();
+        items = new ArrayList<OrderLine>();
+        while (rsOrderLine.next()) {
+            items.add(new OrderLine(
+                    rsOrderLine.getInt("orderId"),
+                    rsOrderLine.getString("productCode"),
+                    rsOrderLine.getInt("quantity")
+            ));
+        }
+
     }
 
-    private Order(Integer orderId, Integer customerId, Date date, OrderStatus status, List<OrderLine> items) {
-        this.orderId = orderId;
-        this.customerId = customerId;
-        this.date = date;
-        this.status = status;
-        this.items = items;
-    }
+//    private Order(Integer orderId, Integer customerId, Date date, OrderStatus status, List<OrderLine> items) {
+//        this.orderId = orderId;
+//        this.customerId = customerId;
+//        this.date = date;
+//        this.status = status;
+//        this.items = items;
+//    }
 
     /**
      * Get the order with its items
@@ -90,7 +103,7 @@ public class Order extends DatabaseOperation.Entity implements DatabaseRecord {
      * @throws SQLException
      */
     public static Order getOrderWithID(Integer orderId) throws SQLException {
-        try (PreparedStatement findQuery = prepareStatement("SELECT * FROM Order WHERE orderId = ?")) {
+        try (PreparedStatement findQuery = prepareStatement("SELECT * FROM `Order` WHERE orderId = ?")) {
             findQuery.setInt(1, orderId);
             ResultSet rs = findQuery.executeQuery();
 
@@ -102,30 +115,30 @@ public class Order extends DatabaseOperation.Entity implements DatabaseRecord {
             throw e;
         }
 
-        try (PreparedStatement orderQuery = prepareStatement("SELECT * FROM Order WHERE orderId = ?");
-             PreparedStatement orderLineQuery = prepareStatement("SELECT * FROM OrderLine WHERE orderId = ?")
+        try (PreparedStatement orderQuery = prepareStatement("SELECT * FROM `Order` WHERE orderId = ?");
+             //PreparedStatement orderLineQuery = prepareStatement("SELECT * FROM OrderLine WHERE orderId = ?")
         ) {
             orderQuery.setInt(1, orderId);
-            orderLineQuery.setInt(1, orderId);
+//            orderLineQuery.setInt(1, orderId);
 
             ResultSet rsOrder = orderQuery.executeQuery();
-            ResultSet rsOrderLine = orderLineQuery.executeQuery();
-
-            List<OrderLine> items = new ArrayList<OrderLine>();
-            while (rsOrderLine.next()) {
-                items.add(new OrderLine(
-                        rsOrderLine.getInt("orderId"),
-                        rsOrderLine.getString("productCode"),
-                        rsOrderLine.getInt("quantity")
-                ));
-            }
+//            ResultSet rsOrderLine = orderLineQuery.executeQuery();
+            // THE ORDER LINES ARE LOADED IN THE CONSTRUCTOR NOW
+//            List<OrderLine> items = new ArrayList<OrderLine>();
+//            while (rsOrderLine.next()) {
+//                items.add(new OrderLine(
+//                        rsOrderLine.getInt("orderId"),
+//                        rsOrderLine.getString("productCode"),
+//                        rsOrderLine.getInt("quantity")
+//                ));
+//            }
 
             Order order = new Order(
                     rsOrder.getInt("orderId"),
                     rsOrder.getInt("personId"),
                     rsOrder.getDate("date"),
-                    Order.OrderStatus.valueOf(rsOrder.getString(4)),
-                    items
+                    Order.OrderStatus.valueOf(rsOrder.getString(4))//,
+//                    items
             );
 
             return order;
@@ -179,7 +192,7 @@ public class Order extends DatabaseOperation.Entity implements DatabaseRecord {
         setAutoCommit(false);
         int id;
 
-        try (PreparedStatement s = prepareStatement("INSERT INTO Order VALUES (default,?,?,?)", Statement.RETURN_GENERATED_KEYS);
+        try (PreparedStatement s = prepareStatement("INSERT INTO `Order` VALUES (default,?,?,?)", Statement.RETURN_GENERATED_KEYS);
              PreparedStatement r = prepareStatement("INSERT INTO OrderLine VALUES (?,?,?)");
         ) {
 
@@ -231,7 +244,7 @@ public class Order extends DatabaseOperation.Entity implements DatabaseRecord {
      * @throws SQLException
      */
     public static boolean updateOrderStatus(int orderId, Order.OrderStatus newStatus) throws SQLException {
-        try (PreparedStatement findQuery = prepareStatement("SELECT * FROM Order WHERE orderId = ?")) {
+        try (PreparedStatement findQuery = prepareStatement("SELECT * FROM `Order` WHERE orderId = ?")) {
             findQuery.setInt(1, orderId);
             ResultSet rs = findQuery.executeQuery();
 
@@ -243,7 +256,7 @@ public class Order extends DatabaseOperation.Entity implements DatabaseRecord {
             throw e;
         }
 
-        try (PreparedStatement query = prepareStatement("UPDATE Order SET status = ? WHERE orderId = ?")) {
+        try (PreparedStatement query = prepareStatement("UPDATE `Order` SET status = ? WHERE orderId = ?")) {
             query.setString(1, newStatus.toString());
             query.setInt(2, orderId);
 

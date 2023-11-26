@@ -186,7 +186,6 @@ public class Profile extends JPanel{
             Person.updatePersonalDetails(forenameInput, surnameInput, houseNumberInput, streetInput, cityInput, postCodeInput);
             JOptionPane.showMessageDialog(AppContext.getWindow(), "Personal Details Updated");
         } catch (Exception exception) {
-            throw new RuntimeException(exception);
         } finally {
             db.closeConnection();
         }
@@ -297,7 +296,7 @@ public class Profile extends JPanel{
                 }
                 try {
                     db.openConnection();
-                    AppContext.setCurrentUser(Person.getPersonById(AppContext.getCurrentUser().getId()));
+                    AppContext.setCurrentUser(Person.getPersonByID(AppContext.getCurrentUser().getId()));
                     System.out.println(AppContext.getCurrentUser().getBankDetail().getCardName());
                 } catch (Exception exception) {
                     throw new RuntimeException(exception);
