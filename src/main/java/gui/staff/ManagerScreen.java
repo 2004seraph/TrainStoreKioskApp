@@ -15,17 +15,19 @@ import java.util.List;
 
 public class ManagerScreen extends JPanel implements TabbedGUIContainer.TabPanel {
     private static class UserRow extends JPanel {
-        static String[] roleNames = Person.Role.getStringValues();
+        static String[] roleNames = {"USER", "STAFF"};
         Person person;
 
-        public UserRow(Person user) {
+        public UserRow(Person user, TabbedGUIContainer parent) {
             person = user;
             JComboBox<String> roleBox = new JComboBox<>(roleNames);
             roleBox.setSelectedItem(user.getRole().toString());
 
+            JButton fireButton = new JButton("Dismiss");
+
             // Can't promote/demote yourself
-            if (AppContext.getCurrentUser().getFullName().equals(person.getFullName())) {
-                roleBox.setEnabled(false);
+            if (person.getRole().equals(Person.Role.MANAGER)) {
+                fireButton.setEnabled(false);
             }
 
             JLabel nameLabel = new JLabel(user.getFullName() + " ("+user.getEmail()+")");
@@ -37,38 +39,26 @@ public class ManagerScreen extends JPanel implements TabbedGUIContainer.TabPanel
             add(content);
 
             content.add(nameLabel);
-            content.add(roleBox);
+            content.add(fireButton);
 
             content.add(new JSeparator(SwingConstants.HORIZONTAL));
             content.add(new JSeparator(SwingConstants.HORIZONTAL));
 
-            roleBox.addActionListener(e -> {
-                Person.Role newRole = Person.Role.valueOf((String) roleBox.getSelectedItem());
-                StringBuilder sb = new StringBuilder();
-                sb.append("Are you sure you want to ");
-                if (newRole.getLevel() < person.getRole().getLevel()) {
-                    sb.append("demote ");
-                } else {
-                    sb.append("promote ");
-                }
-
-                sb.append("to ");
-                sb.append(newRole);
-
-                int confirm = JOptionPane.showConfirmDialog(AppContext.getWindow(), sb.toString(), "Confirm Action", JOptionPane.YES_NO_OPTION);
+            fireButton.addActionListener(e -> {
+                int confirm = JOptionPane.showConfirmDialog(AppContext.getWindow(), "Are you sure you want to dismiss " + user.getFullName(), "Confirm Action", JOptionPane.YES_NO_OPTION);
 
                 if (confirm == 0) {
                     DatabaseBridge db = DatabaseBridge.instance();
                     try {
                         db.openConnection();
-                        Person.updateUserRole(person, newRole);
+                        Person.updateUserRole(person, Person.Role.USER);
                     } catch (SQLException ex) {
                         throw new RuntimeException(ex);
                     } finally {
                         db.closeConnection();
                     }
-                } else {
-                    roleBox.setSelectedItem(person.getRole().toString());
+
+                    parent.switchTab("User Management");
                 }
             });
         }
@@ -77,8 +67,6 @@ public class ManagerScreen extends JPanel implements TabbedGUIContainer.TabPanel
     JScrollPane scrollPane;
     JPanel contentPanel;
     GridBagConstraints gbc;
-
-    String searchTerm = "";
 
     public ManagerScreen() {
         setLayout(new BorderLayout());
@@ -115,6 +103,8 @@ public class ManagerScreen extends JPanel implements TabbedGUIContainer.TabPanel
                 int confirm = JOptionPane.showConfirmDialog(AppContext.getWindow(), sb.toString(), "Confirm Action", JOptionPane.YES_NO_OPTION);
                 if (confirm == 0) {
                     Person.updateUserRole(newStaffMember, Person.Role.STAFF);
+
+                    parent.switchTab("User Management");
                 }
 
             } catch (SQLException ex) {
@@ -122,8 +112,6 @@ public class ManagerScreen extends JPanel implements TabbedGUIContainer.TabPanel
             } finally {
                 db.closeConnection();
             }
-
-            setAll();
         });
 
         header.add(title);
@@ -139,10 +127,10 @@ public class ManagerScreen extends JPanel implements TabbedGUIContainer.TabPanel
         gbc.gridx = 0;
         gbc.gridy = -1;
 
-        setAll();
+        refresh();
     }
 
-    private void setAll() {
+    private void refresh() {
         contentPanel.removeAll();
         repaint();
 
@@ -167,18 +155,12 @@ public class ManagerScreen extends JPanel implements TabbedGUIContainer.TabPanel
             db.closeConnection();
         }
 
-        if (searchTerm.isEmpty()) {
-            personList.forEach(this::addUser);
-        } else {
-            personList.stream()
-                    .filter((person -> person.getFullName().contains(searchTerm)))
-                    .forEach((this::addUser));
-        }
+        personList.forEach(this::addUser);
     }
 
     private void addUser(Person user) {
         gbc.gridy += 1;
-        UserRow row = new UserRow(user);
+        UserRow row = new UserRow(user, parent);
         contentPanel.add(row, gbc);
     }
 
@@ -189,6 +171,6 @@ public class ManagerScreen extends JPanel implements TabbedGUIContainer.TabPanel
 
     @Override
     public void onSelected() {
-        setAll();
+        refresh();
     }
 }
