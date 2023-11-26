@@ -6,6 +6,7 @@ import db.DatabaseOperation;
 import entity.product.Product;
 import gui.components.ButtonColumn;
 import gui.components.CurrencyCellRenderer;
+import gui.components.TabbedGUIContainer;
 
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
@@ -20,7 +21,7 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
-public class StockManagementScreen extends JPanel {
+public class StockManagementScreen extends JPanel implements TabbedGUIContainer.TabPanel {
     private final String[] columns = new String[]{"Code", "Product", "Price Per Unit", "Stock", "Delete Item"};
 
     JPanel viewContainer;
@@ -201,6 +202,21 @@ public class StockManagementScreen extends JPanel {
         JFrame win = AppContext.getWindow();
         win.add(new StockManagementScreen());
         win.setVisible(true);
+    }
+
+    @Override
+    public void setNotebookContainer(TabbedGUIContainer cont) {
+
+    }
+
+    @Override
+    public void onSelected() {
+        SwingUtilities.invokeLater(new Runnable() {
+            @Override
+            public void run() {
+                updateStockView();
+            }
+        });
     }
 }
 

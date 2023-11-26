@@ -7,6 +7,7 @@ import entity.order.OrderLine;
 import entity.product.Product;
 import entity.user.Person;
 import gui.components.CurrencyCellRenderer;
+import gui.components.TabbedGUIContainer;
 
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
@@ -27,7 +28,7 @@ import java.util.Objects;
 
 import static utils.GUI.setEnabledRecursively;
 
-public class OrderManagementScreen extends JPanel {
+public class OrderManagementScreen extends JPanel implements TabbedGUIContainer.TabPanel {
     private final String[] orderViewColumns = new String[]{"Order ID", "Date", "Customer", "Email", "Address", "Payment", "Status"};
     private final String[] orderLineColumns = new String[]{"Product", "Brand", "Name", "Quantity", "SubTotal"};
     // the related product code, the brand and product name, the quantity, and the derived line-cost.
@@ -402,5 +403,20 @@ public class OrderManagementScreen extends JPanel {
         }
 
         return orderData;
+    }
+
+    @Override
+    public void setNotebookContainer(TabbedGUIContainer cont) {
+
+    }
+
+    @Override
+    public void onSelected() {
+        SwingUtilities.invokeLater(new Runnable() {
+            @Override
+            public void run() {
+                refreshData();
+            }
+        });
     }
 }

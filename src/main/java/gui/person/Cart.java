@@ -5,15 +5,31 @@ import db.DatabaseBridge;
 import entity.order.Order;
 import entity.order.OrderLine;
 import entity.product.Product;
+import gui.components.TabbedGUIContainer;
 import utils.GUI;
 
 import javax.swing.*;
 import java.awt.*;
 import java.sql.SQLException;
 
-public class Cart extends JPanel {
+public class Cart extends JPanel implements TabbedGUIContainer.TabPanel {
     private final JPanel contentPanel;
     private final GridBagConstraints gbc;
+
+    @Override
+    public void setNotebookContainer(TabbedGUIContainer cont) {
+
+    }
+
+    @Override
+    public void onSelected() {
+        SwingUtilities.invokeLater(new Runnable() {
+            @Override
+            public void run() {
+                refreshCart();
+            }
+        });
+    }
 
     public class OrderItem extends JPanel {
         OrderLine ol;
@@ -118,6 +134,12 @@ public class Cart extends JPanel {
                 JOptionPane.showMessageDialog(this, "Your bank account details are missing or invalid", "Something went wrong", JOptionPane.ERROR_MESSAGE);
             } else {
                 JOptionPane.showMessageDialog(this, "Order successfully placed");
+                SwingUtilities.invokeLater(new Runnable() {
+                    @Override
+                    public void run() {
+                        refreshCart();
+                    }
+                });
             }
         });
 

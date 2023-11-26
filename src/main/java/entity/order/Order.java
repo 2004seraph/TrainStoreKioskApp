@@ -9,6 +9,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
@@ -87,14 +88,6 @@ public class Order extends DatabaseOperation.Entity implements DatabaseRecord {
         }
 
     }
-
-//    private Order(Integer orderId, Integer customerId, Date date, OrderStatus status, List<OrderLine> items) {
-//        this.orderId = orderId;
-//        this.customerId = customerId;
-//        this.date = date;
-//        this.status = status;
-//        this.items = items;
-//    }
 
     /**
      * Get the order with its items
@@ -189,13 +182,14 @@ public class Order extends DatabaseOperation.Entity implements DatabaseRecord {
     }
 
     public static void createOrder(Order order) throws SQLException {
-        setAutoCommit(false);
         int id;
 
-        try (PreparedStatement s = prepareStatement("INSERT INTO `Order` VALUES (default,?,?,?)", Statement.RETURN_GENERATED_KEYS);
-             PreparedStatement r = prepareStatement("INSERT INTO OrderLine VALUES (?,?,?)");
-        ) {
+        try {
+            openConnection();
+            setAutoCommit(false);
 
+            PreparedStatement s = prepareStatement("INSERT INTO `Order` VALUES (default,?,?,?)", Statement.RETURN_GENERATED_KEYS);
+            PreparedStatement r = prepareStatement("INSERT INTO OrderLine VALUES (?,?,?)");
             Object[] fields = order.getFields().toArray();
 
             s.setInt(1, (Integer) fields[0]); // personId
@@ -233,6 +227,7 @@ public class Order extends DatabaseOperation.Entity implements DatabaseRecord {
             throw e;
         } finally {
             setAutoCommit(true);
+            closeConnection();
         }
     }
 
@@ -303,7 +298,7 @@ public class Order extends DatabaseOperation.Entity implements DatabaseRecord {
     public List<Object> getFields() {
         List<Object> list = Arrays.asList(
                 customerId,
-                date.toString(),
+                (new SimpleDateFormat("yyyy-MM-dd")).format(date), //date.toString(),
                 status.toString()
         );
         return list;

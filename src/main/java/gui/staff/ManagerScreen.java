@@ -153,7 +153,6 @@ public class ManagerScreen extends JPanel implements TabbedGUIContainer.TabPanel
                         addUser(person);
                     }));
         }
-
     }
 
     private void addUser(Person user) {
@@ -165,5 +164,10 @@ public class ManagerScreen extends JPanel implements TabbedGUIContainer.TabPanel
     @Override
     public void setNotebookContainer(TabbedGUIContainer cont) {
         parent = cont;
+    }
+
+    @Override
+    public void onSelected() {
+        setAll();
     }
 }

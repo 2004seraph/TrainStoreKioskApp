@@ -18,6 +18,7 @@ public class TabbedGUIContainer extends JPanel {
     }
     public interface TabPanel {
         public void setNotebookContainer(TabbedGUIContainer cont);
+        public void onSelected();
     }
 
     private static final int TAB_BUTTON_MARGIN = 5;
@@ -188,6 +189,10 @@ public class TabbedGUIContainer extends JPanel {
                     contentContainer.add(ui, contentConstraints);
                     enableAllButtons();
                     panels.get(name).getValue2().setEnabled(false);
+
+                    if (Arrays.asList(ui.getClass().getInterfaces()).contains(TabPanel.class)) {
+                        ((TabPanel)ui).onSelected();
+                    }
 
                     revalidate();
                     repaint();

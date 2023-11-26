@@ -282,4 +282,9 @@ public class Register extends JPanel implements TabbedGUIContainer.TabPanel {
     public void setNotebookContainer(TabbedGUIContainer cont) {
         this.parent = cont;
     }
+
+    @Override
+    public void onSelected() {
+
+    }
 }

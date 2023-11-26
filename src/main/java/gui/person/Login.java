@@ -139,4 +139,9 @@ public class Login extends JPanel implements TabbedGUIContainer.TabPanel {
     public void setNotebookContainer(TabbedGUIContainer cont) {
         parent = cont;
     }
+
+    @Override
+    public void onSelected() {
+
+    }
 }
