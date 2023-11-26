@@ -8,41 +8,22 @@ import java.sql.Date;
 import java.sql.SQLException;
 
 import db.DatabaseBridge;
-import db.DatabaseOperation;
-import db.DatabaseRecord;
 import entity.BankDetail;
 import entity.user.Person;
 import controllers.AppContext;
-import gui.App;
 
 public class Profile extends JPanel{
 
-//    Personal Details
-    private JLabel forenameLabel = new JLabel("Forename:");
-    private JTextField forename = new JTextField(30);
-    private JLabel surnameLabel = new JLabel("Surname:");
-    private JTextField surname = new JTextField(30);
-    private JLabel emailLabel = new JLabel("Email:");
-    private JLabel email = new JLabel();
-//    Address
-    private JLabel houseNumberLabel = new JLabel("House Number:");
-    private JTextField houseNumber = new JTextField(30);
-    private JLabel streetLabel = new JLabel("Street:");
-    private JTextField street = new JTextField(30);
-    private JLabel cityLabel = new JLabel("City:");
-    private JTextField city = new JTextField(30);
-    private JLabel postCodeLabel = new JLabel("PostCode:");
-    private JTextField postCode = new JTextField(30);
-//    Bank Details
-    private JLabel cardNumberLabel = new JLabel("Card Number:");
-    private JTextField cardNumber = new JTextField(30);
-    private JLabel expiryDateLabel = new JLabel("Expiry Date:");
-    private JTextField expiryDate = new JTextField(30);
-    private JLabel securityCodeLabel = new JLabel("Security Code:");
-    private JTextField securityCode = new JTextField(30);
-//    Buttons
-    private JButton updateButton = new JButton("UPDATE");
-    private JButton addBankDetailsButton = new JButton("ADD BANK DETAILS");
+    private final JTextField forename = new JTextField(30);
+    private final JTextField surname = new JTextField(30);
+    private final JTextField houseNumber = new JTextField(30);
+    private final JTextField street = new JTextField(30);
+    private final JTextField city = new JTextField(30);
+    private final JTextField postCode = new JTextField(30);
+
+    private JTextField cardNumber;
+    private JTextField expiryDate;
+    private JTextField securityCode;
 
     private BankDetail bankDetail;
 
@@ -50,7 +31,6 @@ public class Profile extends JPanel{
         setLayout(new GridBagLayout());
         GridBagConstraints gbc = new GridBagConstraints();
         gbc.insets = new Insets(1, 10, 1, 1);
-
 
 //        Add the title
         JLabel title = new JLabel("<html><h1>Profile</h1></html>");
@@ -63,14 +43,19 @@ public class Profile extends JPanel{
 
         gbc.anchor = GridBagConstraints.WEST;
         gbc.gridwidth = 1;
+        //    Personal Details
+        JLabel forenameLabel = new JLabel("Forename:");
         addField(gbc, forenameLabel, forename, 1);
+        JLabel surnameLabel = new JLabel("Surname:");
         addField(gbc, surnameLabel, surname, 2);
 
         gbc.gridx = 0;
         gbc.gridy = 3;
+        JLabel emailLabel = new JLabel("Email:");
         add(emailLabel, gbc);
         gbc.gridx = 1;
         gbc.gridy = 3;
+        JLabel email = new JLabel();
         add(email, gbc);
 
         JLabel addressTitle = new JLabel("<html><h2>Address</h2></html>");
@@ -83,12 +68,15 @@ public class Profile extends JPanel{
         gbc.anchor = GridBagConstraints.WEST;
         gbc.fill = GridBagConstraints.NONE;
         gbc.gridwidth = 1;
+        //    Address
+        JLabel houseNumberLabel = new JLabel("House Number:");
         addField(gbc, houseNumberLabel, houseNumber, 5);
+        JLabel streetLabel = new JLabel("Street:");
         addField(gbc, streetLabel, street, 6);
+        JLabel cityLabel = new JLabel("City:");
         addField(gbc, cityLabel, city, 7);
+        JLabel postCodeLabel = new JLabel("PostCode:");
         addField(gbc, postCodeLabel, postCode, 8);;
-
-
 
         Person person = AppContext.getCurrentUser();
         DatabaseBridge db = DatabaseBridge.instance();
@@ -116,9 +104,19 @@ public class Profile extends JPanel{
 
                 gbc.fill = GridBagConstraints.NONE;
                 gbc.anchor = GridBagConstraints.WEST;
+                //    Bank Details
+                JLabel cardNumberLabel = new JLabel("Card Number:");
+                cardNumber = new JTextField(30);
                 addField(gbc, cardNumberLabel, cardNumber, 10);
+
+                JLabel expiryDateLabel = new JLabel("Expiry Date:");
+                expiryDate = new JTextField(30);
                 addField(gbc, expiryDateLabel, expiryDate, 11);
+
+                JLabel securityCodeLabel = new JLabel("Security Code:");
+                securityCode = new JTextField(30);
                 addField(gbc, securityCodeLabel, securityCode, 12);
+
                 cardNumber.setText(person.getBankDetail().getCardNumber());
                 expiryDate.setText(person.getBankDetail().getExpiryDate().toString());
                 securityCode.setText(person.getBankDetail().getSecurityCode());
@@ -132,6 +130,7 @@ public class Profile extends JPanel{
             } else {
                 gbc.gridx = 1;
                 gbc.gridy = 10;
+                JButton addBankDetailsButton = new JButton("ADD BANK DETAILS");
                 add(addBankDetailsButton, gbc);
 //                For the update button
                 gbc.gridx = 0;
@@ -141,6 +140,8 @@ public class Profile extends JPanel{
                     getBankDetailsFromUser();
                 });
             }
+            //    Buttons
+            JButton updateButton = new JButton("UPDATE");
             add(updateButton, gbc);
             updateButton.addActionListener(e -> {
                 updateDetails();
@@ -163,35 +164,51 @@ public class Profile extends JPanel{
         add(textField, gbc);
     }
 
-
     /**
      * Updates the user's personal details
      */
     public void updateDetails(){
         String forenameInput = forename.getText();
         String surnameInput = surname.getText();
+
         String houseNumberInput = houseNumber.getText();
         String streetInput = street.getText();
         String cityInput = city.getText();
         String postCodeInput = postCode.getText();
+
+        String cardNumberInput = cardNumber.getText();
+        String expiryInput = expiryDate.getText();
+        String securityInput = securityCode.getText();
+
 //        Validate the data
         try {
             Person.validatePersonalDetails(forenameInput, surnameInput, houseNumberInput, streetInput, cityInput, postCodeInput);
         } catch (Exception e) {
-            JOptionPane.showMessageDialog(AppContext.getWindow(), e.getMessage());
+            JOptionPane.showMessageDialog(AppContext.getWindow(), "Invalid fields: " + e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
         }
+        try {
+            BankDetail.validateBankDetails(cardNumberInput, expiryInput, securityInput);
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(AppContext.getWindow(), "Invalid payment information: " + e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+        }
+
         DatabaseBridge db = DatabaseBridge.instance();
         try {
             db.openConnection();
-            Person.updatePersonalDetails(forenameInput, surnameInput, houseNumberInput, streetInput, cityInput, postCodeInput);
-            JOptionPane.showMessageDialog(AppContext.getWindow(), "Personal Details Updated");
+
+            BankDetail newBankDetails = BankDetail.createPaymentInfo(cardNumberInput, Date.valueOf(expiryInput), securityInput);
+            AppContext.getCurrentUser().addNewBankDetails(newBankDetails);
+
+            AppContext.getCurrentUser().updatePersonalDetails(forenameInput, surnameInput, houseNumberInput, streetInput, cityInput, postCodeInput);
+
+            JOptionPane.showMessageDialog(AppContext.getWindow(), "Personal details updated", "Notice", JOptionPane.INFORMATION_MESSAGE);
         } catch (Exception exception) {
+            JOptionPane.showMessageDialog(AppContext.getWindow(), "Personal details could not be updated: " + exception.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
         } finally {
             db.closeConnection();
         }
 
     }
-
 
     /**
      * Creates a new JFrame as a pop up that allows the user to enter their bank details
@@ -271,44 +288,42 @@ public class Profile extends JPanel{
                 String cardNumberInput = cardNumber.getText();
                 String expiryDateInput = expiryDate.getText();
                 String securityCodeInput = securityCode.getText();
+
+                Date expiryDate = Date.valueOf(expiryDateInput);
+
                 try{
                    BankDetail.validateBankDetails(cardNumberInput, expiryDateInput, securityCodeInput);
                 } catch (BankDetail.InvalidBankDetailsException exception) {
-                    JOptionPane.showMessageDialog(AppContext.getWindow(), exception.getMessage());
+                    JOptionPane.showMessageDialog(AppContext.getWindow(), exception.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
                 }
-                Date expiryDate = Date.valueOf(expiryDateInput);
+
                 DatabaseBridge db = DatabaseBridge.instance();
                 try{
                     db.openConnection();
                     bankDetail = BankDetail.createPaymentInfo(cardNumberInput, expiryDate, securityCodeInput);
 //                    Add the bank details to the user
-                    Person.addBankDetailsToPerson(bankDetail);
+                    AppContext.getCurrentUser().addNewBankDetails(bankDetail);
                     JOptionPane.showMessageDialog(AppContext.getWindow(), "Bank Details Added");
-                } catch (BankDetail.InvalidBankDetailsException exception) {
-                    JOptionPane.showMessageDialog(AppContext.getWindow(), exception.getMessage());
-                } catch (SQLException exception) {
-                    throw new RuntimeException(exception);
                 } catch (Exception exception) {
-                    throw new RuntimeException(exception);
+                    JOptionPane.showMessageDialog(AppContext.getWindow(), exception.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
                 } finally {
                     db.closeConnection();
                     frame.dispose();
                 }
+
+                // reload the current state
                 try {
                     db.openConnection();
                     AppContext.setCurrentUser(Person.getPersonByID(AppContext.getCurrentUser().getId()));
-                    System.out.println(AppContext.getCurrentUser().getBankDetail().getCardName());
                 } catch (Exception exception) {
                     throw new RuntimeException(exception);
                 } finally {
                     db.closeConnection();
                 }
+
                 revalidate();
                 repaint();
             }
         });
-
     }
-
-
 }

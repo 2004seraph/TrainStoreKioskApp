@@ -138,33 +138,33 @@ public class Person extends DatabaseOperation.Entity implements DatabaseRecord {
         }
     }
 
-
-    public boolean setBankAccountID(int id) {
-        // check if that id exists
-        try (PreparedStatement query = prepareStatement("SELECT cardName FROM BankDetails WHERE paymentId = ?")){
-            query.setInt(1, id);
-            boolean found = query.execute();
-            if (!found) {
-                throw new BankDetail.BankAccountNotFoundException("Could not find bank details with ID ["+id+"]");
-            }
-
-        } catch (SQLException e) {
-            DatabaseBridge.databaseError("Could not fetch card details for card ID [" + id + "]", e );
-            return false;
-        } catch (BankDetail.BankAccountNotFoundException e) {
-            throw new BankDetail.BankAccountNotFoundException(e.getMessage());
-        }
-
-        try (PreparedStatement update = prepareStatement("UPDATE Person UPDATE paymentId = ? WHERE PersonId = ?")) {
-            update.setInt(1, id);
-            update.setInt(2, personID);
-
-            return update.getUpdateCount() > 0;
-        } catch (SQLException e) {
-            DatabaseBridge.databaseError("Could not update [" + this.email + "]'s payment information", e);
-            return false;
-        }
-    }
+    // DUPLICATED FUNCTION
+//    public boolean setBankAccountID(int id) {
+//        // check if that id exists
+//        try (PreparedStatement query = prepareStatement("SELECT * FROM BankDetails WHERE paymentId = ?")){
+//            query.setInt(1, id);
+//            boolean found = query.execute();
+//            if (!found) {
+//                throw new BankDetail.BankAccountNotFoundException("Could not find bank details with ID ["+id+"]");
+//            }
+//
+//        } catch (SQLException e) {
+//            DatabaseBridge.databaseError("Could not fetch card details for card ID [" + id + "]", e );
+//            return false;
+//        } catch (BankDetail.BankAccountNotFoundException e) {
+//            throw new BankDetail.BankAccountNotFoundException(e.getMessage());
+//        }
+//
+//        try (PreparedStatement update = prepareStatement("UPDATE Person UPDATE paymentId = ? WHERE PersonId = ?")) {
+//            update.setInt(1, id);
+//            update.setInt(2, personID);
+//
+//            return update.getUpdateCount() > 0;
+//        } catch (SQLException e) {
+//            DatabaseBridge.databaseError("Could not update [" + this.email + "]'s payment information", e);
+//            return false;
+//        }
+//    }
 
     /**
      * Returns a result set of every person in the database
@@ -330,10 +330,10 @@ public class Person extends DatabaseOperation.Entity implements DatabaseRecord {
                 UPDATE Role, Person
                 LEFT JOIN Role R ON Person.PersonId = R.personId
                 SET R.role = ?
-                WHERE email = ?
+                WHERE PersonId = ?
                 """)) {
             query.setString(1, newRole.toString());
-            query.setString(2, person.getEmail());
+            query.setInt(2, person.getId());
 
             return query.executeUpdate() > 0;
         } catch (SQLException e) {
@@ -365,89 +365,72 @@ public class Person extends DatabaseOperation.Entity implements DatabaseRecord {
             String streetName,
             String cityName,
             String postCode
-    ) throws Exception {
+    ) throws IllegalArgumentException {
         if (forename.isEmpty() || forename == null) {
-            throw new Exception("Forename is a compulsory field");
+            throw new IllegalArgumentException("Forename is a compulsory field");
         }
         if (surname.isEmpty() || surname == null) {
-            throw new Exception("Surname is a compulsory field");
+            throw new IllegalArgumentException("Surname is a compulsory field");
         }
         if (houseNumber.isEmpty() || houseNumber == null) {
-            throw new Exception("House number is a compulsory field");
+            throw new IllegalArgumentException("House number is a compulsory field");
         }
         if (streetName.isEmpty() || streetName == null) {
-            throw new Exception("Street name is a compulsory field");
+            throw new IllegalArgumentException("Street name is a compulsory field");
         }
         if (cityName.isEmpty() || cityName == null) {
-            throw new Exception("City name is a compulsory field");
+            throw new IllegalArgumentException("City name is a compulsory field");
         }
         if(!Address.validatePostcode(postCode)){
-            throw new Exception("Invalid postcode");
+            throw new IllegalArgumentException("Invalid postcode");
         }
     }
 
-    public static void updatePersonalDetails(
+    public void updatePersonalDetails(
             String forename,
             String surname,
             String houseNumber,
             String streetName,
             String cityName,
             String postCode
-    ) throws Exception {
-        validatePersonalDetails(forename, surname, houseNumber, streetName, cityName, postCode);
-//        DatabaseBridge db = DatabaseBridge.instance();
-        try {
-            openConnection();
-            if (Address.getAddressById(houseNumber, postCode) == null) {
-                Address.CreateAddress(new Address(houseNumber, streetName, cityName, postCode));
-            } else {
-                PreparedStatement s = prepareStatement("UPDATE Address SET houseNumber=?, streetName=?, cityName=?, postCode=? WHERE houseNumber=? AND postCode=?");
-                s.setString(1, houseNumber);
-                s.setString(2, streetName);
-                s.setString(3, cityName);
-                s.setString(4, postCode);
-                s.setString(5, houseNumber);
-                s.setString(6, postCode);
-                s.executeUpdate();
-            }
-        } catch (SQLException e) {
-            DatabaseBridge.databaseError("Failed to update address", e);
-            throw e;
-        }finally {
-            closeConnection();
-        }
+    ) throws SQLException, IllegalArgumentException {
 
-        try {
-            openConnection();
-            PreparedStatement s = prepareStatement("UPDATE Person SET forename=?, surname=?, houseName=?, postCode=? WHERE email=?");
-            s.setString(1, forename);
-            s.setString(2, surname);
-            s.setString(3, houseNumber);
+        validatePersonalDetails(forename, surname, houseNumber, streetName, cityName, postCode);
+
+        if (Address.getAddressById(houseNumber, postCode) == null) {
+            Address.CreateAddress(new Address(houseNumber, streetName, cityName, postCode));
+        } else {
+            PreparedStatement s = prepareStatement("UPDATE Address SET houseNumber=?, streetName=?, cityName=?, postCode=? WHERE houseNumber=? AND postCode=?");
+            s.setString(1, houseNumber);
+            s.setString(2, streetName);
+            s.setString(3, cityName);
             s.setString(4, postCode);
-            s.setString(5, AppContext.getCurrentUser().getEmail());
+            s.setString(5, houseNumber);
+            s.setString(6, postCode);
             s.executeUpdate();
-        } catch (SQLException e) {
-            DatabaseBridge.databaseError("Failed to update person", e);
-            throw e;
-        }finally {
-            closeConnection();
         }
+        PreparedStatement s = prepareStatement("UPDATE Person SET forename=?, surname=?, houseName=?, postCode=? WHERE PersonId=?");
+        s.setString(1, forename);
+        s.setString(2, surname);
+        s.setString(3, houseNumber);
+        s.setString(4, postCode);
+        s.setInt(5, personID);
+        s.executeUpdate();
     }
 
-
-    public static void addBankDetailsToPerson(BankDetail bankDetail) throws Exception {
-        try {
-            openConnection();
-            PreparedStatement s = prepareStatement("UPDATE Person SET paymentId=? WHERE PersonId=?");
-            s.setInt(1, bankDetail.getBankDetailID());
-            s.setInt(2, AppContext.getCurrentUser().getId());
-            s.executeUpdate();
-        } catch (SQLException e) {
-            DatabaseBridge.databaseError("Failed to update person", e);
-            throw e;
-        }finally {
-            closeConnection();
+    public void addNewBankDetails(BankDetail bankDetail) throws SQLException {
+        if (bankDetailsID != -1) {
+            PreparedStatement query = prepareStatement("DELETE FROM BankDetails WHERE paymentId = ?");
+            query.setInt(1, bankDetailsID);
+            query.execute();
         }
+
+        PreparedStatement s = prepareStatement("UPDATE Person SET paymentId=? WHERE PersonId=?");
+        s.setInt(1, bankDetail.getBankDetailID());
+        s.setInt(2, personID);
+        s.executeUpdate();
+
+        bankDetailsID = bankDetail.getBankDetailID();
     }
 
     public List<Order> getAllOrders() {
