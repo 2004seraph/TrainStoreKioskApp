@@ -169,7 +169,7 @@ public class Profile extends JPanel{
 
 //        Validate the data
         try {
-            Person.validatePersonalDetails(forenameInput, surnameInput, houseNumberInput, streetInput, cityInput, postCodeInput);
+            Person.validatePersonalDetails(forenameInput, surnameInput, emailInput,  houseNumberInput, streetInput, cityInput, postCodeInput);
         } catch (Exception e) {
             JOptionPane.showMessageDialog(AppContext.getWindow(), "Invalid fields: " + e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
         }
