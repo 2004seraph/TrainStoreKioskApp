@@ -216,7 +216,7 @@ public class Person extends DatabaseOperation.Entity implements DatabaseRecord {
      * @return A Person object with all of its fields set, or null if there was no one with that id
      * @throws SQLException
      */
-    public static Person getPersonByID(int id) throws SQLException {
+    public static Person getPersonById(int id) throws SQLException {
         PreparedStatement personQuery = prepareStatement("SELECT * FROM Person WHERE personId=?");
         personQuery.setInt(1, id);
         ResultSet res = personQuery.executeQuery();
