@@ -76,9 +76,10 @@ public class App {
         JPanel profilePage = new Profile();
         JPanel cartPage = new Cart();
 
-        screenController.insertTab("Cart", cartPage);
-        screenController.insertTab("Profile", profilePage);
         screenController.insertTab("My Orders", ordersPage);
+        screenController.insertTab("Profile", profilePage);
+        screenController.insertDivider();
+        screenController.insertTab("Cart", cartPage);
         screenController.insertTab("Shop", shopPage);
 
         screenController.switchTab("Profile");

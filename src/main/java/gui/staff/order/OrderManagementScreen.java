@@ -146,7 +146,7 @@ public class OrderManagementScreen extends JPanel {
             JScrollPane scrollPane = new JScrollPane(orderContents);
             panel.add(scrollPane, gbc);
 
-            orderTotal = new JLabel("Total: -", SwingConstants.RIGHT);
+            orderTotal = new JLabel("<html><b>Total:</b> -</html>", SwingConstants.RIGHT);
             orderTotal.setBorder(new EmptyBorder(10, 10, 10, 10));
             gbc.gridy++;
             gbc.weighty = 0;
@@ -356,7 +356,7 @@ public class OrderManagementScreen extends JPanel {
 //        sorter.setSortKeys(sortKeys);
 
         DecimalFormat decimalFormat = new DecimalFormat("0.00");
-        orderTotal.setText("Total: £" + decimalFormat.format(totalCost));
+        orderTotal.setText("<html><b>Total:</b> <u>£" + decimalFormat.format(totalCost) + "</u></html>");
 
         revalidate();
         repaint();
