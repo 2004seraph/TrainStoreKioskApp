@@ -404,6 +404,7 @@ public class Person extends DatabaseOperation.Entity implements DatabaseRecord {
     }
 
     public void updatePersonalDetails(
+            String email,
             String forename,
             String surname,
             String houseNumber,
@@ -426,12 +427,13 @@ public class Person extends DatabaseOperation.Entity implements DatabaseRecord {
             s.setString(6, postCode);
             s.executeUpdate();
         }
-        PreparedStatement s = prepareStatement("UPDATE Person SET forename=?, surname=?, houseName=?, postCode=? WHERE PersonId=?");
-        s.setString(1, forename);
-        s.setString(2, surname);
-        s.setString(3, houseNumber);
-        s.setString(4, postCode);
-        s.setInt(5, personID);
+        PreparedStatement s = prepareStatement("UPDATE Person SET email=?, forename=?, surname=?, houseName=?, postCode=? WHERE PersonId=?");
+        s.setString(1, email);
+        s.setString(2, forename);
+        s.setString(3, surname);
+        s.setString(4, houseNumber);
+        s.setString(5, postCode);
+        s.setInt(6, personID);
         s.executeUpdate();
     }
 

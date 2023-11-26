@@ -114,7 +114,7 @@ public class ManagerScreen extends JPanel implements TabbedGUIContainer.TabPanel
 
                 int confirm = JOptionPane.showConfirmDialog(AppContext.getWindow(), sb.toString(), "Confirm Action", JOptionPane.YES_NO_OPTION);
                 if (confirm == 0) {
-                    Person.updateUserRole(newStaffMember, StoreAttributes.Role.STAFF);
+                    Person.updateUserRole(newStaffMember, Person.Role.STAFF);
                 }
 
             } catch (SQLException ex) {
