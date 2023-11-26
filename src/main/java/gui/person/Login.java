@@ -108,13 +108,8 @@ public class Login extends JPanel implements TabbedGUIContainer.TabPanel {
                 String emailInput = email.getText();
                 char[] passwordInput = password.getPassword();
 
-                if (emailInput == null || passwordInput == null) {
-                    JOptionPane.showMessageDialog(AppContext.getWindow(), "Please enter a valid email and password");
-                    return;
-                }
-
-                if (emailInput.isEmpty() || passwordInput.length == 0) {
-                    JOptionPane.showMessageDialog(AppContext.getWindow(), "Please enter a valid email and password");
+                if (emailInput == null || passwordInput == null || emailInput.isEmpty() || passwordInput.length == 0) {
+                    JOptionPane.showMessageDialog(AppContext.getWindow(), "Please enter a valid email and password", "Error", JOptionPane.WARNING_MESSAGE);
                     return;
                 }
 
@@ -128,8 +123,7 @@ public class Login extends JPanel implements TabbedGUIContainer.TabPanel {
                     OrderController.newOrder();
                     app.userState(user.getRole());
                 } else {
-                    JOptionPane.showMessageDialog(AppContext.getWindow(), "Incorrect email or password");
-                    System.out.println("Authentication was unsuccessful");
+                    JOptionPane.showMessageDialog(AppContext.getWindow(), "Incorrect email or password", "Error", JOptionPane.WARNING_MESSAGE);
                 }
             }
         });

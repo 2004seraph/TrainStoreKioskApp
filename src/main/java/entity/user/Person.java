@@ -5,8 +5,6 @@ import db.DatabaseOperation;
 import db.DatabaseRecord;
 import entity.Address;
 import entity.BankDetail;
-import entity.StoreAttributes;
-import controllers.AppContext;
 import entity.order.Order;
 import entity.order.OrderLine;
 
@@ -17,6 +15,24 @@ import java.util.Arrays;
 import java.util.List;
 
 public class Person extends DatabaseOperation.Entity implements DatabaseRecord {
+    public enum Role {
+        // Number represents where you are in the hierarchy
+        USER(0), STAFF(1), MANAGER(2);
+
+        private final int priviledgeLevel;
+        private Role(int value) {
+            this.priviledgeLevel = value;
+        }
+
+        public int getLevel() {
+            return priviledgeLevel;
+        }
+
+        public static String[] getStringValues() {
+            return Arrays.stream(values()).map(Enum::toString).toArray(String[]::new);
+        }
+    }
+
     public static class PersonNotFoundException extends RuntimeException {
         public PersonNotFoundException(String msg) {
             super(msg);
@@ -36,7 +52,7 @@ public class Person extends DatabaseOperation.Entity implements DatabaseRecord {
     private Address address;
     private BankDetail bankDetail;
 
-    private StoreAttributes.Role role = StoreAttributes.Role.USER;
+    private Role role = Role.USER;
 
     public Address getAddress() {
         return address;
@@ -46,7 +62,7 @@ public class Person extends DatabaseOperation.Entity implements DatabaseRecord {
     }
 
     public int getId() { return personID; }
-    public StoreAttributes.Role getRole() { return role; }
+    public Role getRole() { return role; }
     public String getEmail() { return email; }
     public String getPassword() { return password; }
     public String getForename() { return forename; }
@@ -110,7 +126,7 @@ public class Person extends DatabaseOperation.Entity implements DatabaseRecord {
             String houseNumber,
             String postCode,
             int bankDetailsID,
-            StoreAttributes.Role role,
+            Role role,
             boolean decrypt
     ) throws SQLException, InvalidKeyException {
         this.personID =      id;
@@ -227,10 +243,10 @@ public class Person extends DatabaseOperation.Entity implements DatabaseRecord {
                 roleQuery.setInt(1, id);
                 ResultSet roles = roleQuery.executeQuery();
 
-                StoreAttributes.Role userRole = StoreAttributes.Role.USER;
+                Role userRole = Role.USER;
                 // get the highest priviledge role this user has and use that
                 while (roles.next()) {
-                    StoreAttributes.Role roleValue = StoreAttributes.Role.valueOf(roles.getString(2));
+                    Role roleValue = Role.valueOf(roles.getString(2));
                     if (roleValue.getLevel() > userRole.getLevel())
                         userRole = roleValue;
                 }
@@ -326,12 +342,12 @@ public class Person extends DatabaseOperation.Entity implements DatabaseRecord {
      * @return whether operation was successful
      * @throws SQLException
      */
-    public static boolean updateUserRole(Person person, StoreAttributes.Role newRole) throws SQLException {
+    public static boolean updateUserRole(Person person, Role newRole) throws SQLException {
         try (PreparedStatement query = prepareStatement("""
                 UPDATE Role, Person
                 LEFT JOIN Role R ON Person.PersonId = R.personId
                 SET R.role = ?
-                WHERE PersonId = ?
+                WHERE Person.PersonId = ?
                 """)) {
             query.setString(1, newRole.toString());
             query.setInt(2, person.getId());
@@ -388,6 +404,7 @@ public class Person extends DatabaseOperation.Entity implements DatabaseRecord {
     }
 
     public void updatePersonalDetails(
+            String email,
             String forename,
             String surname,
             String houseNumber,
@@ -410,12 +427,13 @@ public class Person extends DatabaseOperation.Entity implements DatabaseRecord {
             s.setString(6, postCode);
             s.executeUpdate();
         }
-        PreparedStatement s = prepareStatement("UPDATE Person SET forename=?, surname=?, houseName=?, postCode=? WHERE PersonId=?");
-        s.setString(1, forename);
-        s.setString(2, surname);
-        s.setString(3, houseNumber);
-        s.setString(4, postCode);
-        s.setInt(5, personID);
+        PreparedStatement s = prepareStatement("UPDATE Person SET email=?, forename=?, surname=?, houseName=?, postCode=? WHERE PersonId=?");
+        s.setString(1, email);
+        s.setString(2, forename);
+        s.setString(3, surname);
+        s.setString(4, houseNumber);
+        s.setString(5, postCode);
+        s.setInt(6, personID);
         s.executeUpdate();
     }
 
@@ -477,13 +495,12 @@ public class Person extends DatabaseOperation.Entity implements DatabaseRecord {
     }
 
     public static boolean validateEmail(String email) {
-        String emailRegex = "^[a-zA-Z0-9_+&*-]+(?:\\."+ "[a-zA-Z0-9_+&*-]+)*@" + "(?:[a-zA-Z0-9-]+\\.)+[a-z" + "A-Z]{2,7}$";
-        return email.matches(emailRegex);
+        return email.matches("^[a-zA-Z0-9_+&*-]+(?:\\."+ "[a-zA-Z0-9_+&*-]+)*@" + "(?:[a-zA-Z0-9-]+\\.)+[a-z" + "A-Z]{2,7}$");
     }
 
     public static boolean validatePassword(String password) {
-        String passwordRegex = "^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=.*[@#$%^&+=!()]).{8,20}$";
-        return password.matches(passwordRegex);
+        return true; // for development
+//        return password.matches("^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=.*[@#$%^&+=!()]).{8,20}$");
     }
 }
 

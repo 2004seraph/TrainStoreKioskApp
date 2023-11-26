@@ -2,7 +2,6 @@ package gui.staff;
 
 import controllers.AppContext;
 import db.DatabaseBridge;
-import entity.StoreAttributes;
 import entity.user.Person;
 import gui.components.TabbedGUIContainer;
 
@@ -16,7 +15,7 @@ import java.util.List;
 
 public class ManagerScreen extends JPanel implements TabbedGUIContainer.TabPanel {
     private static class UserRow extends JPanel {
-        static String[] roleNames = StoreAttributes.Role.getStringValues();
+        static String[] roleNames = Person.Role.getStringValues();
         Person person;
 
         public UserRow(Person user) {
@@ -29,7 +28,7 @@ public class ManagerScreen extends JPanel implements TabbedGUIContainer.TabPanel
                 roleBox.setEnabled(false);
             }
 
-            JLabel nameLabel = new JLabel(user.getFullName());
+            JLabel nameLabel = new JLabel(user.getFullName() + " ("+user.getEmail()+")");
 
             GridLayout gridLayout = new GridLayout(0,2);
             JPanel content = new JPanel();
@@ -44,7 +43,7 @@ public class ManagerScreen extends JPanel implements TabbedGUIContainer.TabPanel
             content.add(new JSeparator(SwingConstants.HORIZONTAL));
 
             roleBox.addActionListener(e -> {
-                StoreAttributes.Role newRole = StoreAttributes.Role.valueOf((String) roleBox.getSelectedItem());
+                Person.Role newRole = Person.Role.valueOf((String) roleBox.getSelectedItem());
                 StringBuilder sb = new StringBuilder();
                 sb.append("Are you sure you want to ");
                 if (newRole.getLevel() < person.getRole().getLevel()) {
@@ -54,7 +53,7 @@ public class ManagerScreen extends JPanel implements TabbedGUIContainer.TabPanel
                 }
 
                 sb.append("to ");
-                sb.append(newRole.toString());
+                sb.append(newRole);
 
                 int confirm = JOptionPane.showConfirmDialog(AppContext.getWindow(), sb.toString(), "Confirm Action", JOptionPane.YES_NO_OPTION);
 
@@ -92,18 +91,43 @@ public class ManagerScreen extends JPanel implements TabbedGUIContainer.TabPanel
         JPanel header = new JPanel();
         header.setLayout(new FlowLayout());
 
-        JLabel title = new JLabel("<html><h1>Search by Name: </h1></html>");
-        JTextField searchBox = new JTextField();
-        searchBox.setPreferredSize( new Dimension( 200, 24 ) );
-        JButton search = new JButton("\uD83D\uDD0E");
+        JLabel title = new JLabel("<html><h1>Add by email: </h1></html>");
+        JTextField emailBox = new JTextField();
+        emailBox.setPreferredSize( new Dimension( 200, 24 ) );
+        JButton search = new JButton("Promote");
 
         search.addActionListener((e) -> {
-            this.searchTerm = searchBox.getText();
+            DatabaseBridge db = DatabaseBridge.instance();
+
+            try {
+                db.openConnection();
+                Person newStaffMember = Person.getPersonByEmail(emailBox.getText());
+
+                if (newStaffMember == null) {
+                    JOptionPane.showMessageDialog(AppContext.getWindow(), "Could not find user with the email "+emailBox.getText(), "User not Found", JOptionPane.ERROR_MESSAGE);
+                    return;
+                }
+                StringBuilder sb = new StringBuilder();
+                sb.append("Are you sure you want to promote ");
+                sb.append(newStaffMember.getFullName());
+                sb.append(" to the role of staff?");
+
+                int confirm = JOptionPane.showConfirmDialog(AppContext.getWindow(), sb.toString(), "Confirm Action", JOptionPane.YES_NO_OPTION);
+                if (confirm == 0) {
+                    Person.updateUserRole(newStaffMember, Person.Role.STAFF);
+                }
+
+            } catch (SQLException ex) {
+                DatabaseBridge.databaseError("Error finding user by email ["+emailBox.getText()+"] to promote them to staff", ex);
+            } finally {
+                db.closeConnection();
+            }
+
             setAll();
         });
 
         header.add(title);
-        header.add(searchBox);
+        header.add(emailBox);
         header.add(search);
         title.setHorizontalAlignment(SwingConstants.CENTER);
         this.add(header, BorderLayout.NORTH);
@@ -127,7 +151,7 @@ public class ManagerScreen extends JPanel implements TabbedGUIContainer.TabPanel
         List<Person> personList = new ArrayList<>();
         try {
             db.openConnection();
-            PreparedStatement query = db.prepareStatement("SELECT * FROM Person");
+            PreparedStatement query = db.prepareStatement("SELECT Person.PersonId FROM Person JOIN team005.Role R on Person.PersonId = R.personId WHERE R.role != 'USER'");
 
             ResultSet rs = query.executeQuery();
 
@@ -148,10 +172,7 @@ public class ManagerScreen extends JPanel implements TabbedGUIContainer.TabPanel
         } else {
             personList.stream()
                     .filter((person -> person.getFullName().contains(searchTerm)))
-                    .forEach((person -> {
-                        System.out.println(person.getFullName());
-                        addUser(person);
-                    }));
+                    .forEach((this::addUser));
         }
     }
 

@@ -5,6 +5,8 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.sql.Date;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 
 import db.DatabaseBridge;
@@ -16,6 +18,7 @@ public class Profile extends JPanel{
 
     private final JTextField forename = new JTextField(30);
     private final JTextField surname = new JTextField(30);
+    private final JTextField emailField = new JTextField(30);
     private final JTextField houseNumber = new JTextField(30);
     private final JTextField street = new JTextField(30);
     private final JTextField city = new JTextField(30);
@@ -55,8 +58,7 @@ public class Profile extends JPanel{
         add(emailLabel, gbc);
         gbc.gridx = 1;
         gbc.gridy = 3;
-        JLabel email = new JLabel();
-        add(email, gbc);
+        add(emailField, gbc);
 
         JLabel addressTitle = new JLabel("<html><h2>Address</h2></html>");
         gbc.gridx = 0;
@@ -85,11 +87,13 @@ public class Profile extends JPanel{
             db.openConnection();
             forename.setText(person.getForename());
             surname.setText(person.getSurname());
-            email.setText(person.getEmail());
-            houseNumber.setText(person.getAddress().getHouseNumber());
-            street.setText(person.getAddress().getStreetName());
-            city.setText(person.getAddress().getCityName());
-            postCode.setText(person.getAddress().getPostcode());
+            emailField.setText(person.getEmail());
+            if (person.getAddress() != null) {
+                houseNumber.setText(person.getAddress().getHouseNumber());
+                street.setText(person.getAddress().getStreetName());
+                city.setText(person.getAddress().getCityName());
+                postCode.setText(person.getAddress().getPostcode());
+            }
 
             if (person.getBankDetail() != null) {
 //                Add bank details to the profile
@@ -148,7 +152,7 @@ public class Profile extends JPanel{
             });
 
         } catch (Exception e) {
-            System.out.println(e.getMessage());
+            throw new RuntimeException(e);
         } finally {
             db.closeConnection();
         }
@@ -168,6 +172,8 @@ public class Profile extends JPanel{
      * Updates the user's personal details
      */
     public void updateDetails(){
+        String emailInput = emailField.getText();
+
         String forenameInput = forename.getText();
         String surnameInput = surname.getText();
 
@@ -196,10 +202,17 @@ public class Profile extends JPanel{
         try {
             db.openConnection();
 
+            PreparedStatement emailLookup = db.prepareStatement("SELECT email FROM Person WHERE email=?");
+            emailLookup.setString(1, emailInput);
+            ResultSet res = emailLookup.executeQuery();
+            if (res.next()) {
+                throw new IllegalArgumentException("Another user already exists with that email address");
+            }
+
             BankDetail newBankDetails = BankDetail.createPaymentInfo(cardNumberInput, Date.valueOf(expiryInput), securityInput);
             AppContext.getCurrentUser().addNewBankDetails(newBankDetails);
 
-            AppContext.getCurrentUser().updatePersonalDetails(forenameInput, surnameInput, houseNumberInput, streetInput, cityInput, postCodeInput);
+            AppContext.getCurrentUser().updatePersonalDetails(emailInput, forenameInput, surnameInput, houseNumberInput, streetInput, cityInput, postCodeInput);
 
             JOptionPane.showMessageDialog(AppContext.getWindow(), "Personal details updated", "Notice", JOptionPane.INFORMATION_MESSAGE);
         } catch (Exception exception) {

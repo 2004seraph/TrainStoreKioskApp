@@ -57,7 +57,7 @@ public final class DatabaseOperation {
      * @return whether operation was successful
      * @throws SQLException
      */
-    public static boolean updateUserRoleById(int userId, StoreAttributes.Role newRole) throws SQLException {
+    public static boolean updateUserRoleById(int userId, Person.Role newRole) throws SQLException {
         try (PreparedStatement findQuery = db.prepareStatement("SELECT * FROM Person WHERE PersonId = ?")) {
             findQuery.setInt(1, userId);
             ResultSet rs = findQuery.executeQuery();
