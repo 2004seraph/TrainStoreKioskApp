@@ -55,20 +55,6 @@ public class Person extends DatabaseOperation.Entity implements DatabaseRecord {
     public String getHouseNumber() { return houseNumber; }
     public String getPostCode() { return postCode; }
 
-    public static boolean validateEmail(String email) {
-        String emailRegex = "^[a-zA-Z0-9_+&*-]+(?:\\."+ "[a-zA-Z0-9_+&*-]+)*@" + "(?:[a-zA-Z0-9-]+\\.)+[a-z" + "A-Z]{2,7}$";
-        return email.matches(emailRegex);
-    }
-
-    public static boolean validatePassword(String password) {
-        String passwordRegex = "^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=.*[@#$%^&+=!()]).{8,20}$";
-        return password.matches(passwordRegex);
-    }
-
-    public static void main(String[] args){
-        System.out.println("Hello World");
-    }
-
     /**
      * This blank constructor is for creating a brand-new Person (not in the database yet)
      */
@@ -215,7 +201,7 @@ public class Person extends DatabaseOperation.Entity implements DatabaseRecord {
     }
 
     /**
-     * Gets a person from the database using their email
+     * Gets a person from the database using their email, DOES NOT SET THE BANK DETAILS FIELDS
      * @param id The id of a person
      * @return A Person object with all of its fields set, or null if there was no one with that id
      * @throws SQLException
@@ -475,6 +461,16 @@ public class Person extends DatabaseOperation.Entity implements DatabaseRecord {
             DatabaseBridge.databaseError("Error fetching all orders for user ["+personID+"]");
             throw new RuntimeException(e);
         }
+    }
+
+    public static boolean validateEmail(String email) {
+        String emailRegex = "^[a-zA-Z0-9_+&*-]+(?:\\."+ "[a-zA-Z0-9_+&*-]+)*@" + "(?:[a-zA-Z0-9-]+\\.)+[a-z" + "A-Z]{2,7}$";
+        return email.matches(emailRegex);
+    }
+
+    public static boolean validatePassword(String password) {
+        String passwordRegex = "^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=.*[@#$%^&+=!()]).{8,20}$";
+        return password.matches(passwordRegex);
     }
 }
 
