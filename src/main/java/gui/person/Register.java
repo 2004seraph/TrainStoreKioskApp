@@ -192,7 +192,7 @@ public class Register extends JPanel implements TabbedGUIContainer.TabPanel {
 
                         JOptionPane.showMessageDialog(AppContext.getWindow(), "Registration successful");
                     } catch (SQLException sqlError) {
-                        JOptionPane.showMessageDialog(AppContext.getWindow(), sqlError.getMessage());
+                        JOptionPane.showMessageDialog(AppContext.getWindow(), sqlError.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
                     } finally {
                         db.closeConnection();
                     }

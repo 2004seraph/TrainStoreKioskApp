@@ -82,12 +82,12 @@ public class Profile extends JPanel{
 
         Person person = AppContext.getCurrentUser();
         DatabaseBridge db = DatabaseBridge.instance();
-        //            TODO: HANDLE BANK DETAILS IF NULL
         try {
             db.openConnection();
             forename.setText(person.getForename());
             surname.setText(person.getSurname());
             emailField.setText(person.getEmail());
+
             if (person.getAddress() != null) {
                 houseNumber.setText(person.getAddress().getHouseNumber());
                 street.setText(person.getAddress().getStreetName());
@@ -95,8 +95,6 @@ public class Profile extends JPanel{
                 postCode.setText(person.getAddress().getPostcode());
             }
 
-//                Add bank details to the profile
-//                Add bank details title
             JLabel bankDetailsTitle = new JLabel("<html><h2>Bank Details</h2></html>");
             gbc.gridx = 0;
             gbc.gridy = 9;
@@ -107,7 +105,7 @@ public class Profile extends JPanel{
 
             gbc.fill = GridBagConstraints.NONE;
             gbc.anchor = GridBagConstraints.WEST;
-            //    Bank Details
+
             JLabel cardNumberLabel = new JLabel("Card Number:");
             cardNumber = new JTextField(30);
             addField(gbc, cardNumberLabel, cardNumber, 10);
@@ -120,17 +118,18 @@ public class Profile extends JPanel{
             securityCode = new JTextField(30);
             addField(gbc, securityCodeLabel, securityCode, 12);
 
-        if (person.getBankDetail() != null) {
-            cardNumber.setText(person.getBankDetail().getCardNumber());
-            expiryDate.setText(person.getBankDetail().getExpiryDate().toString());
-            securityCode.setText(person.getBankDetail().getSecurityCode());
-        }
-        gbc.gridy++;
-        JButton updateButton = new JButton("UPDATE");
-        add(updateButton, gbc);
-        updateButton.addActionListener(e -> {
-            updateDetails();
-        });
+            if (person.getBankDetail() != null) {
+                cardNumber.setText(person.getBankDetail().getCardNumber());
+                expiryDate.setText(person.getBankDetail().getExpiryDate().toString());
+                securityCode.setText(person.getBankDetail().getSecurityCode());
+            }
+
+            gbc.gridy++;
+            JButton updateButton = new JButton("UPDATE");
+            add(updateButton, gbc);
+            updateButton.addActionListener(e -> {
+                updateDetails();
+            });
 
         } catch (Exception e) {
             throw new RuntimeException(e);
@@ -189,8 +188,6 @@ public class Profile extends JPanel{
             if (res.next() && res.getInt(1) != AppContext.getCurrentUser().getId()) {
                 throw new IllegalArgumentException("Another user already exists with that email address");
             }
-
-            System.out.println(Date.valueOf(expiryInput));
 
             BankDetail newBankDetails = BankDetail.createPaymentInfo(cardNumberInput, Date.valueOf(expiryInput), securityInput);
             AppContext.getCurrentUser().addNewBankDetails(newBankDetails);
