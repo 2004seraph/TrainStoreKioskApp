@@ -8,6 +8,8 @@ import java.sql.Date;
 import java.sql.SQLException;
 
 import db.DatabaseBridge;
+import db.DatabaseOperation;
+import db.DatabaseRecord;
 import entity.BankDetail;
 import entity.user.Person;
 import controllers.AppContext;
@@ -48,22 +50,43 @@ public class Profile extends JPanel{
         setLayout(new GridBagLayout());
         GridBagConstraints gbc = new GridBagConstraints();
         gbc.insets = new Insets(1, 10, 1, 1);
-        gbc.anchor = GridBagConstraints.WEST;
 
-        addField(gbc, forenameLabel, forename, 0);
-        addField(gbc, surnameLabel, surname, 1);
+
+//        Add the title
+        JLabel title = new JLabel("<html><h1>Profile</h1></html>");
+        gbc.gridx = 0;
+        gbc.gridy = 0;
+        gbc.gridwidth = 2;
+        gbc.fill = GridBagConstraints.HORIZONTAL;
+        gbc.anchor = GridBagConstraints.CENTER;
+        add(title, gbc);
+
+        gbc.anchor = GridBagConstraints.WEST;
+        gbc.gridwidth = 1;
+        addField(gbc, forenameLabel, forename, 1);
+        addField(gbc, surnameLabel, surname, 2);
 
         gbc.gridx = 0;
-        gbc.gridy = 2;
+        gbc.gridy = 3;
         add(emailLabel, gbc);
         gbc.gridx = 1;
-        gbc.gridy = 2;
+        gbc.gridy = 3;
         add(email, gbc);
 
-        addField(gbc, houseNumberLabel, houseNumber, 3);
-        addField(gbc, streetLabel, street, 4);
-        addField(gbc, cityLabel, city, 5);
-        addField(gbc, postCodeLabel, postCode, 6);;
+        JLabel addressTitle = new JLabel("<html><h2>Address</h2></html>");
+        gbc.gridx = 0;
+        gbc.gridy = 4;
+        gbc.gridwidth = 2;
+        gbc.anchor = GridBagConstraints.CENTER;
+        add(addressTitle, gbc);
+
+        gbc.anchor = GridBagConstraints.WEST;
+        gbc.fill = GridBagConstraints.NONE;
+        gbc.gridwidth = 1;
+        addField(gbc, houseNumberLabel, houseNumber, 5);
+        addField(gbc, streetLabel, street, 6);
+        addField(gbc, cityLabel, city, 7);
+        addField(gbc, postCodeLabel, postCode, 8);;
 
 
 
@@ -82,27 +105,37 @@ public class Profile extends JPanel{
 
             if (person.getBankDetail() != null) {
 //                Add bank details to the profile
+//                Add bank details title
+                JLabel bankDetailsTitle = new JLabel("<html><h2>Bank Details</h2></html>");
+                gbc.gridx = 0;
+                gbc.gridy = 9;
+                gbc.gridwidth = 2;
+                gbc.fill = GridBagConstraints.HORIZONTAL;
+                gbc.anchor = GridBagConstraints.CENTER;
+                add(bankDetailsTitle, gbc);
+
+                gbc.fill = GridBagConstraints.NONE;
                 gbc.anchor = GridBagConstraints.WEST;
-                addField(gbc, cardNumberLabel, cardNumber, 8);
-                addField(gbc, expiryDateLabel, expiryDate, 9);
-                addField(gbc, securityCodeLabel, securityCode, 10);
+                addField(gbc, cardNumberLabel, cardNumber, 10);
+                addField(gbc, expiryDateLabel, expiryDate, 11);
+                addField(gbc, securityCodeLabel, securityCode, 12);
                 cardNumber.setText(person.getBankDetail().getCardNumber());
                 expiryDate.setText(person.getBankDetail().getExpiryDate().toString());
                 securityCode.setText(person.getBankDetail().getSecurityCode());
 
 //                For the update button
                 gbc.gridx = 0;
-                gbc.gridy = 11;
+                gbc.gridy = 13;
                 gbc.gridwidth = 2;
                 gbc.fill = GridBagConstraints.NONE;
                 gbc.anchor = GridBagConstraints.CENTER;
             } else {
                 gbc.gridx = 1;
-                gbc.gridy = 7;
+                gbc.gridy = 10;
                 add(addBankDetailsButton, gbc);
 //                For the update button
                 gbc.gridx = 0;
-                gbc.gridy = 7;
+                gbc.gridy = 10;
 
                 addBankDetailsButton.addActionListener(e -> {
                     getBankDetailsFromUser();
@@ -262,6 +295,17 @@ public class Profile extends JPanel{
                     db.closeConnection();
                     frame.dispose();
                 }
+                try {
+                    db.openConnection();
+                    AppContext.setCurrentUser(Person.getPersonById(AppContext.getCurrentUser().getId()));
+                    System.out.println(AppContext.getCurrentUser().getBankDetail().getCardName());
+                } catch (Exception exception) {
+                    throw new RuntimeException(exception);
+                } finally {
+                    db.closeConnection();
+                }
+                revalidate();
+                repaint();
             }
         });
 
