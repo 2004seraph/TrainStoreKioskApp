@@ -2,7 +2,6 @@ package gui.staff;
 
 import controllers.AppContext;
 import db.DatabaseBridge;
-import entity.StoreAttributes;
 import entity.user.Person;
 import gui.components.TabbedGUIContainer;
 
@@ -16,7 +15,7 @@ import java.util.List;
 
 public class ManagerScreen extends JPanel implements TabbedGUIContainer.TabPanel {
     private static class UserRow extends JPanel {
-        static String[] roleNames = StoreAttributes.Role.getStringValues();
+        static String[] roleNames = Person.Role.getStringValues();
         Person person;
 
         public UserRow(Person user) {
@@ -44,7 +43,7 @@ public class ManagerScreen extends JPanel implements TabbedGUIContainer.TabPanel
             content.add(new JSeparator(SwingConstants.HORIZONTAL));
 
             roleBox.addActionListener(e -> {
-                StoreAttributes.Role newRole = StoreAttributes.Role.valueOf((String) roleBox.getSelectedItem());
+                Person.Role newRole = Person.Role.valueOf((String) roleBox.getSelectedItem());
                 StringBuilder sb = new StringBuilder();
                 sb.append("Are you sure you want to ");
                 if (newRole.getLevel() < person.getRole().getLevel()) {

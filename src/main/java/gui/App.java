@@ -1,7 +1,7 @@
 package gui;
 
 import controllers.AppContext;
-import entity.StoreAttributes;
+import entity.user.Person;
 import gui.components.TabbedGUIContainer;
 import gui.person.*;
 import gui.staff.ManagerScreen;
@@ -41,7 +41,7 @@ public class App {
     /**
      * The logged-in screen with each dashboard this role has access too
      */
-    public void userState(StoreAttributes.Role userRole) {
+    public void userState(Person.Role userRole) {
         screenController.removeAllTabs();
 
         JButton logOutButton = new JButton("Logout");
@@ -82,6 +82,10 @@ public class App {
         screenController.insertTab("Cart", cartPage);
         screenController.insertTab("Shop", shopPage);
 
-        screenController.switchTab("Profile");
+        switch (userRole) {
+            case USER -> screenController.switchTab("Shop");
+            case STAFF -> screenController.switchTab("Order Management");
+            case MANAGER -> screenController.switchTab("User Management");
+        }
     }
 }
