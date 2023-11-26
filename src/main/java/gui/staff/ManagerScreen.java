@@ -4,6 +4,7 @@ import controllers.AppContext;
 import db.DatabaseBridge;
 import entity.user.Person;
 import gui.components.TabbedGUIContainer;
+import org.jdesktop.swingx.prompt.PromptSupport;
 
 import javax.swing.*;
 import java.awt.*;
@@ -76,12 +77,42 @@ public class ManagerScreen extends JPanel implements TabbedGUIContainer.TabPanel
         contentPanel = new JPanel();
         contentPanel.setLayout(gbl);
 
-        JPanel header = new JPanel();
-        header.setLayout(new FlowLayout());
 
-        JLabel title = new JLabel("<html><h1>Add by email: </h1></html>");
+        JPanel header = new JPanel();
+        gbc.fill = GridBagConstraints.BOTH;
+        header.setLayout(new GridBagLayout());
+
+        JLabel title = new JLabel("<html><h1>Staff Management </h1></html>");
         JTextField emailBox = new JTextField();
+        PromptSupport.setPrompt("Add staff member by email", emailBox);
         emailBox.setPreferredSize( new Dimension( 200, 24 ) );
+        JButton search = searchAndPromoteEmail(emailBox);
+
+        gbc.anchor = GridBagConstraints.NORTHWEST;
+        gbc.weightx = 0;
+        gbc.weighty = 1;
+        gbc.gridy = 0;
+        gbc.gridx = 0;
+        gbc.gridwidth = 2;
+        header.add(title, gbc);
+        gbc.gridwidth = 1;
+        gbc.gridy++;
+        header.add(emailBox, gbc);
+        gbc.gridx++;
+        header.add(search, gbc);
+        title.setHorizontalAlignment(SwingConstants.CENTER);
+        this.add(header, BorderLayout.NORTH);
+
+        scrollPane = new JScrollPane(contentPanel);
+        this.add(scrollPane, BorderLayout.CENTER);
+
+        gbc.gridx = 0;
+        gbc.gridy = -1;
+
+        refresh();
+    }
+
+    private JButton searchAndPromoteEmail(JTextField emailBox) {
         JButton search = new JButton("Promote");
 
         search.addActionListener((e) -> {
@@ -92,7 +123,7 @@ public class ManagerScreen extends JPanel implements TabbedGUIContainer.TabPanel
                 Person newStaffMember = Person.getPersonByEmail(emailBox.getText());
 
                 if (newStaffMember == null) {
-                    JOptionPane.showMessageDialog(AppContext.getWindow(), "Could not find user with the email "+emailBox.getText(), "User not Found", JOptionPane.ERROR_MESSAGE);
+                    JOptionPane.showMessageDialog(AppContext.getWindow(), "Could not find user with the email "+ emailBox.getText(), "User not Found", JOptionPane.ERROR_MESSAGE);
                     return;
                 }
                 StringBuilder sb = new StringBuilder();
@@ -108,26 +139,12 @@ public class ManagerScreen extends JPanel implements TabbedGUIContainer.TabPanel
                 }
 
             } catch (SQLException ex) {
-                DatabaseBridge.databaseError("Error finding user by email ["+emailBox.getText()+"] to promote them to staff", ex);
+                DatabaseBridge.databaseError("Error finding user by email ["+ emailBox.getText()+"] to promote them to staff", ex);
             } finally {
                 db.closeConnection();
             }
         });
-
-        header.add(title);
-        header.add(emailBox);
-        header.add(search);
-        title.setHorizontalAlignment(SwingConstants.CENTER);
-        this.add(header, BorderLayout.NORTH);
-
-        scrollPane = new JScrollPane(contentPanel);
-        this.add(scrollPane, BorderLayout.CENTER);
-
-        gbc.fill = GridBagConstraints.BOTH;
-        gbc.gridx = 0;
-        gbc.gridy = -1;
-
-        refresh();
+        return search;
     }
 
     private void refresh() {
