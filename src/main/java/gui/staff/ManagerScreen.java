@@ -132,7 +132,7 @@ public class ManagerScreen extends JPanel implements TabbedGUIContainer.TabPanel
             ResultSet rs = query.executeQuery();
 
             while (rs.next()) {
-                Person them = Person.getPersonByEmail(rs.getString("email"));
+                Person them = Person.getPersonByID(rs.getInt("PersonId"));
                 assert them != null;
                 personList.add(them);
             }
