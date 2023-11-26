@@ -8,6 +8,7 @@ import entity.BankDetail;
 import entity.StoreAttributes;
 import controllers.AppContext;
 import entity.order.Order;
+import entity.order.OrderLine;
 
 import java.security.InvalidKeyException;
 import java.sql.*;
@@ -448,6 +449,29 @@ public class Person extends DatabaseOperation.Entity implements DatabaseRecord {
             return orders;
         } catch (SQLException e) {
             DatabaseBridge.databaseError("Error fetching all orders for user ["+personID+"]");
+            throw new RuntimeException(e);
+        }
+    }
+
+    public List<OrderLine> getAllOrderLinesByID(int orderId) {
+        List<OrderLine> orderLines = new ArrayList<>();
+        try {
+            openConnection();
+            PreparedStatement s = prepareStatement("SELECT * FROM OrderLine WHERE orderId = ?");
+            s.setInt(1, orderId);
+
+            ResultSet rs = s.executeQuery();
+            while (rs.next()) {
+                orderLines.add(new OrderLine(
+                        rs.getInt("orderId"),
+                        rs.getString("productCode"),
+                        rs.getInt("quantity")
+                ));
+            }
+
+            return orderLines;
+        } catch (SQLException e) {
+            DatabaseBridge.databaseError("Error fetching all order lines for order ["+orderId+"]");
             throw new RuntimeException(e);
         }
     }
