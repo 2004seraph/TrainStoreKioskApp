@@ -80,7 +80,7 @@ public class BankDetail extends DatabaseOperation.Entity implements DatabaseReco
             throw new InvalidBankDetailsException("Card is expired ["+expiryDate+"]");
         }
 
-        if (securityCode.length() != 3) {
+        if (!(securityCode.length() == 3 || securityCode.length() == 4)) {
             throw new InvalidBankDetailsException("Security code was an invalid length ["+securityCode+"]");
         }
 
