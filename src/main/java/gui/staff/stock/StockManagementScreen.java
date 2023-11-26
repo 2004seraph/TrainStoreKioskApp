@@ -182,6 +182,7 @@ public class StockManagementScreen extends JPanel implements TabbedGUIContainer.
                 } finally {
                     db.closeConnection();
                 }
+                AppContext.queueStoreReload = true;
             }
         });
 

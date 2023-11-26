@@ -219,6 +219,7 @@ public class OrderManagementScreen extends JPanel implements TabbedGUIContainer.
                     }
                     db.closeConnection();
                 }
+                AppContext.queueStoreReload = true;
                 refreshData();
                 resetState();
             }
@@ -258,12 +259,18 @@ public class OrderManagementScreen extends JPanel implements TabbedGUIContainer.
     private void resetState() {
         lastSelectedRow = -1;
         lastSelectedOrder = null;
+
+        orderContents.setModel(new DefaultTableModel());
+
         SwingUtilities.invokeLater(new Runnable() {
             @Override
             public void run() {
                 setEnabledRecursively(orderControls, false);
             }
         });
+
+        revalidate();
+        repaint();
     }
 
     private void refreshData() {
@@ -412,11 +419,7 @@ public class OrderManagementScreen extends JPanel implements TabbedGUIContainer.
 
     @Override
     public void onSelected() {
-        SwingUtilities.invokeLater(new Runnable() {
-            @Override
-            public void run() {
-                refreshData();
-            }
-        });
+        refreshData();
+        resetState();
     }
 }

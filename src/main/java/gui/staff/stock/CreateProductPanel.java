@@ -240,6 +240,7 @@ class CreateProductPanel extends JPanel {
             db.closeConnection();
         }
 
+        AppContext.queueStoreReload = true;
         SwingUtilities.invokeLater(alterEvent);
     }
 

@@ -39,6 +39,8 @@ public class AppContext {
 
     private static Person currentUser;
 
+    public static boolean queueStoreReload;
+
     private static byte[] encryptionKey;
     public static byte[] getEncryptionKey() {
         return encryptionKey;

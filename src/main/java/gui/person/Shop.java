@@ -1,7 +1,9 @@
 package gui.person;
 
+import controllers.AppContext;
 import db.DatabaseBridge;
 import entity.product.Product;
+import gui.components.TabbedGUIContainer;
 
 import javax.swing.*;
 import java.awt.*;
@@ -10,12 +12,14 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 
 
-public class Shop extends JPanel {
+public class Shop extends JPanel implements TabbedGUIContainer.TabPanel {
     private static final int cardSpacing = 30;
+
+    private JPanel contentPanel;
 
     public Shop() {
         this.setLayout(new BorderLayout());
-        JPanel contentPanel = new JPanel();
+        contentPanel = new JPanel();
         GridLayout gl = new GridLayout(0, 2);
         gl.setHgap(cardSpacing);
         gl.setVgap(cardSpacing);
@@ -24,10 +28,15 @@ public class Shop extends JPanel {
         JScrollPane scrollPane = new JScrollPane(contentPanel);
         add(scrollPane, BorderLayout.CENTER);
 
+        // TO LOAD THE PRODUCTS
+        loadStore();
+    }
+
+    private void loadStore() {
+        contentPanel.removeAll();
         DatabaseBridge db = DatabaseBridge.instance();
         ArrayList<Product> productList = new ArrayList<>();
 
-        // TO LOAD THE PRODUCTS
         try {
             db.openConnection();
             ResultSet products = Product.getAllProducts();
@@ -54,6 +63,19 @@ public class Shop extends JPanel {
             throw new RuntimeException(e);
         } finally {
             db.closeConnection();
+        }
+    }
+
+    @Override
+    public void setNotebookContainer(TabbedGUIContainer cont) {
+
+    }
+
+    @Override
+    public void onSelected() {
+        if (AppContext.queueStoreReload) {
+            loadStore();
+            AppContext.queueStoreReload = false;
         }
     }
 }
