@@ -438,9 +438,9 @@ public class Person extends DatabaseOperation.Entity implements DatabaseRecord {
     public static void addBankDetailsToPerson(BankDetail bankDetail) throws Exception {
         try {
             openConnection();
-            PreparedStatement s = prepareStatement("UPDATE Person SET paymentId=? WHERE email=?");
+            PreparedStatement s = prepareStatement("UPDATE Person SET paymentId=? WHERE PersonId=?");
             s.setInt(1, bankDetail.getBankDetailID());
-            s.setString(2, AppContext.getCurrentUser().getEmail());
+            s.setInt(2, AppContext.getCurrentUser().getId());
             s.executeUpdate();
         } catch (SQLException e) {
             DatabaseBridge.databaseError("Failed to update person", e);

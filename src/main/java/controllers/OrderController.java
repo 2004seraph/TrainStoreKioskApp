@@ -20,13 +20,16 @@ public final class OrderController {
         BankDetail bankDetail = user.getBankDetail();
 
         if (bankDetail == null) {
+            System.out.println("null");
             return false;
         }
 
         try {
             SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd");
             BankDetail.validateBankDetails(bankDetail.getCardNumber(), df.format(bankDetail.getExpiryDate()), bankDetail.getSecurityCode());
+            // error
         } catch (BankDetail.InvalidBankDetailsException e) {
+            System.out.println("bad validation");
             return false;
         }
 

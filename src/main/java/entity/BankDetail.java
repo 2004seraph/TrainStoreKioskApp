@@ -165,8 +165,7 @@ public class BankDetail extends DatabaseOperation.Entity implements DatabaseReco
             throw new InvalidBankDetailsException("Card number invalid, failed Luhn check ["+cardNumber+"]");
         }
         // Expiry date should be in the format yyyy-MM-dd
-        String pattern = "^\\d{4}-\\d{2}-\\d{2}$";
-        if (!expiryDate.matches(pattern)) { //2024-01-01
+        if (!expiryDate.matches("^\\d{4}-\\d{2}-\\d{2}$")) { //2024-01-01
             throw new InvalidBankDetailsException("Expiry date was an invalid format");
         }
 //        Check if card is expired

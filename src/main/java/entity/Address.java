@@ -36,7 +36,7 @@ public class Address extends DatabaseOperation.Entity implements DatabaseRecord{
     }
 
     public static boolean validatePostcode(String postcode) {
-        return postcode.matches("^([a-zA-Z0-9]{6}) | ([a-zA-Z0-9]{3} [a-zA-Z0-9]{3})$");
+        return postcode.matches("^([a-zA-Z0-9]{6})|([a-zA-Z0-9]{3} [a-zA-Z0-9]{3})$");
     }
 
     /**
