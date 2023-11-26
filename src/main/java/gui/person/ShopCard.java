@@ -72,7 +72,7 @@ public class ShopCard extends JPanel {
 
                 if (productComponent.getClass().equals(Locomotive.class)) {
                     gbc.gridy++;
-                    JLabel priceBracket = new JLabel("Price Bracket: "+((Locomotive) productComponent).getPriceBracket().toString());
+                    JLabel priceBracket = new JLabel("DCC Category: "+((Locomotive) productComponent).getPriceBracket().toString());
                     add(priceBracket, gbc);
                 }
 
