@@ -144,6 +144,7 @@ public class OrderManagementScreen extends JPanel implements TabbedGUIContainer.
             gbc.gridy++;
             gbc.weighty = 1;
             orderContents = new JTable(new DefaultTableModel());
+            orderContents.setRowHeight(24);
             JScrollPane scrollPane = new JScrollPane(orderContents);
             panel.add(scrollPane, gbc);
 
@@ -169,7 +170,7 @@ public class OrderManagementScreen extends JPanel implements TabbedGUIContainer.
 
         panel.setBorder(new EmptyBorder(10, 10, 10, 10));
 
-        JButton fulfillOrder = new JButton("Fulfill Order");
+        JButton fulfillOrder = new JButton("Fulfill Order (deducts stock from the database)");
         panel.add(fulfillOrder, gbc);
         fulfillOrder.addActionListener(new ActionListener() {
             @Override
@@ -219,6 +220,7 @@ public class OrderManagementScreen extends JPanel implements TabbedGUIContainer.
                     }
                     db.closeConnection();
                 }
+                AppContext.queueStoreReload = true;
                 refreshData();
                 resetState();
             }
@@ -258,12 +260,18 @@ public class OrderManagementScreen extends JPanel implements TabbedGUIContainer.
     private void resetState() {
         lastSelectedRow = -1;
         lastSelectedOrder = null;
+
+        orderContents.setModel(new DefaultTableModel());
+
         SwingUtilities.invokeLater(new Runnable() {
             @Override
             public void run() {
                 setEnabledRecursively(orderControls, false);
             }
         });
+
+        revalidate();
+        repaint();
     }
 
     private void refreshData() {
@@ -271,6 +279,7 @@ public class OrderManagementScreen extends JPanel implements TabbedGUIContainer.
         orderData = loadData();
         orderList = new JTable(new OrderViewTableModel(orderData, orderViewColumns));
         JScrollPane scrollPane = new JScrollPane(orderList);
+        orderList.setRowHeight(24);
 
         TableRowSorter<TableModel> sorter = new TableRowSorter<TableModel>(orderList.getModel());
         orderList.setRowSorter(sorter);
@@ -412,11 +421,7 @@ public class OrderManagementScreen extends JPanel implements TabbedGUIContainer.
 
     @Override
     public void onSelected() {
-        SwingUtilities.invokeLater(new Runnable() {
-            @Override
-            public void run() {
-                refreshData();
-            }
-        });
+        refreshData();
+        resetState();
     }
 }

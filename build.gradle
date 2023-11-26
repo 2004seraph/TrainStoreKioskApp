@@ -21,6 +21,9 @@ dependencies {
     implementation 'at.favre.lib:bcrypt:0.10.2'
     implementation 'org.javatuples:javatuples:1.2'
     implementation 'commons-validator:commons-validator:1.7'
+    // https://mvnrepository.com/artifact/org.swinglabs/swingx
+    implementation group: 'org.swinglabs', name: 'swingx', version: '1.6.1'
+
 }
 
 tasks.withType(JavaCompile) {

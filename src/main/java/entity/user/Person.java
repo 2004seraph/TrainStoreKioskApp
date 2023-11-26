@@ -378,6 +378,7 @@ public class Person extends DatabaseOperation.Entity implements DatabaseRecord {
     public static void validatePersonalDetails(
             String forename,
             String surname,
+            String email,
             String houseNumber,
             String streetName,
             String cityName,
@@ -388,6 +389,9 @@ public class Person extends DatabaseOperation.Entity implements DatabaseRecord {
         }
         if (surname.isEmpty() || surname == null) {
             throw new IllegalArgumentException("Surname is a compulsory field");
+        }
+        if (email.isEmpty() || email == null) {
+            throw new IllegalArgumentException("Email is a compulsory field");
         }
         if (houseNumber.isEmpty() || houseNumber == null) {
             throw new IllegalArgumentException("House number is a compulsory field");
@@ -401,6 +405,9 @@ public class Person extends DatabaseOperation.Entity implements DatabaseRecord {
         if(!Address.validatePostcode(postCode)){
             throw new IllegalArgumentException("Invalid postcode");
         }
+        if(!validateEmail(email)){
+            throw new IllegalArgumentException("Invalid email");
+        }
     }
 
     public void updatePersonalDetails(
@@ -413,7 +420,7 @@ public class Person extends DatabaseOperation.Entity implements DatabaseRecord {
             String postCode
     ) throws SQLException, IllegalArgumentException {
 
-        validatePersonalDetails(forename, surname, houseNumber, streetName, cityName, postCode);
+        validatePersonalDetails(forename, surname, email, houseNumber, streetName, cityName, postCode);
 
         if (Address.getAddressById(houseNumber, postCode) == null) {
             Address.CreateAddress(new Address(houseNumber, streetName, cityName, postCode));
@@ -467,29 +474,6 @@ public class Person extends DatabaseOperation.Entity implements DatabaseRecord {
             return orders;
         } catch (SQLException e) {
             DatabaseBridge.databaseError("Error fetching all orders for user ["+personID+"]");
-            throw new RuntimeException(e);
-        }
-    }
-
-    public List<OrderLine> getAllOrderLinesByID(Integer orderId) {
-        List<OrderLine> orderLines = new ArrayList<>();
-        try {
-            openConnection();
-            PreparedStatement s = prepareStatement("SELECT * FROM OrderLine WHERE orderId = ?");
-            s.setInt(1, orderId);
-
-            ResultSet rs = s.executeQuery();
-            while (rs.next()) {
-                orderLines.add(new OrderLine(
-                        rs.getInt("orderId"),
-                        rs.getString("productCode"),
-                        rs.getInt("quantity")
-                ));
-            }
-
-            return orderLines;
-        } catch (SQLException e) {
-            DatabaseBridge.databaseError("Error fetching all order lines for order ["+orderId+"]");
             throw new RuntimeException(e);
         }
     }

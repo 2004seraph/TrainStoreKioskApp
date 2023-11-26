@@ -1,5 +1,6 @@
 package gui.staff.stock;
 
+import controllers.AppContext;
 import db.DatabaseBridge;
 
 import javax.swing.*;
@@ -73,6 +74,8 @@ class StockManagementTableModel extends AbstractTableModel {
         } finally {
             db.closeConnection();
         }
+
+        AppContext.queueStoreReload = true;
     }
 
     @Override
