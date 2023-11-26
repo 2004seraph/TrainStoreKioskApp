@@ -453,7 +453,7 @@ public class Person extends DatabaseOperation.Entity implements DatabaseRecord {
         }
     }
 
-    public List<OrderLine> getAllOrderLinesByID(int orderId) {
+    public List<OrderLine> getAllOrderLinesByID(Integer orderId) {
         List<OrderLine> orderLines = new ArrayList<>();
         try {
             openConnection();

@@ -72,11 +72,11 @@ public class App {
         }
 
         JPanel shopPage = new Shop();
-        JPanel ordersPage = new PastOrders();
+        // JPanel pastOrdersPage = new PastOrdersScreen();
         JPanel profilePage = new Profile();
         JPanel cartPage = new Cart();
 
-        screenController.insertTab("My Orders", ordersPage);
+        // screenController.insertTab("My Orders", pastOrdersPage);
         screenController.insertTab("Profile", profilePage);
         screenController.insertDivider();
         screenController.insertTab("Cart", cartPage);
