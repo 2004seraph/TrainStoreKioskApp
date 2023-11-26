@@ -38,25 +38,27 @@ public class Register extends JPanel implements TabbedGUIContainer.TabPanel {
 
         //construct components
         JLabel registerLabel = new JLabel("<html><h1>Register a new account</h1></html>");
-        forename = new JTextField ();
-        JLabel forenameLabel = new JLabel("Forename*");
-        JLabel surnameLabel = new JLabel("Surname*");
+        forename = new JTextField();
+        JLabel forenameLabel = new JLabel("Forename");
+        JLabel surnameLabel = new JLabel("Surname");
         surname = new JTextField(5);
-        JLabel emailLabel = new JLabel("Email*");
+        JLabel emailLabel = new JLabel("Email");
         email = new JTextField (5);
-        JLabel passwordLabel = new JLabel("Password*");
+        JLabel passwordLabel = new JLabel("Password");
         password = new JPasswordField (5);
-        JLabel passwordConfirmationLabel = new JLabel("Password Confirmation*");
+        JLabel passwordConfirmationLabel = new JLabel("Password Confirmation");
         passwordConfirmation = new JPasswordField (5);
+
         JLabel addressLabel = new JLabel("<html><h2>Address</h2></html>");
-        JLabel houseNumberLabel = new JLabel("House Number*");
-        houseNumber = new JTextField (5);
-        JLabel streetNameLabel = new JLabel("Street Name*");
-        streetName = new JTextField (5);
-        JLabel cityNameLabel = new JLabel("City Name*");
-        cityName = new JTextField (5);
-        JLabel postCodeLabel = new JLabel("PostCode*");
-        postCode = new JTextField (5);
+        JLabel houseNumberLabel = new JLabel("House Number");
+        houseNumber = new JTextField(5);
+        JLabel streetNameLabel = new JLabel("Street Name");
+        streetName = new JTextField(5);
+        JLabel cityNameLabel = new JLabel("City Name");
+        cityName = new JTextField(5);
+        JLabel postCodeLabel = new JLabel("PostCode");
+        postCode = new JTextField(5);
+
         JButton registerButton = new JButton("Create Account");
         JLabel loginLabel = new JLabel("<html><u><font color='blue'>Login</font></u></html>");
 
@@ -202,55 +204,55 @@ public class Register extends JPanel implements TabbedGUIContainer.TabPanel {
 
     private boolean validateCompulsoryInput() {
         if (forename.getText().isEmpty()) {
-            JOptionPane.showMessageDialog(AppContext.getWindow(), "Forename cannot be empty");
+            JOptionPane.showMessageDialog(AppContext.getWindow(), "Forename cannot be empty", "Error", JOptionPane.WARNING_MESSAGE);
             return false;
         }
         if (surname.getText().isEmpty()) {
-            JOptionPane.showMessageDialog(AppContext.getWindow(), "Surname cannot be empty");
+            JOptionPane.showMessageDialog(AppContext.getWindow(), "Surname cannot be empty", "Error", JOptionPane.WARNING_MESSAGE);
             return false;
         }
         if (email.getText().isEmpty()) {
-            JOptionPane.showMessageDialog(AppContext.getWindow(), "Email cannot be empty");
+            JOptionPane.showMessageDialog(AppContext.getWindow(), "Email cannot be empty", "Error", JOptionPane.WARNING_MESSAGE);
             return false;
         }
         if (password.getText().isEmpty()) {
-            JOptionPane.showMessageDialog(AppContext.getWindow(), "Password cannot be empty");
+            JOptionPane.showMessageDialog(AppContext.getWindow(), "Password cannot be empty", "Error", JOptionPane.WARNING_MESSAGE);
             return false;
         }
         if (passwordConfirmation.getText().isEmpty()) {
-            JOptionPane.showMessageDialog(AppContext.getWindow(), "Password confirmation cannot be empty");
+            JOptionPane.showMessageDialog(AppContext.getWindow(), "Password confirmation cannot be empty", "Error", JOptionPane.WARNING_MESSAGE);
             return false;
         }
         if (!password.getText().equals(passwordConfirmation.getText())) {
-            JOptionPane.showMessageDialog(AppContext.getWindow(), "Passwords do not match");
+            JOptionPane.showMessageDialog(AppContext.getWindow(), "Passwords do not match", "Error", JOptionPane.WARNING_MESSAGE);
             return false;
         }
         if (houseNumber.getText().isEmpty()) {
-            JOptionPane.showMessageDialog(AppContext.getWindow(), "House number cannot be empty");
+            JOptionPane.showMessageDialog(AppContext.getWindow(), "House number cannot be empty", "Error", JOptionPane.WARNING_MESSAGE);
             return false;
         }
         if (streetName.getText().isEmpty()) {
-            JOptionPane.showMessageDialog(AppContext.getWindow(), "Street name cannot be empty");
+            JOptionPane.showMessageDialog(AppContext.getWindow(), "Street name cannot be empty", "Error", JOptionPane.WARNING_MESSAGE);
             return false;
         }
         if (cityName.getText().isEmpty()) {
-            JOptionPane.showMessageDialog(AppContext.getWindow(), "City name cannot be empty");
+            JOptionPane.showMessageDialog(AppContext.getWindow(), "City name cannot be empty", "Error", JOptionPane.WARNING_MESSAGE);
             return false;
         }
         if (postCode.getText().isEmpty()) {
-            JOptionPane.showMessageDialog(AppContext.getWindow(), "Postcode cannot be empty");
+            JOptionPane.showMessageDialog(AppContext.getWindow(), "Postcode cannot be empty", "Error", JOptionPane.WARNING_MESSAGE);
             return false;
         }
         try {
             DatabaseBridge db = DatabaseBridge.instance();
             db.openConnection();
             if (Person.getPersonByEmail(email.getText()) != null) {
-                JOptionPane.showMessageDialog(AppContext.getWindow(), "Email already exists");
+                JOptionPane.showMessageDialog(AppContext.getWindow(), "Email already exists", "Error", JOptionPane.WARNING_MESSAGE);
                 return false;
             }
             db.closeConnection();
-        } catch (SQLException throwables) {
-            JOptionPane.showMessageDialog(AppContext.getWindow(), throwables.getMessage());
+        } catch (SQLException e) {
+            JOptionPane.showMessageDialog(AppContext.getWindow(), "Account creation error: " + e.getMessage(), "Database Error", JOptionPane.ERROR_MESSAGE);
         }
         return true;
     }
@@ -260,18 +262,18 @@ public class Register extends JPanel implements TabbedGUIContainer.TabPanel {
 
         // Validate the fields with the regular expressions
         if (!Person.validateEmail(email.getText())) {
-            JOptionPane.showMessageDialog(AppContext.getWindow(), "Invalid email");
+            JOptionPane.showMessageDialog(AppContext.getWindow(), "Invalid email", "Error", JOptionPane.WARNING_MESSAGE);
             return false;
         }
         if (!Address.validatePostcode(postCode.getText())) {
-            JOptionPane.showMessageDialog(AppContext.getWindow(), "Invalid postcode");
+            JOptionPane.showMessageDialog(AppContext.getWindow(), "Invalid postcode", "Error", JOptionPane.WARNING_MESSAGE);
             return false;
         }
         if (!Person.validatePassword(password.getText())) {
             JOptionPane.showMessageDialog(
                     AppContext.getWindow(),
                     "Password must be at least 8 characters long and contain at least one number, " +
-                            "one uppercase letter and one lowercase letter"
+                            "one uppercase letter and one lowercase letter", "Error", JOptionPane.WARNING_MESSAGE
             );
             return false;
         }

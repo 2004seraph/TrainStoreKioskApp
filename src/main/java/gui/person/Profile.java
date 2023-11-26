@@ -88,10 +88,12 @@ public class Profile extends JPanel{
             forename.setText(person.getForename());
             surname.setText(person.getSurname());
             emailField.setText(person.getEmail());
-            houseNumber.setText(person.getAddress().getHouseNumber());
-            street.setText(person.getAddress().getStreetName());
-            city.setText(person.getAddress().getCityName());
-            postCode.setText(person.getAddress().getPostcode());
+            if (person.getAddress() != null) {
+                houseNumber.setText(person.getAddress().getHouseNumber());
+                street.setText(person.getAddress().getStreetName());
+                city.setText(person.getAddress().getCityName());
+                postCode.setText(person.getAddress().getPostcode());
+            }
 
             if (person.getBankDetail() != null) {
 //                Add bank details to the profile
@@ -150,7 +152,7 @@ public class Profile extends JPanel{
             });
 
         } catch (Exception e) {
-            System.out.println(e.getMessage());
+            throw new RuntimeException(e);
         } finally {
             db.closeConnection();
         }
