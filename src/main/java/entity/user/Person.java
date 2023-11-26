@@ -478,6 +478,29 @@ public class Person extends DatabaseOperation.Entity implements DatabaseRecord {
         }
     }
 
+    public List<OrderLine> getAllOrderLinesByID(Integer orderId) {
+        List<OrderLine> orderLines = new ArrayList<>();
+        try {
+            openConnection();
+            PreparedStatement s = prepareStatement("SELECT * FROM OrderLine WHERE orderId = ?");
+            s.setInt(1, orderId);
+
+            ResultSet rs = s.executeQuery();
+            while (rs.next()) {
+                orderLines.add(new OrderLine(
+                        rs.getInt("orderId"),
+                        rs.getString("productCode"),
+                        rs.getInt("quantity")
+                ));
+            }
+
+            return orderLines;
+        } catch (SQLException e) {
+            DatabaseBridge.databaseError("Error fetching all order lines for order ["+orderId+"]");
+            throw new RuntimeException(e);
+        }
+    }
+
     public static boolean validateEmail(String email) {
         return email.matches("^[a-zA-Z0-9_+&*-]+(?:\\."+ "[a-zA-Z0-9_+&*-]+)*@" + "(?:[a-zA-Z0-9-]+\\.)+[a-z" + "A-Z]{2,7}$");
     }
