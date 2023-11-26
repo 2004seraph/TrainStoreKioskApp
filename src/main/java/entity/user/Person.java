@@ -7,6 +7,7 @@ import entity.Address;
 import entity.BankDetail;
 import entity.StoreAttributes;
 import controllers.AppContext;
+import entity.order.Order;
 
 import java.security.InvalidKeyException;
 import java.sql.*;
@@ -122,7 +123,8 @@ public class Person extends DatabaseOperation.Entity implements DatabaseRecord {
             String houseNumber,
             String postCode,
             int bankDetailsID,
-            StoreAttributes.Role role
+            StoreAttributes.Role role,
+            boolean decrypt
     ) {
         this.personID =      id;
         this.forename =      forename;
@@ -139,14 +141,16 @@ public class Person extends DatabaseOperation.Entity implements DatabaseRecord {
             if (address == null) {
                 throw new SQLException("No address found with that house number and postcode");
             }
-            try {
-                BankDetail bankDetail = BankDetail.getBankDetailsById(bankDetailsID);
-                this.bankDetail = bankDetail;
-            } catch (BankDetail.BankAccountNotFoundException e) {
-                this.bankDetail = null;
-            }
-
             this.address = address;
+
+            if (decrypt) {
+                try {
+                    BankDetail bankDetail = BankDetail.getBankDetailsById(bankDetailsID);
+                    this.bankDetail = bankDetail;
+                } catch (BankDetail.BankAccountNotFoundException e) {
+                    this.bankDetail = null;
+                }
+            }
         } catch (SQLException | InvalidKeyException e) {
             throw new RuntimeException(e);
         }
@@ -207,7 +211,7 @@ public class Person extends DatabaseOperation.Entity implements DatabaseRecord {
         PreparedStatement personQuery = prepareStatement("SELECT * FROM Person WHERE email=?");
         personQuery.setString(1, email);
         ResultSet res = personQuery.executeQuery();
-        return personFromResultSet(res);
+        return personFromResultSet(res, true);
     }
 
     /**
@@ -220,17 +224,17 @@ public class Person extends DatabaseOperation.Entity implements DatabaseRecord {
         PreparedStatement personQuery = prepareStatement("SELECT * FROM Person WHERE personId=?");
         personQuery.setInt(1, id);
         ResultSet res = personQuery.executeQuery();
-        return personFromResultSet(res);
+        return personFromResultSet(res, false);
     }
 
     public static Person getPersonByID(int id, boolean decrypt) throws SQLException {
         PreparedStatement personQuery = prepareStatement("SELECT * FROM Person WHERE personId=?");
         personQuery.setInt(1, id);
         ResultSet res = personQuery.executeQuery();
-        return personFromResultSet(res);
+        return personFromResultSet(res, decrypt);
     }
 
-    private static Person personFromResultSet(ResultSet res) throws SQLException {
+    private static Person personFromResultSet(ResultSet res, boolean decrypt) throws SQLException {
         Person person;
         if (res.next()) {
             PreparedStatement roleQuery = prepareStatement("SELECT * FROM Role WHERE personId=?");
@@ -256,7 +260,8 @@ public class Person extends DatabaseOperation.Entity implements DatabaseRecord {
                     res.getString(6),   // houseNumber
                     res.getString(7),   // postcode
                     res.getInt(8),      // bank details
-                    userRole
+                    userRole,
+                    decrypt
             );
 
             return person;
@@ -450,6 +455,25 @@ public class Person extends DatabaseOperation.Entity implements DatabaseRecord {
             throw e;
         }finally {
             closeConnection();
+        }
+    }
+
+    public List<Order> getAllOrders() {
+        List<Order> orders = new ArrayList<>();
+        try {
+            openConnection();
+            PreparedStatement s = prepareStatement("SELECT orderId FROM Order WHERE personId = ?");
+            s.setInt(1, personID);
+
+            ResultSet rs = s.executeQuery();
+            while (rs.next()) {
+                orders.add(Order.getOrderWithID(rs.getInt("orderId")));
+            }
+
+            return orders;
+        } catch (SQLException e) {
+            DatabaseBridge.databaseError("Error fetching all orders for user ["+personID+"]");
+            throw new RuntimeException(e);
         }
     }
 }
