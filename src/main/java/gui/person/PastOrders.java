@@ -1,10 +1,11 @@
 package gui.person;
 
+import javax.swing.*;
+
 import entity.order.Order;
 import entity.order.OrderLine;
 import entity.product.Product;
 
-import javax.swing.*;
 import java.awt.*;
 import java.sql.SQLException;
 import java.text.SimpleDateFormat;
@@ -18,50 +19,42 @@ public class PastOrders extends JPanel {
         gbl = new GridBagLayout();
         gbc.fill = GridBagConstraints.BOTH;
         setLayout(gbl);
-
         setBorder(BorderFactory.createLineBorder(Color.black));
 
-        JLabel orderIdLabel = new JLabel("Order ID: " + order.getOrderId());
-        gbc.gridy = 0;
-        add(orderIdLabel, gbc);
+        addLabel("Order ID: " + order.getOrderId(), 0);
+        addLabel("Date: " + formatDate(order.getDate()), 1);
+        addLabel("Status: " + order.getStatus().toString(), 2);
+        addLabel("Total Cost: " + String.format("%.2f", order.getTotalCost()), 3);
 
-        JLabel dateLabel = new JLabel("Date: " + formatDate(order.getDate()));
-        gbc.gridy++;
-        add(dateLabel, gbc);
+        JPanel itemsPanel = new JPanel(new GridLayout(order.getItemsList().size() + 1, 3));
+        itemsPanel.setBorder(BorderFactory.createTitledBorder("Items"));
 
-        JLabel statusLabel = new JLabel("Status: " + order.getStatus().toString());
-        gbc.gridy++;
-        add(statusLabel, gbc);
-
-        JLabel totalCostLabel = new JLabel("Total Cost: " + String.format("%.2f", order.getTotalCost()));
-        gbc.gridy++;
-        add(totalCostLabel, gbc);
-
-        JLabel itemsLabel = new JLabel("Items:");
-        gbc.gridy++;
-        add(itemsLabel, gbc);
+        itemsPanel.add(new JLabel("Product"));
+        itemsPanel.add(new JLabel("Quantity"));
+        itemsPanel.add(new JLabel("Unit Price"));
 
         for (OrderLine orderLine : order.getItemsList()) {
             try {
-                JPanel orderLinePanel = new JPanel(new GridLayout(1, 3));
-
                 Product product = orderLine.getItem();
-
-                JLabel itemNameLabel = new JLabel("Product: " + product.getName());
-                orderLinePanel.add(itemNameLabel);
-
-                JLabel quantityLabel = new JLabel("Quantity: " + orderLine.getQuantity());
-                orderLinePanel.add(quantityLabel);
-
-                JLabel unitPriceLabel = new JLabel("Unit Price: " + String.format("%.2f", product.getPrice()));
-                orderLinePanel.add(unitPriceLabel);
-
-                gbc.gridy++;
-                add(orderLinePanel, gbc);
+                itemsPanel.add(new JLabel(product.getName()));
+                itemsPanel.add(new JLabel(String.valueOf(orderLine.getQuantity())));
+                itemsPanel.add(new JLabel(String.format("%.2f", product.getPrice())));
             } catch (SQLException e) {
+                // Handle SQLException gracefully (e.g., display an error message)
                 e.printStackTrace();
             }
         }
+
+        gbc.gridy++;
+        gbc.gridwidth = 2; // span two columns
+        add(itemsPanel, gbc);
+    }
+
+    private void addLabel(String text, int yPos) {
+        JLabel label = new JLabel(text);
+        gbc.gridy = yPos;
+        gbc.insets = new Insets(5, 5, 5, 5); // Add padding
+        add(label, gbc);
     }
 
     private String formatDate(java.util.Date date) {
