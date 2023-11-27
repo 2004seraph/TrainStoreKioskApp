@@ -9,6 +9,7 @@ import gui.components.TabbedGUIContainer;
 import utils.GUI;
 
 import javax.swing.*;
+import javax.swing.border.EmptyBorder;
 import java.awt.*;
 import java.sql.SQLException;
 
@@ -80,7 +81,7 @@ public class Cart extends JPanel implements TabbedGUIContainer.TabPanel {
             add(unitPrice, gbc);
 
             gbc.gridx = 1;
-            JLabel total = new JLabel("Total: "+GUI.ukCurrencyFormat.format(quantity * product.getPrice()));
+            JLabel total = new JLabel("Subtotal: "+GUI.ukCurrencyFormat.format(quantity * product.getPrice()));
             add(total, gbc);
         }
     }
@@ -89,19 +90,50 @@ public class Cart extends JPanel implements TabbedGUIContainer.TabPanel {
         contentPanel = new JPanel();
         setLayout(new BorderLayout());
 
+        add(new JSeparator(SwingConstants.HORIZONTAL), BorderLayout.NORTH);
+
         gbc = new GridBagConstraints();
         GridBagLayout gbl = new GridBagLayout();
 
         gbc.fill = GridBagConstraints.BOTH;
         gbc.gridx = 0;
         gbc.gridy = 0;
+        gbc.weightx = 0.5;
+        gbc.weighty = 0;
+        gbc.gridwidth = 2;
         gbl.setConstraints(contentPanel, gbc);
+
+        JPanel headerPanel = new JPanel();
+
+        headerPanel.setLayout(gbl);
         contentPanel.setLayout(gbl);
 
-        add(contentPanel, BorderLayout.CENTER);
+        JLabel title = new JLabel("<html><h1>Cart</h1></html>");
+        title.setBorder(new EmptyBorder(0, 6, 0, 0));
+        headerPanel.add(title, gbc);
 
+        gbc.gridy++;
+        JLabel infoLabel = new JLabel("Review your order and head to checkout");
+        int infoInset = 7;
+        infoLabel.setBorder(new EmptyBorder(infoInset, infoInset, infoInset, infoInset));
+        headerPanel.add(infoLabel, gbc);
+
+        gbc.gridy++;
+        JSeparator sep = new JSeparator(SwingConstants.HORIZONTAL);
+        sep.setBorder(new EmptyBorder(0, 0, 10, 0));
+        headerPanel.add(sep, gbc);
         JButton refreshCartBtn = new JButton("Refresh Cart");
-        add(refreshCartBtn, BorderLayout.NORTH);
+        gbc.gridy++;
+        gbc.gridwidth = 1;
+        headerPanel.add(refreshCartBtn, gbc);
+
+        gbc.weightx = 0;
+        gbc.weighty = 0;
+        gbc.gridx = 0;
+        gbc.gridwidth = 2;
+
+        add(headerPanel, BorderLayout.NORTH);
+        add(contentPanel, BorderLayout.CENTER);
 
         refreshCartBtn.addActionListener((e) -> {
             refreshCart();
@@ -122,8 +154,8 @@ public class Cart extends JPanel implements TabbedGUIContainer.TabPanel {
 
         JPanel checkoutPanel = new JPanel();
         checkoutPanel.setLayout(new GridLayout(1, 2));
-        JLabel totalCost = new JLabel("Total: "
-                + GUI.ukCurrencyFormat.format(OrderController.currentOrder.getTotalCost()));
+        JLabel totalCost = new JLabel("<html><b>Total: </b>"
+                + GUI.ukCurrencyFormat.format(OrderController.currentOrder.getTotalCost()) + "</html>");
         JButton checkoutBtn = new JButton("Checkout");
         checkoutPanel.add(totalCost);
         checkoutPanel.add(checkoutBtn);
