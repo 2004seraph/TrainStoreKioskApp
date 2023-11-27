@@ -146,19 +146,19 @@ public class Order extends DatabaseOperation.Entity implements DatabaseRecord {
     }
 
     /**
-     * Returns all orders with a given status
-     * @param statuses A variadic list of either PENDING, CONFIRMED, FULFILLED
-     * @return List of orders
-     * @throws SQLException
+     * Retrieves a list of orders with the specified statuses
+     * @param statuses A variadic list of order statuses (PENDING, CONFIRMED, FULFILLED)
+     * @return List of orders matching the specified statuses
+     * @throws SQLException If a database error occurs during the retrieval process
      */
     public static List<Order> getOrdersWithStatus(Order.OrderStatus... statuses) throws SQLException {
+        // Build the SQL statement dynamically based on the provided statuses
         try {
-            // build a query with all the status's the user wants to find
             StringBuilder statementText = new StringBuilder("SELECT * FROM `Order` WHERE");
             statementText.append(" status = ? OR".repeat(statuses.length));
             statementText.delete(statementText.lastIndexOf(" OR"), statementText.length());
 
-            // populate said query
+            // Populate the query with the statuses provided as parameters to the method call
             PreparedStatement orderQuery = prepareStatement(statementText.toString());
             int i = 1;
             for (OrderStatus s : statuses) {
