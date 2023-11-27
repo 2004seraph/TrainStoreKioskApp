@@ -126,6 +126,10 @@ public class Order extends DatabaseOperation.Entity implements DatabaseRecord {
 //                ));
 //            }
 
+            if (!rsOrder.next()) {
+                return null;
+            }
+
             Order order = new Order(
                     rsOrder.getInt("orderId"),
                     rsOrder.getInt("personId"),
