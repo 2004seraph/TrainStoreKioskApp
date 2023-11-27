@@ -37,7 +37,7 @@ public class PastOrdersScreen extends JPanel implements TabbedGUIContainer.TabPa
                 contentPanel.add(new PastOrders(o));
             }
         } catch (SQLException e) {
-            DatabaseBridge.databaseError("Error whilst fetching all products", e);
+            DatabaseBridge.databaseError("Error whilst fetching all orders", e);
             throw new RuntimeException(e);
         } finally {
             db.closeConnection();
