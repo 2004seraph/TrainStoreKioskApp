@@ -69,7 +69,6 @@ public class Profile extends JPanel{
         add(addressTitle, gbc);
 
         gbc.anchor = GridBagConstraints.WEST;
-        gbc.fill = GridBagConstraints.NONE;
         gbc.gridwidth = 1;
         //    Address
         JLabel houseNumberLabel = new JLabel("House Number:");
@@ -104,9 +103,8 @@ public class Profile extends JPanel{
             gbc.anchor = GridBagConstraints.CENTER;
             add(bankDetailsTitle, gbc);
 
-            gbc.fill = GridBagConstraints.NONE;
             gbc.anchor = GridBagConstraints.WEST;
-
+            gbc.gridwidth = 1;
             JLabel cardHolderNameLabel = new JLabel("Card Holder Name:");
             cardHolderName = new JTextField(30);
             addField(gbc, cardHolderNameLabel, cardHolderName, 10);
