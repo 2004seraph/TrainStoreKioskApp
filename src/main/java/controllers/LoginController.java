@@ -53,7 +53,6 @@ public final class LoginController {
             db.closeConnection();
         }
 
-
         return null;
     }
 }

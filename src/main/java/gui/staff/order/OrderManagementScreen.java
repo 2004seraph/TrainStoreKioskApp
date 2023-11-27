@@ -277,16 +277,20 @@ public class OrderManagementScreen extends JPanel implements TabbedGUIContainer.
     private void refreshData() {
         orderViewContainer.removeAll();
         orderData = loadData();
+
+        // Create a new JTable with the updated order data
         orderList = new JTable(new OrderViewTableModel(orderData, orderViewColumns));
         JScrollPane scrollPane = new JScrollPane(orderList);
         orderList.setRowHeight(24);
 
+        // Set up a sorter for the JTable to allow sorting by date in ascending order
         TableRowSorter<TableModel> sorter = new TableRowSorter<TableModel>(orderList.getModel());
         orderList.setRowSorter(sorter);
         List<RowSorter.SortKey> sortKeys = new ArrayList<>(1);
         sortKeys.add(new RowSorter.SortKey(1, SortOrder.ASCENDING));
         sorter.setSortKeys(sortKeys);
 
+        // Configure the GridBagConstraints for placing the JTable in the order view container
         GridBagConstraints gbc = new GridBagConstraints();
         gbc.fill = GridBagConstraints.BOTH;
         gbc.gridx = 0;
@@ -295,6 +299,7 @@ public class OrderManagementScreen extends JPanel implements TabbedGUIContainer.
         gbc.weighty = 1;
         orderViewContainer.add(scrollPane, gbc);
 
+        // Add a ListSelectionListener to the order list to handle row selection events
         orderList.getSelectionModel().addListSelectionListener(new ListSelectionListener() {
             @Override
             public void valueChanged(ListSelectionEvent event) {
