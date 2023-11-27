@@ -34,13 +34,13 @@ public class Login extends JPanel implements TabbedGUIContainer.TabPanel {
 
         JLabel emailLabel = new JLabel("Email");
         email = new JTextField (5);
-        email.setText("najaaznabhan@gmail.com");
-//        email.setText("sam@sheffield.ac.uk");
+//        email.setText("najaaznabhan@gmail.com");
+        email.setText("sam@sheffield.ac.uk");
 
         JLabel passwordLabel = new JLabel("Password");
         password = new JPasswordField (5);
-        password.setText("Naajid12345!");
-//        password.setText("password123");
+//        password.setText("Naajid12345!");
+        password.setText("password123");
 
         JButton loginButton = new JButton("Login");
         JLabel registerLabel = new JLabel("<html><u><font color='blue'>Register Now</font></u></html>");
@@ -84,16 +84,6 @@ public class Login extends JPanel implements TabbedGUIContainer.TabPanel {
         gbc.gridy++;
         gbc.weighty = 1;
         add(new JPanel(), gbc);
-
-        //set component bounds (only needed by Absolute Positioning) - Please never do this again
-//        loginButton.setBounds (140, 215, 100, 25);
-//        passwordLabel.setBounds (140, 155, 100, 25);
-//        email.setBounds (140, 130, 200, 25); - Please never do this again
-//        emailLabel.setBounds (140, 105, 100, 25);
-//        loginLabel.setBounds (210, 65, 100, 35);
-//        notAUserLabel.setBounds (140, 245, 70, 20); - Please never do this again
-//        reigsterLabel.setBounds (210, 245, 100, 20);
-//        password.setBounds (140, 180, 200, 25); - Please never do this again
 
         registerLabel.addMouseListener(new MouseAdapter() {
             @Override

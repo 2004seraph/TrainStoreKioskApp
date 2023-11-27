@@ -76,17 +76,13 @@ public class App {
         JPanel profilePage = new Profile();
         JPanel cartPage = new Cart();
 
-         screenController.insertTab("My Orders", pastOrdersPage);
+        screenController.insertTab("My Orders", pastOrdersPage);
         screenController.insertTab("Profile", profilePage);
         screenController.insertDivider();
         screenController.insertTab("Cart", cartPage);
         screenController.insertTab("Shop", shopPage);
 
-        switch (userRole) {
-//            case USER -> screenController.switchTab("Shop");
-            case USER -> screenController.switchTab("Profile");
-            case STAFF -> screenController.switchTab("Order Management");
-            case MANAGER -> screenController.switchTab("User Management");
-        }
+        screenController.switchTab("Shop");
+
     }
 }

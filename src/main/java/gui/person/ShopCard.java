@@ -168,7 +168,11 @@ public class ShopCard extends JPanel {
                 return;
             }
 
+            if (quantity < 1) {
+                return;
+            }
             OrderController.currentOrder.addItem(product, quantity);
+            JOptionPane.showMessageDialog(this, "Added "+quantity+"x "+product.getName()+" to your cart.");
         });
     }
 }
