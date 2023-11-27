@@ -54,7 +54,7 @@ public class BankDetail extends DatabaseOperation.Entity implements DatabaseReco
         return securityCode;
     }
 
-    private BankDetail(int bankDetailID, String cardHolderName, String cardName, String cardNumber, Date expiryDate, String securityCode) {
+    private BankDetail(int bankDetailID, String cardName, String cardHolderName, String cardNumber, Date expiryDate, String securityCode) {
         this.bankDetailID = bankDetailID;
         this.cardHolderName = cardHolderName;
         this.cardName = cardName;
