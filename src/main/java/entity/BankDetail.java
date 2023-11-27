@@ -31,6 +31,8 @@ public class BankDetail extends DatabaseOperation.Entity implements DatabaseReco
         }
     }
     private int bankDetailID = -1;
+
+    private final String cardHolderName;
     private final String cardName;
     private final String cardNumber;
     private final Date expiryDate;
@@ -38,6 +40,7 @@ public class BankDetail extends DatabaseOperation.Entity implements DatabaseReco
 
 
     public int getBankDetailID() { return bankDetailID; }
+    public String getCardHolderName() { return cardHolderName; }
     public String getCardName() {
         return cardName;
     }
@@ -51,8 +54,9 @@ public class BankDetail extends DatabaseOperation.Entity implements DatabaseReco
         return securityCode;
     }
 
-    private BankDetail(int bankDetailID, String cardName, String cardNumber, Date expiryDate, String securityCode) {
+    private BankDetail(int bankDetailID, String cardHolderName, String cardName, String cardNumber, Date expiryDate, String securityCode) {
         this.bankDetailID = bankDetailID;
+        this.cardHolderName = cardHolderName;
         this.cardName = cardName;
         this.cardNumber = cardNumber;
         this.expiryDate = expiryDate;
@@ -62,13 +66,14 @@ public class BankDetail extends DatabaseOperation.Entity implements DatabaseReco
     /**
      * Creates an entry in the database for a new set of bank details, it also returns a constructed class representation.
      * @param cardNumber
+     * @param cardHolderName
      * @param expiryDate
      * @param securityCode
      * @return A new instance of BankDetail referencing an entry in the DB
      * @throws SQLException
      * @throws InvalidBankDetailsException
      */
-    public static BankDetail createPaymentInfo(String cardNumber, Date expiryDate, String securityCode)
+    public static BankDetail createPaymentInfo(String cardNumber, String cardHolderName, Date expiryDate, String securityCode)
             throws SQLException, InvalidBankDetailsException {
         int id = -1;
         boolean isCardValid = LuhnCheckDigit.LUHN_CHECK_DIGIT.isValid(cardNumber);
@@ -86,16 +91,17 @@ public class BankDetail extends DatabaseOperation.Entity implements DatabaseReco
 
         String cardName = "Card ending in " + cardNumber.substring(cardNumber.length() - 4);
         System.out.println("Card name: " + cardName);
-        try (PreparedStatement cardQuery = prepareStatement("INSERT INTO BankDetails (cardName, cardNumber, expiryDate, securityCode) VALUES (?, ?, ?, ?)",
+        try (PreparedStatement cardQuery = prepareStatement("INSERT INTO BankDetails (cardName, cardHolderName, cardNumber, expiryDate, securityCode) VALUES (?, ?, ?, ?, ?)",
                 Statement.RETURN_GENERATED_KEYS)) {
             byte[] encryptionKey = AppContext.getEncryptionKey();
             String encryptedCardNumber = Crypto.encryptString(cardNumber, encryptionKey);
             String encryptedSecurityCode = Crypto.encryptString(securityCode, encryptionKey);
 
             cardQuery.setString(1, cardName);
-            cardQuery.setString(2, encryptedCardNumber);
-            cardQuery.setDate(3, new java.sql.Date(expiryDate.getTime()));
-            cardQuery.setString(4, encryptedSecurityCode);
+            cardQuery.setString(2, cardHolderName);
+            cardQuery.setString(3, encryptedCardNumber);
+            cardQuery.setDate(4, new java.sql.Date(expiryDate.getTime()));
+            cardQuery.setString(5, encryptedSecurityCode);
 
             cardQuery.executeUpdate();
             ResultSet rs = cardQuery.getGeneratedKeys();
@@ -106,7 +112,7 @@ public class BankDetail extends DatabaseOperation.Entity implements DatabaseReco
                 throw new InternalError("Failed to insert into BankDetails table");
             }
 
-            return new BankDetail(id, cardName, cardNumber, expiryDate, securityCode);
+            return new BankDetail(id, cardName,cardHolderName, cardNumber, expiryDate, securityCode);
         } catch (SQLException e) {
             DatabaseBridge.databaseError("Failed to insert new payment info ["+cardName+"]", e);
             throw e;
@@ -132,6 +138,7 @@ public class BankDetail extends DatabaseOperation.Entity implements DatabaseReco
             return new BankDetail(
                     rs.getInt("paymentId"),
                     rs.getString("cardName"),
+                    rs.getString("cardHolderName"),
                     decryptedCardNumber,
                     rs.getDate("expiryDate"),
                     decryptedSecurityCode
@@ -147,9 +154,9 @@ public class BankDetail extends DatabaseOperation.Entity implements DatabaseReco
         }
     }
 
-    public static void validateBankDetails(String cardNumber, String expiryDate, String securityCode)
+    public static void validateBankDetails(String cardNumber, String cardHolderName, String expiryDate, String securityCode)
             throws InvalidBankDetailsException{
-        if (cardNumber == null || expiryDate == null || securityCode == null) {
+        if (cardNumber == null || expiryDate == null || securityCode == null || cardHolderName == null) {
             throw new InvalidBankDetailsException("Please enter a valid card number, expiry date and security code");
         }
         boolean isCardValid = LuhnCheckDigit.LUHN_CHECK_DIGIT.isValid(cardNumber); // 4012888888881881
