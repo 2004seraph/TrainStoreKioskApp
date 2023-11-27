@@ -162,7 +162,7 @@ public class BankDetail extends DatabaseOperation.Entity implements DatabaseReco
         }
 //        Check if card is expired
 
-        if (securityCode.length() != 3) {
+        if (!(securityCode.length() == 3 || securityCode.length() == 4)) {
             throw new InvalidBankDetailsException("Security code was an invalid length ["+securityCode+"]");
         }
     }
