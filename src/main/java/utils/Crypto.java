@@ -87,6 +87,13 @@ public final class Crypto {
         }
     }
 
+    /**
+     * Encrypts a given input string using AES encryption with CBC mode and PKCS5 padding
+     * @param input The string to be encrypted
+     * @param key   The encryption key used for AES encryption
+     * @return A Base64-encoded string representing the encrypted data
+     * @throws InvalidKeyException If the provided encryption key is invalid
+     */
     public static String encryptString(String input, byte[] key) throws InvalidKeyException {
         try {
             SecureRandom secureRandom = new SecureRandom();
@@ -121,7 +128,6 @@ public final class Crypto {
             cryptoError("Encryption block size was not padded correctly", e);
             throw new RuntimeException("Encryption block size was not padded correctly");
         }
-
     }
 
     public static String decryptString(String input, byte[] key) throws InvalidKeyException{

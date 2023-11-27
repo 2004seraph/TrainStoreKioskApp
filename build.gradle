@@ -41,3 +41,22 @@ tasks.withType(JavaExec) {
 test {
     useJUnitPlatform()
 }
+
+jar {
+    manifest {
+        attributes "Main-Class": "Main"
+    }
+
+    archiveClassifier = 'uber'
+
+    duplicatesStrategy = DuplicatesStrategy.EXCLUDE
+
+    from {
+        configurations.runtimeClasspath.collect {
+            it.isDirectory() ? it : zipTree(it)
+        }
+    }
+    exclude 'META-INF/*.RSA'
+    exclude 'META-INF/*.SF'
+    exclude 'META-INF/*.DSA'
+}

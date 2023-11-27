@@ -7,6 +7,7 @@ import gui.components.TabbedGUIContainer;
 import org.jdesktop.swingx.prompt.PromptSupport;
 
 import javax.swing.*;
+import javax.swing.border.EmptyBorder;
 import java.awt.*;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -15,7 +16,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class ManagerScreen extends JPanel implements TabbedGUIContainer.TabPanel {
-    private static class UserRow extends JPanel {
+    private class UserRow extends JPanel {
         static String[] roleNames = {"USER", "STAFF"};
         Person person;
 
@@ -59,7 +60,7 @@ public class ManagerScreen extends JPanel implements TabbedGUIContainer.TabPanel
                         db.closeConnection();
                     }
 
-                    parent.switchTab("User Management");
+                    refresh();
                 }
             });
         }
@@ -83,29 +84,42 @@ public class ManagerScreen extends JPanel implements TabbedGUIContainer.TabPanel
         header.setLayout(new GridBagLayout());
 
         JLabel title = new JLabel("<html><h1>Staff Management </h1></html>");
+        title.setHorizontalAlignment(SwingConstants.LEFT);
         JTextField emailBox = new JTextField();
         PromptSupport.setPrompt("Add staff member by email", emailBox);
         emailBox.setPreferredSize( new Dimension( 200, 24 ) );
         JButton search = searchAndPromoteEmail(emailBox);
 
         gbc.anchor = GridBagConstraints.NORTHWEST;
-        gbc.weightx = 0;
+        gbc.weightx = 1;
         gbc.weighty = 1;
         gbc.gridy = 0;
         gbc.gridx = 0;
         gbc.gridwidth = 2;
         header.add(title, gbc);
+
+        gbc.weightx = 0;
         gbc.gridwidth = 1;
         gbc.gridy++;
         header.add(emailBox, gbc);
+
         gbc.gridx++;
+        gbc.fill = GridBagConstraints.NONE;
         header.add(search, gbc);
-        title.setHorizontalAlignment(SwingConstants.CENTER);
+
         this.add(header, BorderLayout.NORTH);
+        header.setBorder(new EmptyBorder(7,7,7,7));
+
+        JPanel filler = new JPanel();
+        gbc.weighty = 1;
+        gbc.gridx = 0;
+        gbc.gridy = 0;
+        contentPanel.add(filler, gbc);
 
         scrollPane = new JScrollPane(contentPanel);
         this.add(scrollPane, BorderLayout.CENTER);
 
+        gbc.weighty = 0;
         gbc.gridx = 0;
         gbc.gridy = -1;
 
@@ -134,22 +148,22 @@ public class ManagerScreen extends JPanel implements TabbedGUIContainer.TabPanel
                 int confirm = JOptionPane.showConfirmDialog(AppContext.getWindow(), sb.toString(), "Confirm Action", JOptionPane.YES_NO_OPTION);
                 if (confirm == 0) {
                     Person.updateUserRole(newStaffMember, Person.Role.STAFF);
-
-                    parent.switchTab("User Management");
                 }
+
+                emailBox.setText("");
 
             } catch (SQLException ex) {
                 DatabaseBridge.databaseError("Error finding user by email ["+ emailBox.getText()+"] to promote them to staff", ex);
             } finally {
                 db.closeConnection();
             }
+            refresh();
         });
         return search;
     }
 
     private void refresh() {
         contentPanel.removeAll();
-        repaint();
 
         DatabaseBridge db = DatabaseBridge.instance();
 
@@ -173,12 +187,17 @@ public class ManagerScreen extends JPanel implements TabbedGUIContainer.TabPanel
         }
 
         personList.forEach(this::addUser);
+
+        revalidate();
+        repaint();
     }
 
     private void addUser(Person user) {
-        gbc.gridy += 1;
+//        gbc.gridy += 1;
+        gbc.weighty = 0;
+        gbc.weightx = 0;
         UserRow row = new UserRow(user, parent);
-        contentPanel.add(row, gbc);
+        contentPanel.add(row, gbc, 0);
     }
 
     @Override

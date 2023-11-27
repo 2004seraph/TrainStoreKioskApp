@@ -74,7 +74,7 @@ public class StockManagementScreen extends JPanel implements TabbedGUIContainer.
 //        add(newProductButton, gbc);
 
         gbc.weightx = 1;
-        gbc.weighty = 0.8;
+        gbc.weighty = 1;
         gbc.gridx = 0;
         gbc.gridy++;
         gbc.gridwidth = 2;
@@ -84,7 +84,7 @@ public class StockManagementScreen extends JPanel implements TabbedGUIContainer.
         this.add(viewContainer, gbc);
 
         gbc.gridy++;
-        gbc.weighty = 0.2;
+        gbc.weighty = 0;
 
         productCreationContainer = new JPanel();
         GridBagLayout gbl2 = new GridBagLayout();
