@@ -81,19 +81,4 @@ public final class DatabaseOperation {
         }
     }
 
-    public static void main(String[] args) {
-        DatabaseBridge db = DatabaseBridge.instance();
-        DatabaseOperation.setConnection(db);
-        try{
-            db.openConnection();
-            BankDetail.createPaymentInfo("1234567890123456", Date.valueOf("2021-01-01"), "123");
-//            BankDetail bank = GetBankDetailsById(2);
-//            System.out.println(bank);
-        } catch (Exception e) {
-            System.out.println("Failed to open connection");
-            System.out.println(e.getMessage());
-        } finally {
-            db.closeConnection();
-        }
-    }
 }

@@ -26,7 +26,7 @@ public final class OrderController {
 
         try {
             SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd");
-            BankDetail.validateBankDetails(bankDetail.getCardNumber(), df.format(bankDetail.getExpiryDate()), bankDetail.getSecurityCode());
+            BankDetail.validateBankDetails(bankDetail.getCardNumber(), bankDetail.getCardHolderName(), df.format(bankDetail.getExpiryDate()), bankDetail.getSecurityCode());
             // error
         } catch (BankDetail.InvalidBankDetailsException e) {
             System.out.println("bad validation");
