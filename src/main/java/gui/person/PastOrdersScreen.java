@@ -17,6 +17,16 @@ public class PastOrdersScreen extends JPanel implements TabbedGUIContainer.TabPa
 
     JPanel contentPanel;
 
+    @Override
+    public void onSelected() {
+        SwingUtilities.invokeLater(new Runnable() {
+            @Override
+            public void run() {
+                refreshCart();
+            }
+        });
+    }
+
     public PastOrdersScreen() {
         this.setLayout(new BorderLayout());
         contentPanel = new JPanel();
@@ -45,13 +55,30 @@ public class PastOrdersScreen extends JPanel implements TabbedGUIContainer.TabPa
 
     }
 
+//    Implement a refreshCart() method that will refresh the cart everytime the page is selected
+    private void refreshCart() {
+        contentPanel.removeAll();
+        DatabaseBridge db = DatabaseBridge.instance();
+
+        try {
+            db.openConnection();
+            List<Order> orders = AppContext.getCurrentUser().getAllOrders();
+            for (Order o : orders) {
+                contentPanel.add(new PastOrders(o));
+            }
+        } catch (SQLException e) {
+            DatabaseBridge.databaseError("Error whilst fetching all orders", e);
+            throw new RuntimeException(e);
+        } finally {
+            db.closeConnection();
+        }
+        contentPanel.revalidate();
+        contentPanel.repaint();
+    }
+
     @Override
     public void setNotebookContainer(TabbedGUIContainer cont) {
         
     }
 
-    @Override
-    public void onSelected() {
-        
-    }
 }
