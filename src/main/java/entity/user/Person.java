@@ -463,7 +463,7 @@ public class Person extends DatabaseOperation.Entity implements DatabaseRecord {
         List<Order> orders = new ArrayList<>();
         try {
             openConnection();
-            PreparedStatement s = prepareStatement("SELECT orderId FROM Order WHERE personId = ?");
+            PreparedStatement s = prepareStatement("SELECT orderId FROM `Order` WHERE personId = ?");
             s.setInt(1, personID);
 
             ResultSet rs = s.executeQuery();
