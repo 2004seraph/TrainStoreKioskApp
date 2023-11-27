@@ -59,7 +59,6 @@ public class PastOrders extends JPanel {
                 gbc.gridy++;
                 add(orderLinePanel, gbc);
             } catch (SQLException e) {
-                // Handle the exception appropriately in your application or log it
                 e.printStackTrace();
             }
         }
