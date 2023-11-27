@@ -88,6 +88,7 @@ public class Cart extends JPanel implements TabbedGUIContainer.TabPanel {
 
     public Cart() {
         contentPanel = new JPanel();
+        JPanel headerPanel = new JPanel();
         setLayout(new BorderLayout());
 
         add(new JSeparator(SwingConstants.HORIZONTAL), BorderLayout.NORTH);
@@ -101,9 +102,7 @@ public class Cart extends JPanel implements TabbedGUIContainer.TabPanel {
         gbc.weightx = 0.5;
         gbc.weighty = 0;
         gbc.gridwidth = 2;
-        gbl.setConstraints(contentPanel, gbc);
-
-        JPanel headerPanel = new JPanel();
+        gbl.setConstraints(headerPanel, gbc);
 
         headerPanel.setLayout(gbl);
         contentPanel.setLayout(gbl);

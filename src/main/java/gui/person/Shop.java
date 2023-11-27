@@ -6,6 +6,7 @@ import entity.product.Product;
 import gui.components.TabbedGUIContainer;
 
 import javax.swing.*;
+import javax.swing.border.EmptyBorder;
 import java.awt.*;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -20,10 +21,35 @@ public class Shop extends JPanel implements TabbedGUIContainer.TabPanel {
     public Shop() {
         this.setLayout(new BorderLayout());
         contentPanel = new JPanel();
+        JPanel headerPanel = new JPanel();
         GridLayout gl = new GridLayout(0, 2);
         gl.setHgap(cardSpacing);
         gl.setVgap(cardSpacing);
         contentPanel.setLayout(gl);
+
+        GridBagConstraints gbc = new GridBagConstraints();
+        GridBagLayout gbl = new GridBagLayout();
+
+        gbc.fill = GridBagConstraints.BOTH;
+        gbc.gridx = 0;
+        gbc.gridy = 0;
+        gbc.weightx = 0.5;
+        gbc.weighty = 0;
+        gbc.gridwidth = 2;
+        gbl.setConstraints(headerPanel, gbc);
+
+        headerPanel.setLayout(gbl);
+
+        JLabel title = new JLabel("<html><h1>Trains of Sheffield</h1></html>");
+        title.setHorizontalAlignment(SwingConstants.CENTER);
+        title.setBorder(new EmptyBorder(0, 6, 0, 0));
+        headerPanel.add(title, gbc);
+        gbc.gridy++;
+        JSeparator sep = new JSeparator(SwingConstants.HORIZONTAL);
+        sep.setBorder(new EmptyBorder(0, 0, 10, 0));
+        headerPanel.add(sep, gbc);
+
+        add(headerPanel, BorderLayout.NORTH);
 
         JScrollPane scrollPane = new JScrollPane(contentPanel);
         add(scrollPane, BorderLayout.CENTER);
