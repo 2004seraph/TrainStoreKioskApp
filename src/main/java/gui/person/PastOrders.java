@@ -33,6 +33,7 @@ public class PastOrders extends JPanel {
         itemsPanel.add(new JLabel("Quantity"));
         itemsPanel.add(new JLabel("Unit Price"));
 
+        // Iterating through order items and adding them to the panel
         for (OrderLine orderLine : order.getItemsList()) {
             try {
                 Product product = orderLine.getItem();
@@ -40,23 +41,24 @@ public class PastOrders extends JPanel {
                 itemsPanel.add(new JLabel(String.valueOf(orderLine.getQuantity())));
                 itemsPanel.add(new JLabel(String.format("%.2f", product.getPrice())));
             } catch (SQLException e) {
-                // Handle SQLException gracefully (e.g., display an error message)
                 e.printStackTrace();
             }
         }
 
         gbc.gridy++;
-        gbc.gridwidth = 2; // span two columns
+        gbc.gridwidth = 2;
         add(itemsPanel, gbc);
     }
 
+    // Helper method to add a label with specified text at a given y-position
     private void addLabel(String text, int yPos) {
         JLabel label = new JLabel(text);
         gbc.gridy = yPos;
-        gbc.insets = new Insets(5, 5, 5, 5); // Add padding
+        gbc.insets = new Insets(5, 5, 5, 5);
         add(label, gbc);
     }
 
+    // Helper method to format a date using a SimpleDateFormat
     private String formatDate(java.util.Date date) {
         SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
         return dateFormat.format(date);

@@ -22,7 +22,7 @@ public class PastOrdersScreen extends JPanel implements TabbedGUIContainer.TabPa
         SwingUtilities.invokeLater(new Runnable() {
             @Override
             public void run() {
-                refreshCart();
+                refreshOrders();
             }
         });
     }
@@ -55,8 +55,8 @@ public class PastOrdersScreen extends JPanel implements TabbedGUIContainer.TabPa
 
     }
 
-//    Implement a refreshCart() method that will refresh the cart everytime the page is selected
-    private void refreshCart() {
+    // Refreshes the content panel with updated past orders
+    private void refreshOrders() {
         contentPanel.removeAll();
         DatabaseBridge db = DatabaseBridge.instance();
 
