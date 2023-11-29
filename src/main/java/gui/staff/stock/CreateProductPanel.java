@@ -259,8 +259,10 @@ class CreateProductPanel extends JPanel {
             message.append("Malformed product code");
             return false;
         }
-        if (!p.matches("[0-9]*\\.[0-9]+")) {
-            message.append("Invalid price");
+//        if (!p.matches("[0-9]*\\.[0-9]+")) {
+        if (!p.matches("^[1-9]\\d*(\\.\\d{1,2})?$")) {
+
+                message.append("Invalid price");
             return false;
         }
         return true;
