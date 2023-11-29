@@ -22,6 +22,10 @@ public class Order extends DatabaseOperation.Entity implements DatabaseRecord {
             super(msg);
         }
     }
+
+    public static class OrderHasInsufficientStockException extends Exception {
+        public OrderHasInsufficientStockException(String msg) {super(msg);}
+    }
     private Integer orderId = -1;
     private Integer customerId;
     private Date date;
@@ -297,6 +301,25 @@ public class Order extends DatabaseOperation.Entity implements DatabaseRecord {
         }
 
         return total;
+    }
+
+    public void checkStock() throws OrderHasInsufficientStockException {
+        if (items.isEmpty()) return;
+
+        try {
+            for (OrderLine ol : items) {
+                int quantity = ol.getQuantity();
+                int stock = ol.getItem().getStockLevel();
+
+                if (quantity > stock) {
+                    throw new OrderHasInsufficientStockException("Insufficient stock for item "+ol.getItem().getName()+", tried to purchase "+quantity+" but we only have "+stock+" in stock");
+                }
+            }
+        } catch (SQLException e) {
+            DatabaseBridge.databaseError("Error whilst checking stock on an order with id ["+orderId+"]", e);
+            throw new RuntimeException(e);
+        }
+
     }
 
     public List<Object> getFields() {

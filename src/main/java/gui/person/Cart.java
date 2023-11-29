@@ -160,17 +160,19 @@ public class Cart extends JPanel implements TabbedGUIContainer.TabPanel {
         checkoutPanel.add(checkoutBtn);
 
         checkoutBtn.addActionListener((e) -> {
+            try {
+                OrderController.currentOrder.checkStock();
+            } catch (Order.OrderHasInsufficientStockException ex) {
+                JOptionPane.showMessageDialog(this, ex.getMessage(), "Insufficient Stock", JOptionPane.ERROR_MESSAGE);
+                return;
+            }
+
             boolean success = OrderController.checkout();
             if (!success) {
                 JOptionPane.showMessageDialog(this, "Your bank account details are missing or invalid", "Something went wrong", JOptionPane.ERROR_MESSAGE);
             } else {
                 JOptionPane.showMessageDialog(this, "Order successfully placed");
-                SwingUtilities.invokeLater(new Runnable() {
-                    @Override
-                    public void run() {
-                        refreshCart();
-                    }
-                });
+                SwingUtilities.invokeLater(this::refreshCart);
             }
         });
 
