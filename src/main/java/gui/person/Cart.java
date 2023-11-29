@@ -75,6 +75,13 @@ public class Cart extends JPanel implements TabbedGUIContainer.TabPanel {
             quantityBox.setText(quantity.toString());
             add(quantityBox, gbc);
 
+            quantityBox.addActionListener((e) -> {
+                quantity = Integer.valueOf(quantityBox.getText());
+                ol.setQuantity(quantity);
+
+                SwingUtilities.invokeLater(Cart.this::refreshCart);
+            });
+
             gbc.gridx = 0;
             gbc.gridy = 2;
             JLabel unitPrice = new JLabel("Unit Price: "+ GUI.ukCurrencyFormat.format(product.getPrice()));
