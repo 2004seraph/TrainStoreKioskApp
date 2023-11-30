@@ -3,6 +3,8 @@ package gui.person;
 import entity.order.Order;
 
 import javax.swing.*;
+import javax.swing.border.EmptyBorder;
+
 
 import controllers.AppContext;
 import db.DatabaseBridge;
@@ -29,6 +31,11 @@ public class PastOrdersScreen extends JPanel implements TabbedGUIContainer.TabPa
 
     public PastOrdersScreen() {
         this.setLayout(new BorderLayout());
+
+        JLabel titleLabel = new JLabel("<html><h1>My Orders</h1></html>");
+        titleLabel.setBorder(new EmptyBorder(0, 6, 0, 0));
+        add(titleLabel, BorderLayout.NORTH);
+
         contentPanel = new JPanel();
         GridLayout gl = new GridLayout(0, 2);
         gl.setHgap(orderSpacing);
