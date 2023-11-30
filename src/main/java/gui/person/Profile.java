@@ -135,7 +135,7 @@ public class Profile extends JPanel{
             }
 
             gbc.gridy++;
-            JButton updateButton = new JButton("UPDATE PROFILE");
+            JButton updateButton = new JButton("Update Profile");
             add(updateButton, gbc);
             updateButton.addActionListener(e -> {
                 updateDetails();
