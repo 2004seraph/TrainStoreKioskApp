@@ -34,12 +34,12 @@ public class Login extends JPanel implements TabbedGUIContainer.TabPanel {
 
         JLabel emailLabel = new JLabel("Email");
         email = new JTextField (5);
-        email.setText("staff@sheffield.ac.uk");
+//        email.setText("staff@sheffield.ac.uk");
 //        email.setText("sam@sheffield.ac.uk");
 
         JLabel passwordLabel = new JLabel("Password");
         password = new JPasswordField (5);
-        password.setText("Staff12345!");
+//        password.setText("Staff12345!");
 //        password.setText("password123");
 
         JButton loginButton = new JButton("Login");
