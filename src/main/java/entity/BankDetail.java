@@ -12,6 +12,9 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeFormatterBuilder;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
@@ -166,6 +169,13 @@ public class BankDetail extends DatabaseOperation.Entity implements DatabaseReco
         // Expiry date should be in the format yyyy-MM-dd
         if (!expiryDate.matches("^\\d{4}-\\d{2}-\\d{2}$")) { //2024-01-01
             throw new InvalidBankDetailsException("Expiry date was an invalid format");
+        }
+
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+        LocalDate exDate = LocalDate.parse(expiryDate, formatter);
+
+        if (exDate.isBefore(LocalDate.now())) {
+            throw new InvalidBankDetailsException("Card is expired ["+expiryDate+"]");
         }
 //        Check if card is expired
 
