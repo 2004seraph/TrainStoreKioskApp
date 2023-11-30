@@ -2,7 +2,13 @@
 
 ## Project Info
  - Java version: 17
- - Uses gradle
+ - Gradle version: 8.2
+
+## Building
+
+This project uses gradle-wrapper, so nothing need be installed.
+
+Just run `./gradlew jar` to output a standalone JAR file.
 
 ## Our Database DDL
 
