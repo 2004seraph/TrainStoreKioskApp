@@ -31,7 +31,7 @@ public class AppContext {
             } catch (Exception e) {
                 System.out.println("Failed to style app, continuing with default style");
             }
-            window = new JFrame("Store Kiosk");
+            window = new JFrame("Trains of Sheffield");
             window.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         }
         return window;
