@@ -83,7 +83,7 @@ public class ManagerScreen extends JPanel implements TabbedGUIContainer.TabPanel
         gbc.fill = GridBagConstraints.BOTH;
         header.setLayout(new GridBagLayout());
 
-        JLabel title = new JLabel("<html><h1>Staff Management </h1></html>");
+        JLabel title = new JLabel("<html><h1>User Management </h1></html>");
         title.setHorizontalAlignment(SwingConstants.LEFT);
         JTextField emailBox = new JTextField();
         PromptSupport.setPrompt("Add staff member by email", emailBox);
