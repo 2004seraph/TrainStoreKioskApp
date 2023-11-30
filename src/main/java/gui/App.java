@@ -83,7 +83,7 @@ public class App {
         screenController.insertTab("Shop", shopPage);
 
         switch (userRole) {
-            case USER -> screenController.switchTab("Profile");
+            case USER -> screenController.switchTab("Shop");
             case STAFF -> screenController.switchTab("Order Management");
             case MANAGER -> screenController.switchTab("User Management");
         }
