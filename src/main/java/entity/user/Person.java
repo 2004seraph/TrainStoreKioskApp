@@ -6,7 +6,6 @@ import db.DatabaseRecord;
 import entity.Address;
 import entity.BankDetail;
 import entity.order.Order;
-import entity.order.OrderLine;
 
 import java.security.InvalidKeyException;
 import java.sql.*;
@@ -139,11 +138,7 @@ public class Person extends DatabaseOperation.Entity implements DatabaseRecord {
         this.bankDetailsID = bankDetailsID;
         this.role = role;
 
-        Address address = Address.getAddressById(houseNumber, postCode);
-        if (address == null) {
-            throw new SQLException("No address found with that house number and postcode");
-        }
-        this.address = address;
+        reloadAddress();
 
         if (decrypt) {
             try {
@@ -155,33 +150,13 @@ public class Person extends DatabaseOperation.Entity implements DatabaseRecord {
         }
     }
 
-    // DUPLICATED FUNCTION
-//    public boolean setBankAccountID(int id) {
-//        // check if that id exists
-//        try (PreparedStatement query = prepareStatement("SELECT * FROM BankDetails WHERE paymentId = ?")){
-//            query.setInt(1, id);
-//            boolean found = query.execute();
-//            if (!found) {
-//                throw new BankDetail.BankAccountNotFoundException("Could not find bank details with ID ["+id+"]");
-//            }
-//
-//        } catch (SQLException e) {
-//            DatabaseBridge.databaseError("Could not fetch card details for card ID [" + id + "]", e );
-//            return false;
-//        } catch (BankDetail.BankAccountNotFoundException e) {
-//            throw new BankDetail.BankAccountNotFoundException(e.getMessage());
-//        }
-//
-//        try (PreparedStatement update = prepareStatement("UPDATE Person UPDATE paymentId = ? WHERE PersonId = ?")) {
-//            update.setInt(1, id);
-//            update.setInt(2, personID);
-//
-//            return update.getUpdateCount() > 0;
-//        } catch (SQLException e) {
-//            DatabaseBridge.databaseError("Could not update [" + this.email + "]'s payment information", e);
-//            return false;
-//        }
-//    }
+    public void reloadAddress() throws SQLException {
+        Address address = Address.getAddressById(houseNumber, postCode);
+        if (address == null) {
+            throw new SQLException("No address found with that house number and postcode");
+        }
+        this.address = address;
+    }
 
     /**
      * Returns a result set of every person in the database
@@ -324,6 +299,9 @@ public class Person extends DatabaseOperation.Entity implements DatabaseRecord {
             r.executeUpdate();
 
             commit();
+
+            person.reloadAddress();
+            person.personID = id;
         } catch (SQLException | InternalError e) {
             DatabaseBridge.databaseError("Failed to insert new user", e);
             rollback();
@@ -457,6 +435,7 @@ public class Person extends DatabaseOperation.Entity implements DatabaseRecord {
         s.executeUpdate();
 
         bankDetailsID = bankDetail.getBankDetailID();
+        this.bankDetail = bankDetail;
     }
 
     public List<Order> getAllOrders() {
