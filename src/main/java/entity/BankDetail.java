@@ -68,6 +68,7 @@ public class BankDetail extends DatabaseOperation.Entity implements DatabaseReco
 
     /**
      * Creates an entry in the database for a new set of bank details, it also returns a constructed class representation.
+     * @param cardName
      * @param cardNumber
      * @param cardHolderName
      * @param expiryDate
@@ -76,7 +77,7 @@ public class BankDetail extends DatabaseOperation.Entity implements DatabaseReco
      * @throws SQLException
      * @throws InvalidBankDetailsException
      */
-    public static BankDetail createPaymentInfo(String cardNumber, String cardHolderName, Date expiryDate, String securityCode)
+    public static BankDetail createPaymentInfo(String cardName, String cardNumber, String cardHolderName, Date expiryDate, String securityCode)
             throws SQLException, InvalidBankDetailsException {
         int id = -1;
         boolean isCardValid = LuhnCheckDigit.LUHN_CHECK_DIGIT.isValid(cardNumber);
@@ -92,8 +93,6 @@ public class BankDetail extends DatabaseOperation.Entity implements DatabaseReco
             throw new InvalidBankDetailsException("Security code was an invalid length ["+securityCode+"]");
         }
 
-        String cardName = "Card ending in " + cardNumber.substring(cardNumber.length() - 4);
-        System.out.println("Card name: " + cardName);
         try (PreparedStatement cardQuery = prepareStatement("INSERT INTO BankDetails (cardName, cardHolderName, cardNumber, expiryDate, securityCode) VALUES (?, ?, ?, ?, ?)",
                 Statement.RETURN_GENERATED_KEYS)) {
             byte[] encryptionKey = AppContext.getEncryptionKey();
@@ -157,9 +156,9 @@ public class BankDetail extends DatabaseOperation.Entity implements DatabaseReco
         }
     }
 
-    public static void validateBankDetails(String cardNumber, String cardHolderName, String expiryDate, String securityCode)
+    public static void validateBankDetails(String cardName, String cardNumber, String cardHolderName, String expiryDate, String securityCode)
             throws InvalidBankDetailsException{
-        if (cardNumber == null || expiryDate == null || securityCode == null || cardHolderName == null) {
+        if (cardNumber == null || expiryDate == null || securityCode == null || cardHolderName == null || cardName == null) {
             throw new InvalidBankDetailsException("Please enter a valid card number, expiry date and security code");
         }
         boolean isCardValid = LuhnCheckDigit.LUHN_CHECK_DIGIT.isValid(cardNumber); // 4012888888881881

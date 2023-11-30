@@ -24,6 +24,7 @@ public class Profile extends JPanel{
     private final JTextField city = new JTextField(30);
     private final JTextField postCode = new JTextField(30);
 
+    private JTextField cardName;
     private JTextField cardHolderName;
     private JTextField cardNumber;
     private JTextField expiryDate;
@@ -105,23 +106,28 @@ public class Profile extends JPanel{
 
             gbc.anchor = GridBagConstraints.WEST;
             gbc.gridwidth = 1;
+            JLabel cardNameLabel = new JLabel("Card Name:");
+            cardName = new JTextField(30);
+            addField(gbc, cardNameLabel, cardName, 10);
+
             JLabel cardHolderNameLabel = new JLabel("Card Holder Name:");
             cardHolderName = new JTextField(30);
-            addField(gbc, cardHolderNameLabel, cardHolderName, 10);
+            addField(gbc, cardHolderNameLabel, cardHolderName, 11);
 
             JLabel cardNumberLabel = new JLabel("Card Number:");
             cardNumber = new JTextField(30);
-            addField(gbc, cardNumberLabel, cardNumber, 11);
+            addField(gbc, cardNumberLabel, cardNumber, 12);
 
             JLabel expiryDateLabel = new JLabel("Expiry Date (yyyy-mm-dd):");
             expiryDate = new JTextField(30);
-            addField(gbc, expiryDateLabel, expiryDate, 12);
+            addField(gbc, expiryDateLabel, expiryDate, 13);
 
             JLabel securityCodeLabel = new JLabel("Security Code:");
             securityCode = new JTextField(30);
-            addField(gbc, securityCodeLabel, securityCode, 13);
+            addField(gbc, securityCodeLabel, securityCode, 14);
 
             if (person.getBankDetail() != null) {
+                cardName.setText(person.getBankDetail().getCardName());
                 cardHolderName.setText(person.getBankDetail().getCardHolderName());
                 cardNumber.setText(person.getBankDetail().getCardNumber());
                 expiryDate.setText(person.getBankDetail().getExpiryDate().toString());
@@ -129,7 +135,7 @@ public class Profile extends JPanel{
             }
 
             gbc.gridy++;
-            JButton updateButton = new JButton("UPDATE");
+            JButton updateButton = new JButton("UPDATE PROFILE");
             add(updateButton, gbc);
             updateButton.addActionListener(e -> {
                 updateDetails();
@@ -166,6 +172,7 @@ public class Profile extends JPanel{
         String cityInput = city.getText();
         String postCodeInput = postCode.getText();
 
+        String cardNameInput = cardName.getText();
         String cardHolderNameInput = cardHolderName.getText();
         String cardNumberInput = cardNumber.getText();
         String expiryInput = expiryDate.getText();
@@ -178,7 +185,7 @@ public class Profile extends JPanel{
             JOptionPane.showMessageDialog(AppContext.getWindow(), "Invalid fields: " + e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
         }
         try {
-            BankDetail.validateBankDetails(cardNumberInput, cardHolderNameInput, expiryInput, securityInput);
+            BankDetail.validateBankDetails(cardNameInput, cardNumberInput, cardHolderNameInput, expiryInput, securityInput);
         } catch (Exception e) {
             JOptionPane.showMessageDialog(AppContext.getWindow(), "Invalid payment information: " + e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
         }
@@ -194,7 +201,7 @@ public class Profile extends JPanel{
                 throw new IllegalArgumentException("Another user already exists with that email address");
             }
 
-            BankDetail newBankDetails = BankDetail.createPaymentInfo(cardNumberInput, cardHolderNameInput ,Date.valueOf(expiryInput), securityInput);
+            BankDetail newBankDetails = BankDetail.createPaymentInfo(cardNameInput, cardNumberInput, cardHolderNameInput ,Date.valueOf(expiryInput), securityInput);
             AppContext.getCurrentUser().addNewBankDetails(newBankDetails);
 
             AppContext.getCurrentUser().updatePersonalDetails(emailInput, forenameInput, surnameInput, houseNumberInput, streetInput, cityInput, postCodeInput);
