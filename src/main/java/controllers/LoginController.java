@@ -4,6 +4,8 @@ import db.DatabaseBridge;
 import entity.user.Person;
 import utils.Crypto;
 
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 
 public final class LoginController {
@@ -36,15 +38,18 @@ public final class LoginController {
         DatabaseBridge db = DatabaseBridge.instance();
         try {
             db.openConnection();
-            Person user = Person.getPersonByEmail(email);
-            if (user == null) {
+            PreparedStatement q = db.prepareStatement("SELECT password FROM Person WHERE email = ?");
+            q.setString(1, email);
+
+            ResultSet rs = q.executeQuery();
+            if (!rs.next()) {
                 return null;
             }
 
-            boolean pwdMatch = Crypto.verifyString(password, user.getPassword());
+            boolean pwdMatch = Crypto.verifyString(password, rs.getString("password"));
 
             if (pwdMatch) {
-                return user;
+                return Person.getPersonByEmail(email);
             }
         } catch (SQLException e) {
             logError("Failed to fetch user", e);
