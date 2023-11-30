@@ -246,7 +246,7 @@ public class Register extends JPanel implements TabbedGUIContainer.TabPanel {
         try {
             DatabaseBridge db = DatabaseBridge.instance();
             db.openConnection();
-            if (Person.getPersonByEmail(email.getText()) != null) {
+            if (Person.getPersonByEmail(email.getText(), false) != null) {
                 JOptionPane.showMessageDialog(AppContext.getWindow(), "Email already exists", "Error", JOptionPane.WARNING_MESSAGE);
                 return false;
             }

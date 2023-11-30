@@ -187,6 +187,12 @@ public class Person extends DatabaseOperation.Entity implements DatabaseRecord {
         ResultSet res = personQuery.executeQuery();
         return personFromResultSet(res, true);
     }
+    public static Person getPersonByEmail(String email, boolean status) throws SQLException {
+        PreparedStatement personQuery = prepareStatement("SELECT * FROM Person WHERE email=?");
+        personQuery.setString(1, email);
+        ResultSet res = personQuery.executeQuery();
+        return personFromResultSet(res, status);
+    }
 
     /**
      * Gets a person from the database using their email, DOES NOT SET THE BANK DETAILS FIELDS
