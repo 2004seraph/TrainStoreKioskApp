@@ -1,6 +1,7 @@
 package gui;
 
 import controllers.AppContext;
+import controllers.OrderController;
 import entity.user.Person;
 import gui.components.TabbedGUIContainer;
 import gui.person.*;
@@ -42,6 +43,7 @@ public class App {
      * The logged-in screen with each dashboard this role has access too
      */
     public void userState(Person.Role userRole) {
+        OrderController.newOrder();
         screenController.removeAllTabs();
 
         JButton logOutButton = new JButton("Logout");

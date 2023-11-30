@@ -112,7 +112,6 @@ public class Login extends JPanel implements TabbedGUIContainer.TabPanel {
                 if (user != null) {
                     System.out.println("Successfully authenticated user");
                     AppContext.setCurrentUser(user);
-                    OrderController.newOrder();
                     app.userState(user.getRole());
                 } else {
                     JOptionPane.showMessageDialog(AppContext.getWindow(), "Incorrect email or password", "Error", JOptionPane.WARNING_MESSAGE);
