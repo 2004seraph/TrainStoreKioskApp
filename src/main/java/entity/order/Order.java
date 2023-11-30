@@ -285,6 +285,10 @@ public class Order extends DatabaseOperation.Entity implements DatabaseRecord {
         items.add(ol);
     }
 
+    public void removeItem(Product product) {
+        items.removeIf(line -> line.getProductCode().equals(product.getProductCode()));
+    }
+
     public Double getTotalCost() {
         if (items.isEmpty()) {
             return 0.00;
