@@ -65,10 +65,9 @@ public class Cart extends JPanel implements TabbedGUIContainer.TabPanel {
             add(productName, gbc);
 
             gbc.gridy = 1;
-            JLabel quantityLabel = new JLabel("Quantity: ");
+            JLabel quantityLabel = new JLabel("<html>Quantity <br>(Set to 0 to remove, press Enter to update)</html>");
             add(quantityLabel, gbc);
 
-            //TODO: Make functional
             gbc.gridx = 1;
             quantityBox = new JTextField();
             quantityBox.setPreferredSize(new Dimension(30, 24));
@@ -88,11 +87,11 @@ public class Cart extends JPanel implements TabbedGUIContainer.TabPanel {
 
             gbc.gridx = 0;
             gbc.gridy = 2;
-            JLabel unitPrice = new JLabel("Unit Price: "+ GUI.ukCurrencyFormat.format(product.getPrice()));
+            JLabel unitPrice = new JLabel("Unit Price "+ GUI.ukCurrencyFormat.format(product.getPrice()));
             add(unitPrice, gbc);
 
             gbc.gridx = 1;
-            JLabel total = new JLabel("Subtotal: "+GUI.ukCurrencyFormat.format(quantity * product.getPrice()));
+            JLabel total = new JLabel("Subtotal "+GUI.ukCurrencyFormat.format(quantity * product.getPrice()));
             add(total, gbc);
         }
     }
