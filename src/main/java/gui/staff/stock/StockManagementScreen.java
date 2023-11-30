@@ -166,19 +166,39 @@ public class StockManagementScreen extends JPanel implements TabbedGUIContainer.
                 DatabaseBridge db = DatabaseBridge.instance();
                 try {
                     db.openConnection();
+
+                    String productCode = (String)jt.getValueAt(row, 0);
+
+                    PreparedStatement isProductReferencedInOrders = db.prepareStatement("SELECT COUNT(1) FROM OrderLine WHERE productCode=? AND quantity>0;");
+                    isProductReferencedInOrders.setString(1, productCode);
+                    ResultSet res = isProductReferencedInOrders.executeQuery();
+                    if (res.next()) {
+                        String confirmMessage;
+                        if (res.getInt(1) != 0) {
+                            confirmMessage = "This product is referenced in past or present orders, deleting it will modify them...";
+                        } else {
+                            confirmMessage = "Are you sure? This product is not referenced in any orders.";
+                        }
+                        int deleteConfirm = JOptionPane.showConfirmDialog(AppContext.getWindow(), confirmMessage, "Dangerous Action", JOptionPane.YES_NO_OPTION);
+                        if (deleteConfirm == JOptionPane.NO_OPTION) {
+                            return;
+                        }
+                    }
+
                     // THIS CODE WORKS BUT I DO NOT WANT STUFF TO BE DELETED RIGHT NOW, WE NEED TO TEST THE APP
-                    PreparedStatement productDeletion = DatabaseBridge.instance().prepareStatement("DELETE FROM Product WHERE productCode=?;");
-                    productDeletion.setString(1, (String)jt.getValueAt(row, 0));
+                    PreparedStatement productDeletion = db.prepareStatement("DELETE FROM Product WHERE productCode=?;");
+                    productDeletion.setString(1, productCode);
                     productDeletion.executeUpdate();
-                    JOptionPane.showMessageDialog(AppContext.getWindow(), "Deleted '" + (String)jt.getValueAt(row, 1) + "' from products.", "Success", JOptionPane.INFORMATION_MESSAGE);
+                    JOptionPane.showMessageDialog(AppContext.getWindow(), "Deleted '" + productCode + "' from products.", "Success", JOptionPane.INFORMATION_MESSAGE);
                     SwingUtilities.invokeLater(new Runnable() {
                         @Override
                         public void run() {
                             StockManagementScreen.this.updateStockView();
                         }
                     });
-                } catch (SQLException e) {
-                    JOptionPane.showMessageDialog(AppContext.getWindow(), "Could not delete item, it is referenced in past or present orders.", "Error", JOptionPane.WARNING_MESSAGE);
+                }
+                catch (SQLException e) {
+                    JOptionPane.showMessageDialog(AppContext.getWindow(), "Could not delete item: " + e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
                     throw new RuntimeException(e);
                 } finally {
                     db.closeConnection();
