@@ -92,6 +92,43 @@ public class Shop extends JPanel implements TabbedGUIContainer.TabPanel {
         }
     }
 
+//    Create the refreshShop method
+    private void refreshShop() {
+        contentPanel.removeAll();
+        DatabaseBridge db = DatabaseBridge.instance();
+        ArrayList<Product> productList = new ArrayList<>();
+
+        try {
+            db.openConnection();
+            ResultSet products = Product.getAllProducts();
+            assert products != null;
+
+            while (products.next()) {
+                productList.add(Product.getProductByID(products.getString(1)));
+            }
+        } catch (SQLException e) {
+            DatabaseBridge.databaseError("Error whilst fetching all products", e);
+            throw new RuntimeException(e);
+        } finally {
+            db.closeConnection();
+        }
+
+        // TO LOAD THE SATELLITE DATA AND ADD TO THE UI
+        try {
+            db.openConnection();
+            for (Product p : productList) {
+                contentPanel.add(new ShopCard(p));
+            }
+        } catch (SQLException e) {
+            DatabaseBridge.databaseError("Error whilst fetching all products", e);
+            throw new RuntimeException(e);
+        } finally {
+            db.closeConnection();
+        }
+        contentPanel.revalidate();
+        contentPanel.repaint();
+    }
+
     @Override
     public void setNotebookContainer(TabbedGUIContainer cont) {
 
@@ -103,5 +140,11 @@ public class Shop extends JPanel implements TabbedGUIContainer.TabPanel {
             loadStore();
             AppContext.queueStoreReload = false;
         }
+        SwingUtilities.invokeLater(new Runnable() {
+            @Override
+            public void run() {
+                refreshShop();
+            }
+        });
     }
 }
