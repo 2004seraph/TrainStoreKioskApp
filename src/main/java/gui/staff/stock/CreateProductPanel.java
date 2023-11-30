@@ -217,6 +217,11 @@ class CreateProductPanel extends JPanel {
 
             db.commit();
             db.setAutoCommit(true);
+            JOptionPane.showMessageDialog(
+                    AppContext.getWindow(),
+                    "Added new product to stock",
+                    "Success",
+                    JOptionPane.INFORMATION_MESSAGE);
         } catch (IllegalStateException e) {
             try {
                 db.rollback();
@@ -261,6 +266,42 @@ class CreateProductPanel extends JPanel {
         if (!pc.matches("^(R|C|L|S|M|P)[a-zA-Z0-9]*$") || pc.length() > 7 || pc.length() < 4) {
             message.append("Malformed product code");
             return false;
+        } else {
+            switch (Objects.requireNonNull(getSelectedButtonFromGroup(productTypeRadioGroup))) {
+                case boxedSetText:
+                    if (!(pc.startsWith("P") || pc.startsWith("M"))) {
+                        message.append("Boxed set product codes must start with P for track packs or M for train sets");
+                        return false;
+                    }
+                    break;
+                case componentText:
+                    switch (Objects.requireNonNull(getSelectedButtonFromGroup(componentTypeRadioGroup))) {
+                        case trackText:
+                            if (!pc.startsWith("R")) {
+                                message.append("Track product codes must start with R");
+                                return false;
+                            }
+                            break;
+                        case locomotiveText:
+                            if (!pc.startsWith("L")) {
+                                message.append("Locomotive product codes must start with L");
+                                return false;
+                            }
+                            break;
+                        case controllerText:
+                            if (!pc.startsWith("C")) {
+                                message.append("Controller product codes must start with C");
+                                return false;
+                            }
+                            break;
+                        default:
+                            if (!pc.startsWith("S")) {
+                                message.append("Rolling stock product codes must start with S");
+                                return false;
+                            }
+                            break;
+                    }
+            }
         }
 //        if (!p.matches("[0-9]*\\.[0-9]+")) {
         if (!p.matches("^[1-9]\\d*(\\.\\d{1,2})?$")) {
