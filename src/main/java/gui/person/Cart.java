@@ -77,6 +77,10 @@ public class Cart extends JPanel implements TabbedGUIContainer.TabPanel {
 
             quantityBox.addActionListener((e) -> {
                 quantity = Integer.valueOf(quantityBox.getText());
+
+                if (quantity == 0) {
+                    OrderController.currentOrder.removeItem(product);
+                }
                 ol.setQuantity(quantity);
 
                 SwingUtilities.invokeLater(Cart.this::refreshCart);
