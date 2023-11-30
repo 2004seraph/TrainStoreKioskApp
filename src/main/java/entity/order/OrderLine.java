@@ -65,7 +65,7 @@ public class OrderLine extends DatabaseOperation.Entity implements DatabaseRecor
         deductStock.setString(2, productCode);
         deductStock.executeUpdate();
 
-        return stock - quantity > 0;
+        return stock - quantity >= 0;
     }
 
     public List<Object> getFields() {
