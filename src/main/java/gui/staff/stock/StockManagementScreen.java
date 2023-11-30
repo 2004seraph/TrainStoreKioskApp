@@ -74,7 +74,7 @@ public class StockManagementScreen extends JPanel implements TabbedGUIContainer.
 //        add(newProductButton, gbc);
 
         gbc.weightx = 1;
-        gbc.weighty = 1;
+        gbc.weighty = 0.4;
         gbc.gridx = 0;
         gbc.gridy++;
         gbc.gridwidth = 2;
@@ -84,13 +84,16 @@ public class StockManagementScreen extends JPanel implements TabbedGUIContainer.
         this.add(viewContainer, gbc);
 
         gbc.gridy++;
-        gbc.weighty = 0;
+        gbc.weighty = 0.6;
 
         productCreationContainer = new JPanel();
         GridBagLayout gbl2 = new GridBagLayout();
         productCreationContainer.setLayout(gbl2);
         createProductForm();
-        this.add(productCreationContainer, gbc);
+        JScrollPane pccScroll = new JScrollPane(productCreationContainer,
+                JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,
+                JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
+        this.add(pccScroll, gbc);
     }
 
     private void createProductForm() {
@@ -118,6 +121,7 @@ public class StockManagementScreen extends JPanel implements TabbedGUIContainer.
     }
 
     private void createStockView(JPanel container) {
+//        container.setMinimumSize(new Dimension(0, 100));
         try {
             DatabaseBridge.instance().openConnection();
             PreparedStatement countQuery = DatabaseBridge.instance().prepareStatement("SELECT COUNT(*) FROM Product;");
