@@ -52,6 +52,7 @@ class CreateProductPanel extends JPanel {
     private JComboBox<Component.Gauge> gaugeInput;
     ButtonGroup componentTypeRadioGroup;
 
+    static final String otherText = "Other";
     static final String trackText = "Track";
     static final String locomotiveText = "Locomotive";
     static final String controllerText = "Controller";
@@ -188,6 +189,8 @@ class CreateProductPanel extends JPanel {
                                 newController.setString(2, ((Controller.ControlType) Objects.requireNonNull(controllerInput.getSelectedItem())).toString());
                                 newController.executeUpdate();
                             }
+                            break;
+                        default:
                             break;
                     }
                     break;
@@ -396,6 +399,11 @@ class CreateProductPanel extends JPanel {
         setEnabledRecursively(boxedSetBuilder, false);
         // enable correct component type panel
         switch (Objects.requireNonNull(getSelectedButtonFromGroup(componentTypeRadioGroup))) {
+            case otherText:
+                GUI.setEnabledRecursively(trackContainer, false);
+                GUI.setEnabledRecursively(locomotiveContainer, false);
+                GUI.setEnabledRecursively(controllerContainer, false);
+                break;
             case trackText:
                 GUI.setEnabledRecursively(trackContainer, true);
                 GUI.setEnabledRecursively(locomotiveContainer, false);
@@ -414,7 +422,11 @@ class CreateProductPanel extends JPanel {
         }
     }
     private void selectComponentTypeRadioButton(Class<?> productType) {
-        if (productType.equals(Track.class)) {
+        if (productType.equals(Component.GenericComponent.class)) {
+            GUI.setEnabledRecursively(trackContainer, false);
+            GUI.setEnabledRecursively(locomotiveContainer, false);
+            GUI.setEnabledRecursively(controllerContainer, false);
+        } else if (productType.equals(Track.class)) {
             GUI.setEnabledRecursively(trackContainer, true);
             GUI.setEnabledRecursively(locomotiveContainer, false);
             GUI.setEnabledRecursively(controllerContainer, false);
@@ -580,12 +592,19 @@ class CreateProductPanel extends JPanel {
         }
         { // special component type and data
             componentTypeRadioGroup = new ButtonGroup();
+
+            JRadioButton other = new JRadioButton(otherText);
             JRadioButton track = new JRadioButton(trackText);
             JRadioButton locomotive = new JRadioButton(locomotiveText);
             JRadioButton controller = new JRadioButton(controllerText);
+
+            componentTypeRadioGroup.add(other);
             componentTypeRadioGroup.add(track);
             componentTypeRadioGroup.add(locomotive);
             componentTypeRadioGroup.add(controller);
+
+            gbc.gridy++;
+            panel.add(other, gbc);
 
             gbc.gridy++;
             panel.add(track, gbc);
@@ -619,6 +638,17 @@ class CreateProductPanel extends JPanel {
                 panel.add(controllerContainer, gbc);
             }
 
+            other.addActionListener(new ActionListener() {
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    SwingUtilities.invokeLater(new Runnable() {
+                        @Override
+                        public void run() {
+                            selectComponentTypeRadioButton(Component.GenericComponent.class);
+                        }
+                    });
+                }
+            });
             track.addActionListener(new ActionListener() {
                 @Override
                 public void actionPerformed(ActionEvent e) {
@@ -654,8 +684,8 @@ class CreateProductPanel extends JPanel {
             });
 
             // initial selection
-            track.setSelected(true);
-            selectComponentTypeRadioButton(Track.class);
+            other.setSelected(true);
+            selectComponentTypeRadioButton(Component.GenericComponent.class);
         }
 
         return panel;

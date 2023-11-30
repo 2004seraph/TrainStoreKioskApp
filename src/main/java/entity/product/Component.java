@@ -1,6 +1,8 @@
 package entity.product;
 
 public class Component extends Product{
+    public static class GenericComponent {}
+
     public static class ComponentNotFoundException extends RuntimeException {
         public ComponentNotFoundException(String msg) {super(msg);}
     }

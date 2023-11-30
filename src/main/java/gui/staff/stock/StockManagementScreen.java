@@ -170,7 +170,7 @@ public class StockManagementScreen extends JPanel implements TabbedGUIContainer.
                     PreparedStatement productDeletion = DatabaseBridge.instance().prepareStatement("DELETE FROM Product WHERE productCode=?;");
                     productDeletion.setString(1, (String)jt.getValueAt(row, 0));
                     productDeletion.executeUpdate();
-                    JOptionPane.showMessageDialog(AppContext.getWindow(), "Deleted '" + (String)jt.getValueAt(row, 1) + "' from products.");
+                    JOptionPane.showMessageDialog(AppContext.getWindow(), "Deleted '" + (String)jt.getValueAt(row, 1) + "' from products.", "Success", JOptionPane.INFORMATION_MESSAGE);
                     SwingUtilities.invokeLater(new Runnable() {
                         @Override
                         public void run() {
@@ -178,7 +178,8 @@ public class StockManagementScreen extends JPanel implements TabbedGUIContainer.
                         }
                     });
                 } catch (SQLException e) {
-
+                    JOptionPane.showMessageDialog(AppContext.getWindow(), "Could not delete item, it is referenced in past or present orders.", "Error", JOptionPane.WARNING_MESSAGE);
+                    throw new RuntimeException(e);
                 } finally {
                     db.closeConnection();
                 }
