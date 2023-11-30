@@ -48,8 +48,29 @@ public class ShopCard extends JPanel {
         gbc.gridx = 0;
         gbc.gridy = 1;
 
-        JLabel productCode = new JLabel(product.getProductCode());
-        add(productCode, gbc);
+        String productCode = product.getProductCode();
+        switch (productCode.charAt(0)) {
+            case 'L':
+                productCode = "<html><h3>Locomotive</h3></html>";
+                break;
+            case 'R':
+                productCode = "<html><h3>Track Piece</h3></html>";
+                break;
+            case 'C':
+                productCode = "<html><h3>Controller</h3></html>";
+                break;
+            case 'S':
+                productCode = "<html><h3>Rolling Stock</h3></html>";
+                break;
+            case 'M':
+                productCode = "<html><h3>Train Set</h3></html>";
+                break;
+            case 'P':
+                productCode = "<html><h3>Track Pack</h3></html>";
+                break;
+        }
+        JLabel productCodeLabel = new JLabel(productCode);
+        add(productCodeLabel, gbc);
 
         gbc.gridy = 2;
 
