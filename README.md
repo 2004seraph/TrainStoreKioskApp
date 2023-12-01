@@ -1,4 +1,8 @@
-# COM2008 Team 5
+# My university systems design group project
+
+In this project we had to gather requirements and design a retail store kiosk application which interfaces with a database. Staff would use the system to manage store stock and perform business management operations, and customers would use it for browsing products and placing orders.
+
+This app will not function without a MySQL database with a correct schema to interface with, we were required to configure this on university servers and to develop the app connected to our VPN.
 
 ## Project Info
  - Java version: 17
@@ -8,9 +12,9 @@
 
 This project uses gradle-wrapper, so nothing need be installed.
 
-Just run `./gradlew jar` to output a standalone JAR file.
+Just run `./gradlew jar` to output a standalone JAR file which can be run.
 
-## Our Database DDL
+## Our Database DDL - An assessment requirement
 
 ### Person
 ```mysql
